@@ -17,6 +17,12 @@ const BASE_URL = process.env.NODE_ENV === 'production'
   : '/'
 
 module.exports = {
+  // 原本在webpack.config.js中的配置写到下面
+  configureWebpack: {
+    externals: {
+      'jsbarcode': 'JsBarcode'
+    }
+  },
   // Project deployment base
   // By default we assume your app will be deployed at the root of a domain,
   // e.g. https://www.my-app.com/

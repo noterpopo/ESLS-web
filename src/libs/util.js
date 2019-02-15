@@ -16,6 +16,12 @@ export const getToken = () => {
   else return false
 }
 
+export const convertCanvasToImage = (canvas) => {
+  var image = new Image()
+  image.src = canvas.toDataURL('image/png')
+  return image
+}
+
 export const hasChild = (item) => {
   return item.children && item.children.length !== 0
 }

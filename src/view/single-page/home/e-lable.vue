@@ -1,8 +1,13 @@
 <template>
-    <canvas id="label" ref="canvas">您的浏览器不支持canvas！</canvas>
+    <div>
+      <canvas id="label" ref="canvas">您的浏览器不支持canvas！</canvas>
+      <canvas id="barcode">您的浏览器不支持canvas！</canvas>
+    </div>
 </template>
 
 <script>
+import JsBarcode from 'jsbarcode'
+import { convertCanvasToImage } from '@/libs/util'
 var canvas
 var ctx
 export default {
@@ -87,10 +92,24 @@ export default {
       ctx.fillText('单位：' + this.itemUnit, leftMargin + 8 + canvas.width / 9 * this.itemPrice.split('.')[0].length + this.itemPrice.split('.')[1].length * canvas.width / 12.5 + 20, topMargin + canvas.width / 6 + canvas.width / 13.5 * 2)
       // 右边框信息-产地
       ctx.font = canvas.width / 18.75 + 'px 微软雅黑'
-      ctx.fillText('产地' + this.itemOrigin, leftMargin + 8 + canvas.width / 9 * this.itemPrice.split('.')[0].length + this.itemPrice.split('.')[1].length * canvas.width / 12.5 + 20, topMargin + canvas.width / 6 + canvas.width / 13.5 * 3)
+      ctx.fillText('产地：' + this.itemOrigin, leftMargin + 8 + canvas.width / 9 * this.itemPrice.split('.')[0].length + this.itemPrice.split('.')[1].length * canvas.width / 12.5 + 20, topMargin + canvas.width / 6 + canvas.width / 13.5 * 3)
       // 条形码
-      ctx.fillText('产地' + this.itemBarCode, leftMargin + 0, 48 + topMargin + 22 * 3)
+      var barcode = document.getElementById('barcode')
+      barcode.width = barcode.width
+      var barcodewidth = canvas.width / 2.5
+      var barcodeheight = canvas.height / 4
+      JsBarcode('#barcode', this.itemBarCode, {
+        fontSize: canvas.width / 6
+      })
+      var barcodeimg = convertCanvasToImage(barcode)
+      barcodeimg.onload = function () { ctx.drawImage(barcodeimg, leftMargin, canvas.height * 0.74, barcodewidth, barcodeheight) }
     }
   }
 }
 </script>
+
+<style>
+#barcode{
+  display: none;
+}
+</style>
