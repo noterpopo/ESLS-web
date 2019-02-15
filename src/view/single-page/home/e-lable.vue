@@ -1,8 +1,10 @@
 <template>
-    <div>{{itemName}}</div>
+    <canvas id="label" ref="canvas">您的浏览器不支持canvas！</canvas>
 </template>
 
 <script>
+var canvas
+var ctx
 export default {
   name: 'e_lable',
   props: {
@@ -47,8 +49,48 @@ export default {
       default: '999.99'
     }
   },
+  mounted () {
+    this.draw()
+  },
   methods: {
-
+    draw () {
+      var topMargin = 2
+      var leftMargin = 2
+      canvas = this.$refs.canvas
+      ctx = canvas.getContext('2d')
+      if (!ctx) return
+      canvas.width = 300
+      canvas.height = canvas.width / 2
+      // 商品名称
+      ctx.font = canvas.width / 15 + 'px 微软雅黑'
+      ctx.fillText(this.itemName, leftMargin + 0, topMargin + canvas.width / 15)
+      // 下划线
+      ctx.beginPath()
+      ctx.moveTo(leftMargin + 0, topMargin + canvas.width / 15 + 10)
+      ctx.lineTo(canvas.width, topMargin + canvas.width / 15 + 10)
+      ctx.stroke()
+      // 价格整
+      ctx.font = canvas.width / 6 + 'px 微软雅黑'
+      ctx.textBaseline = 'hanging'
+      ctx.fillText(this.itemPrice.split('.')[0] + '.', leftMargin + 8, topMargin + canvas.width / 6)
+      // 价格小
+      ctx.font = canvas.width / 7.5 + 'px 微软雅黑'
+      ctx.fillText(this.itemPrice.split('.')[1], leftMargin + 8 + canvas.width / 9 * this.itemPrice.split('.')[0].length, topMargin + canvas.width / 6)
+      // 右边框信息-规格
+      ctx.font = canvas.width / 18.75 + 'px 微软雅黑'
+      ctx.fillText('规格：' + this.itemNorm, leftMargin + 8 + canvas.width / 9 * this.itemPrice.split('.')[0].length + this.itemPrice.split('.')[1].length * canvas.width / 12.5 + 20, topMargin + canvas.width / 6)
+      // 右边框信息-类别
+      ctx.font = canvas.width / 18.75 + 'px 微软雅黑'
+      ctx.fillText('类别：' + this.itemQRCode, leftMargin + 8 + canvas.width / 9 * this.itemPrice.split('.')[0].length + this.itemPrice.split('.')[1].length * canvas.width / 12.5 + 20, topMargin + canvas.width / 6 + canvas.width / 13.5 * 1)
+      // 右边框信息-单位
+      ctx.font = canvas.width / 18.75 + 'px 微软雅黑'
+      ctx.fillText('单位：' + this.itemUnit, leftMargin + 8 + canvas.width / 9 * this.itemPrice.split('.')[0].length + this.itemPrice.split('.')[1].length * canvas.width / 12.5 + 20, topMargin + canvas.width / 6 + canvas.width / 13.5 * 2)
+      // 右边框信息-产地
+      ctx.font = canvas.width / 18.75 + 'px 微软雅黑'
+      ctx.fillText('产地' + this.itemOrigin, leftMargin + 8 + canvas.width / 9 * this.itemPrice.split('.')[0].length + this.itemPrice.split('.')[1].length * canvas.width / 12.5 + 20, topMargin + canvas.width / 6 + canvas.width / 13.5 * 3)
+      // 条形码
+      ctx.fillText('产地' + this.itemBarCode, leftMargin + 0, 48 + topMargin + 22 * 3)
+    }
   }
 }
 </script>
