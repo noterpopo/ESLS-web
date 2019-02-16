@@ -58,12 +58,46 @@ export default {
       default: '999.99'
     }
   },
+  watch: {
+    'itemName': function () {
+      this.draw()
+    },
+    'itemUnit': function () {
+      this.draw()
+    },
+    'itemNorm': function () {
+      this.draw()
+    },
+    'itemCategory': function () {
+      this.draw()
+    },
+    'itemOrigin': function () {
+      this.draw()
+    },
+    'itemNo': function () {
+      this.draw()
+    },
+    'itemQRCode': function () {
+      this.draw()
+    },
+    'itemBarCode': function () {
+      this.draw()
+    },
+    'itemisOnSale': function () {
+      this.draw()
+    },
+    'itemPrice': function () {
+      this.draw()
+    },
+    'itemOnSalePrice': function () {
+      this.draw()
+    }
+  },
   mounted () {
     this.draw()
   },
   methods: {
     draw () {
-      this.$Message.info(this.itemName)
       var topMargin = 2
       var leftMargin = 2
       canvas = this.$refs.canvas

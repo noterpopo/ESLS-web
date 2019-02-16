@@ -1,18 +1,17 @@
 <template>
   <div>
     <e_label v-bind="item" ref="label_canvas" ></e_label>
-    <Input type="text" v-model="item.itemName" @on-change="onItemChange"/>
-    <Input type="text" v-model="item.itemUnit" @on-change="onItemChange"/>
-    <Input type="text" v-model="item.itemNorm" @on-change="onItemChange"/>
-    <Input type="text" v-model="item.itemCategory" @on-change="onItemChange"/>
-    <Input type="text" v-model="item.itemOrigin" @on-change="onItemChange"/>
-    <Input type="text" v-model="item.itemNo" @on-change="onItemChange"/>
-    <Input type="text" v-model="item.itemQRCode" @on-change="onItemChange"/>
-    <Input type="text" v-model="item.itemBarCode" @on-change="onItemChange"/>
-    <Input type="text" v-model="item.itemPrice" @on-change="onItemChange"/>
-    <Input type="text" v-model="item.itemOnSalePrice" @on-change="onItemChange"/>
-    <i-switch v-model="item.itemisOnSale" @on-change="onItemChange" />
-
+    <Input type="text" v-model="item.itemName" />
+    <Input type="text" v-model="item.itemUnit" />
+    <Input type="text" v-model="item.itemNorm" />
+    <Input type="text" v-model="item.itemCategory" />
+    <Input type="text" v-model="item.itemOrigin" />
+    <Input type="text" v-model="item.itemNo" />
+    <Input type="text" v-model="item.itemQRCode" />
+    <Input type="text" v-model="item.itemBarCode" />
+    <Input type="text" v-model="item.itemPrice" />
+    <Input type="text" v-model="item.itemOnSalePrice" />
+    <i-switch v-model="item.itemisOnSale"  />
   </div>
 </template>
 
@@ -32,7 +31,7 @@ export default {
         itemCategory: '食品',
         itemOrigin: '上海',
         itemNo: '00012',
-        itemQRCode: '233333',
+        itemQRCode: '692226641428',
         itemBarCode: '692226641428',
         itemisOnSale: false,
         itemPrice: '999.99',
@@ -41,9 +40,6 @@ export default {
     }
   },
   methods: {
-    onItemChange () {
-      this.$refs.label_canvas.draw()
-    }
   }
 }
 </script>
