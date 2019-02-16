@@ -1,7 +1,7 @@
 <template>
   <div>
     <e_label v-bind="item" ref="label_canvas" ></e_label>
-    <input type="text" v-model="item.itemName" @on-change="onItemChange"/>
+    <Input type="text" v-model="item.itemName" @on-change="onItemChange"/>
     <Input type="text" v-model="item.itemUnit" @on-change="onItemChange"/>
     <Input type="text" v-model="item.itemNorm" @on-change="onItemChange"/>
     <Input type="text" v-model="item.itemCategory" @on-change="onItemChange"/>
@@ -12,8 +12,6 @@
     <Input type="text" v-model="item.itemPrice" @on-change="onItemChange"/>
     <Input type="text" v-model="item.itemOnSalePrice" @on-change="onItemChange"/>
     <i-switch v-model="item.itemisOnSale" @on-change="onItemChange" />
-    <ul id="v-for-object" class="demo">
-</ul>
 
   </div>
 </template>
