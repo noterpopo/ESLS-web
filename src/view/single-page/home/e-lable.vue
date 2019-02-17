@@ -245,6 +245,61 @@ export default {
         this.drawDispms('二维码', 280 * widthRadius, 180 * heightRadius, 100 * heightRadius, 100 * heightRadius, 0, this.itemQRCode, '', '', 0, '', '', 0)
         // 条形码
         this.drawDispms('条形码', 6 * widthRadius, 258 * canvas.height / 300, 100 * widthRadius, 30 * heightRadius, 0, this.itemBarCode, '', '', 0, '', '', 67 * widthRadius)
+      } else if (this.labelStyle === '3') {
+        canvas.width = 250
+        canvas.height = 122
+        widthRadius = canvas.width / 250
+        heightRadius = canvas.height / 122
+        // 商品名称
+        this.drawDispms('', 4 * widthRadius, 18 * heightRadius, 0, 0, 1, this.itemName, '', '', 'bold', '微软雅黑', 0, 16 * widthRadius)
+        if (this.itemisOnSale) {
+          // 单位
+          this.drawDispms('', 4 * widthRadius, 42 * heightRadius, 0, 0, 1, this.itemUnit, '单位：', '', 'normal', '微软雅黑', 0, 12 * widthRadius)
+          // 规格
+          this.drawDispms('', 4 * widthRadius, 60 * heightRadius, 0, 0, 1, this.itemNorm, '规格：', '', 'normal', '微软雅黑', 0, 12 * widthRadius)
+          // 产地
+          this.drawDispms('', 4 * widthRadius, 78 * heightRadius, 0, 0, 1, this.itemOrigin, '产地：', '', 'normal', '微软雅黑', 0, 12 * widthRadius)
+          // 黑色底
+          this.drawDispms('背景', 4 * widthRadius, 82 * heightRadius, 76 * widthRadius, 30 * heightRadius, 0, '', '', '', 'bold', '微软雅黑', 2, 0)
+          // '促销'
+          this.drawDispms('', 12 * widthRadius, 108 * heightRadius, 0, 0, 1, '促销', '', '', 'normal', '微软雅黑', 1, 28 * widthRadius)
+          // '现价'
+          this.drawDispms('', 88 * widthRadius, 82 * heightRadius, 0, 0, 1, '现价', '', '', 'bold', '微软雅黑', 0, 16 * widthRadius)
+          // 黑色底
+          this.drawDispms('背景', 130 * widthRadius, 74 * heightRadius, 120 * widthRadius, 45 * heightRadius, 0, '', '', '', 'bold', '微软雅黑', 2, 0)
+          // 现价整
+          this.drawDispms('', 130 * widthRadius, 112 * heightRadius, 0, 0, 1, this.itemOnSalePrice.split('.')[0], '', '.', 'bold', '微软雅黑', 1, 40 * widthRadius)
+          // 现价小
+          this.drawDispms('', 146 * widthRadius, 104 * heightRadius, 0, 0, 1, this.itemOnSalePrice.split('.')[1], '', '', 'bold', '微软雅黑', 1, 32 * widthRadius, this.itemOnSalePrice.split('.')[0], 22 * widthRadius)
+          // ’原价‘
+          this.drawDispms('', 104 * widthRadius, 60 * heightRadius, 0, 0, 1, '原价', '', '', 'normal', '微软雅黑', 0, 14 * widthRadius)
+          // 原价整
+          this.drawDispms('', 200 * widthRadius, 62 * heightRadius, 0, 0, 1, this.itemPrice.split('.')[0], '', '.', 'oblique', '微软雅黑', 0, 16 * widthRadius)
+          // 原价小
+          this.drawDispms('', 208 * widthRadius, 58 * heightRadius, 0, 0, 1, this.itemPrice.split('.')[1], '', '', 'oblique', '微软雅黑', 0, 12 * widthRadius, this.itemPrice.split('.')[0], 8 * widthRadius)
+          // 划线
+          this.drawDispms('线段', 200 * widthRadius, 56 * heightRadius, 0, 0, 1, '', '', '', 'normal', '微软雅黑', 1, 0, '', 0, this.itemPrice.split('.')[0], 12 * widthRadius)
+          this.drawDispms('线段', 208 * widthRadius, 54 * heightRadius, 0, 0, 1, '', '', '', 'normal', '微软雅黑', 1, 0, this.itemPrice.split('.')[0], 8 * widthRadius, this.itemPrice.split('.')[1], 8 * widthRadius)
+          // 条形码
+          this.drawDispms('条形码', 140 * widthRadius, 19 * heightRadius, 100 * widthRadius, 20 * heightRadius, 0, this.itemBarCode, '', '', 0, '', '', 67 * widthRadius)
+        } else {
+          // 单位
+          this.drawDispms('', 4 * widthRadius, 42 * heightRadius, 0, 0, 1, this.itemUnit, '单位：', '', 'normal', '微软雅黑', 0, 12 * widthRadius)
+          // 规格
+          this.drawDispms('', 70 * widthRadius, 42 * heightRadius, 0, 0, 1, this.itemNorm, '规格：', '', 'normal', '微软雅黑', 0, 12 * widthRadius)
+          // 产地
+          this.drawDispms('', 4 * widthRadius, 62 * heightRadius, 0, 0, 1, this.itemOrigin, '产地：', '', 'normal', '微软雅黑', 0, 12 * widthRadius)
+          // 货号
+          this.drawDispms('', 70 * widthRadius, 62 * heightRadius, 0, 0, 1, this.itemNo, '货号：', '', 'normal', '微软雅黑', 0, 12 * widthRadius)
+          // 价格整
+          this.drawDispms('', 4 * widthRadius, 112 * heightRadius, 0, 0, 1, this.itemPrice.split('.')[0], '', '.', 'normal', '微软雅黑', 0, 42 * widthRadius)
+          // 价格小
+          this.drawDispms('', 24 * widthRadius, 104 * heightRadius, 0, 0, 1, this.itemPrice.split('.')[1], '', '', 'normal', '微软雅黑', 0, 38 * widthRadius, this.itemPrice.split('.')[0], 22 * widthRadius)
+          // 二维码
+          this.drawDispms('二维码', 160 * widthRadius, 9 * heightRadius, 80 * heightRadius, 80 * heightRadius, 0, this.itemQRCode, '', '', 0, '', '', 0)
+          // 条形码
+          this.drawDispms('条形码', 140 * widthRadius, 100 * heightRadius, 100 * widthRadius, 20 * heightRadius, 0, this.itemBarCode, '', '', 0, '', '', 67 * widthRadius)
+        }
       } else {
 
       }
@@ -259,7 +314,7 @@ export default {
           fontSize: fontSize,
           margin: 0,
           textMargin: 0,
-          width: text.length / 3
+          width: height / 5
         })
         barcodeimg = convertCanvasToImage(barcodecanvas)
         barcodeimg.onload = function () { ctx.drawImage(barcodeimg, x, y, width, height) }

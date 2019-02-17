@@ -41,7 +41,7 @@ export default {
         itemisOnSale: false,
         itemPrice: '999.99',
         itemOnSalePrice: '999.99',
-        labelStyle: '1'
+        labelStyle: '3'
       },
       styleList: [
         '1',
