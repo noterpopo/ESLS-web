@@ -118,182 +118,191 @@ export default {
   },
   methods: {
     draw () {
-      var topMargin = 2
-      var leftMargin = 2
+      var widthRadius
+      var heightRadius
       canvas = this.$refs.canvas
       ctx = canvas.getContext('2d')
       if (!ctx) return
+      ctx.textBaseline = 'alphabetic'
       if (this.labelStyle === '1') {
-        canvas.width = 300
-        canvas.height = canvas.width / 2
+        canvas.width = 250
+        canvas.height = 122
+        widthRadius = canvas.width / 250
+        heightRadius = canvas.height / 122
         // 商品名称
-        ctx.font = canvas.width / 12 + 'px 微软雅黑'
-        ctx.fillText(this.itemName, leftMargin + 0, topMargin + canvas.width / 15)
+        ctx.textBaseline = 'alphabetic'
+        this.drawDispms('', 2 * widthRadius, 18 * heightRadius, 0, 0, 1, this.itemName, '', '', 'normal', '微软雅黑', 0, 21 * widthRadius)
         // 下划线
-        ctx.beginPath()
-        ctx.moveTo(leftMargin + 0, topMargin + canvas.width / 15 + 10)
-        ctx.lineTo(canvas.width, topMargin + canvas.width / 15 + 10)
-        ctx.stroke()
-        console.log(this.itemisOnSale)
+        ctx.textBaseline = 'alphabetic'
+        this.drawDispms('线段', 2 * widthRadius, 28 * heightRadius, 250 * widthRadius, 0, 1, '', '', '', 'normal', '微软雅黑', 1, 0)
         if (this.itemisOnSale) {
-          ctx.textBaseline = 'middle'
           // 原价整
-          ctx.font = 'bold ' + canvas.width / 16 + 'px 微软雅黑'
-          ctx.fillText('原价：￥' + this.itemPrice.split('.')[0] + '.', leftMargin + 8, topMargin + canvas.width / 15 + 10 + canvas.width / 16)
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('', 10 * widthRadius, 48 * heightRadius, 0, 0, 1, '原价：￥', '', '', 'bold', '微软雅黑', 0, 16 * widthRadius)
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('', 72 * widthRadius, 48 * heightRadius, 0, 0, 1, this.itemPrice.split('.')[0], '', '.', 'bold', '微软雅黑', 0, 16 * widthRadius)
           // 原价小
-          ctx.font = 'bold ' + canvas.width / 18 + 'px 微软雅黑'
-          ctx.fillText(this.itemPrice.split('.')[1], leftMargin + 8 + canvas.width / 19.5 * (this.itemPrice.split('.')[0].length + 4) + 10, topMargin + canvas.width / 15 + 10 + canvas.width / 16 * 0.9)
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('', 80 * widthRadius, 46 * heightRadius, 0, 0, 1, this.itemPrice.split('.')[1], '', '', 'bold', '微软雅黑', 0, 14 * widthRadius, this.itemPrice.split('.')[0], 8 * widthRadius)
           // 划线
-          ctx.beginPath()
-          ctx.moveTo(leftMargin + 8 + canvas.width / 19.5 * 4, topMargin + canvas.width / 15 + 10 + canvas.width / 16)
-          ctx.lineTo(leftMargin + 8 + canvas.width / 19.5 * (this.itemPrice.split('.')[0].length + 4) + 10, topMargin + canvas.width / 15 + 10 + canvas.width / 16)
-          ctx.stroke()
-          ctx.beginPath()
-          ctx.moveTo(leftMargin + 8 + canvas.width / 19.5 * (this.itemPrice.split('.')[0].length + 4) + 10, topMargin + canvas.width / 15 + 10 + canvas.width / 16 * 0.9)
-          ctx.lineTo(leftMargin + 8 + canvas.width / 19.5 * (this.itemPrice.split('.')[0].length + 5) + 10, topMargin + canvas.width / 15 + 10 + canvas.width / 16 * 0.9)
-          ctx.stroke()
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('线段', 68 * widthRadius, 42 * heightRadius, 0, 0, 1, '', '', '', 'normal', '微软雅黑', 1, 0, '', 0, this.itemPrice.split('.')[0], 14 * widthRadius)
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('线段', 80 * widthRadius, 40 * heightRadius, 0, 0, 1, '', '', '', 'normal', '微软雅黑', 1, 0, this.itemPrice.split('.')[0], 8 * widthRadius, this.itemPrice.split('.')[1], 10 * widthRadius)
           // 红色底
-          ctx.fillStyle = 'red'
-          ctx.fillRect(leftMargin + 8 + 3 * canvas.width / 16, topMargin + canvas.width / 15 + 10 + canvas.width / 16 + canvas.width / 18, canvas.width / 13 * 5, canvas.width / 8)
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('背景', 57 * widthRadius, 56 * heightRadius, 96 * widthRadius, 32 * heightRadius, 2, '', '', '', 'bold', '微软雅黑', 2, 16 * widthRadius)
           // 促价整
-          ctx.font = 'bold ' + canvas.width / 16 + 'px 微软雅黑'
-          ctx.fillText('现价：', leftMargin + 8, topMargin + canvas.width / 15 + 10 + canvas.width / 16 + canvas.width / 18 + canvas.width / 15)
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('', 10 * widthRadius, 80 * heightRadius, 0, 0, 1, '现价：', '', '', 'bold', '微软雅黑', 2, 16 * widthRadius)
           ctx.fillStyle = 'white'
-          ctx.font = 'bold ' + canvas.width / 12 + 'px 微软雅黑'
-          ctx.fillText('￥' + this.itemOnSalePrice.split('.')[0] + '.', leftMargin + 8 + 3 * canvas.width / 16, topMargin + canvas.width / 15 + 10 + canvas.width / 16 + canvas.width / 18 + canvas.width / 15)
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('', 57 * widthRadius, 80 * heightRadius, 0, 0, 1, this.itemOnSalePrice.split('.')[0], '￥', '.', 'bold', '微软雅黑', 1, 21 * widthRadius)
           // 促价小
-          ctx.font = 'bold ' + canvas.width / 14 + 'px 微软雅黑'
-          ctx.fillText(this.itemOnSalePrice.split('.')[1], leftMargin + 8 + canvas.width / 16.5 * (this.itemOnSalePrice.split('.')[0].length + 4) + 10, topMargin + canvas.width / 15 + 10 + canvas.width / 16 + canvas.width / 18 * 0.8 + canvas.width / 15)
-          ctx.textBaseline = 'hanging'
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('', 88 * widthRadius, 77 * heightRadius, 0, 0, 1, this.itemOnSalePrice.split('.')[1], '', '', 'bold', '微软雅黑', 1, 18 * widthRadius, this.itemOnSalePrice.split('.')[0], 12 * widthRadius)
         } else {
-          ctx.textBaseline = 'hanging'
           // 价格整
-          ctx.font = canvas.width / 5 + 'px 微软雅黑'
-          ctx.fillText(this.itemPrice.split('.')[0] + '.', leftMargin + 8, topMargin + canvas.width / 6)
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('', 10 * widthRadius, 86 * heightRadius, 0, 0, 1, this.itemPrice.split('.')[0], '', '.', 'normal', '微软雅黑', 0, 50 * widthRadius)
           // 价格小
-          ctx.font = canvas.width / 6.5 + 'px 微软雅黑'
-          ctx.fillText(this.itemPrice.split('.')[1], leftMargin + 8 + canvas.width / 7.5 * this.itemPrice.split('.')[0].length, topMargin + canvas.width / 6)
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('', 10 * widthRadius, 78 * heightRadius, 0, 0, 1, this.itemPrice.split('.')[1], '', '', 'normal', '微软雅黑', 0, 38 * widthRadius, this.itemPrice.split('.')[0], 33 * widthRadius)
         }
-        ctx.fillStyle = 'black'
         // 右边框信息-规格
-        ctx.font = canvas.width / 18.75 + 'px 微软雅黑'
-        ctx.fillText('规格：' + this.itemNorm, canvas.width * 0.68, topMargin + canvas.width / 6)
+        ctx.textBaseline = 'alphabetic'
+        this.drawDispms('', 170 * widthRadius, 56 * heightRadius, 0, 0, 1, this.itemNorm, '规格：', '', 'normal', '微软雅黑', 0, 13 * widthRadius)
         // 右边框信息-类别
-        ctx.font = canvas.width / 18.75 + 'px 微软雅黑'
-        ctx.fillText('类别：' + this.itemCategory, canvas.width * 0.68, topMargin + canvas.width / 6 + canvas.width / 13.5 * 1)
+        ctx.textBaseline = 'alphabetic'
+        this.drawDispms('', 170 * widthRadius, 74 * heightRadius, 0, 0, 1, this.itemCategory, '类别：', '', 'normal', '微软雅黑', 0, 13 * widthRadius)
         // 右边框信息-单位
-        ctx.font = canvas.width / 18.75 + 'px 微软雅黑'
-        ctx.fillText('单位：' + this.itemUnit, canvas.width * 0.68, topMargin + canvas.width / 6 + canvas.width / 13.5 * 2)
+        ctx.textBaseline = 'alphabetic'
+        this.drawDispms('', 170 * widthRadius, 92 * heightRadius, 0, 0, 1, this.itemUnit, '单位：', '', 'normal', '微软雅黑', 0, 13 * widthRadius)
         // 右边框信息-产地
-        ctx.font = canvas.width / 18.75 + 'px 微软雅黑'
-        ctx.fillText('产地：' + this.itemOrigin, canvas.width * 0.68, topMargin + canvas.width / 6 + canvas.width / 13.5 * 3)
+        ctx.textBaseline = 'alphabetic'
+        this.drawDispms('', 170 * widthRadius, 110 * heightRadius, 0, 0, 1, this.itemOrigin, '产地：', '', 'normal', '微软雅黑', 0, 13 * widthRadius)
         // 条形码
-        barcodecanvas = document.getElementById('barcode')
-        barcodecanvas.width = barcode.width
-        var barcodewidth = canvas.width / 2.2
-        var barcodeheight = canvas.height / 5
-        JsBarcode('#barcode', this.itemBarCode, {
-          format: 'EAN13',
-          fontSize: canvas.width / 6,
-          margin: 0,
-          textMargin: 0,
-          width: this.itemBarCode.length / 3
-        })
-        barcodeimg = convertCanvasToImage(barcode)
-        barcodeimg.onload = function () { ctx.drawImage(barcodeimg, leftMargin, canvas.height * 0.76, barcodewidth, barcodeheight) }
+        this.drawDispms('条形码', 2 * widthRadius, 96 * heightRadius, 114 * widthRadius, 25 * heightRadius, 0, this.itemBarCode, '', '', 0, '', '', 67 * widthRadius)
       } else if (this.labelStyle === '2') {
+        ctx.textBaseline = 'alphabetic'
         canvas.width = 400
-        canvas.height = canvas.width * 0.75
+        canvas.height = 300
+        widthRadius = canvas.width / 400
+        heightRadius = canvas.height / 300
         // 商品名称
-        ctx.font = canvas.width / 12 + 'px 微软雅黑'
-        ctx.fillText(this.itemName, leftMargin + 0, topMargin + canvas.width / 15)
+        ctx.textBaseline = 'alphabetic'
+        this.drawDispms('', 2 * widthRadius, 30 * heightRadius, 0, 0, 1, this.itemName, '', '', 'normal', '微软雅黑', 0, 33 * widthRadius)
         // 下划线
-        ctx.beginPath()
-        ctx.moveTo(leftMargin + 0, topMargin + canvas.width / 15 + 10)
-        ctx.lineTo(canvas.width, topMargin + canvas.width / 15 + 10)
-        ctx.stroke()
+        ctx.textBaseline = 'alphabetic'
+        this.drawDispms('线段', 2 * widthRadius, 38 * heightRadius, 400 * widthRadius, 0, 1, '原价：￥', '', '', 'normal', '微软雅黑', 0, 20 * widthRadius)
 
         if (this.itemisOnSale) {
-          ctx.textBaseline = 'middle'
           // '原价：￥'
-          ctx.font = canvas.width / 20 + 'px 微软雅黑'
-          ctx.fillText('原价：￥', leftMargin + canvas.width / 100, topMargin + canvas.width / 15 + 10 + canvas.height / 9)
-          // 原价整
-          ctx.font = 'oblique ' + canvas.width / 20 + 'px 微软雅黑'
-          ctx.fillText(this.itemPrice.split('.')[0] + '.', leftMargin + canvas.width / 100 + 4 * canvas.width / 20, topMargin + canvas.width / 15 + 10 + canvas.height / 9)
-          // 原价小
-          ctx.font = 'oblique ' + canvas.width / 26 + 'px 微软雅黑'
-          ctx.fillText(this.itemPrice.split('.')[1], leftMargin + canvas.width / 100 + 4 * canvas.width / 20 + this.itemPrice.split('.')[0].length * canvas.width / 28, topMargin + canvas.width / 15 + 10 + canvas.height / 9 - canvas.height / 100)
           ctx.textBaseline = 'alphabetic'
+          this.drawDispms('', 6 * widthRadius, 76 * heightRadius, 0, 0, 1, '原价：￥', '', '', 'normal', '微软雅黑', 0, 20 * widthRadius)
+          // 原价整
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('', 86 * widthRadius, 76 * heightRadius, 0, 0, 1, this.itemPrice.split('.')[0], '', '.', 'oblique', '微软雅黑', 0, 20 * widthRadius)
+          // 原价小
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('', 86 * widthRadius, 72 * heightRadius, 0, 0, 1, this.itemPrice.split('.')[1], '', '', 'oblique', '微软雅黑', 0, 15 * widthRadius, this.itemPrice.split('.')[0], 14 * widthRadius)
           // 划线
-          ctx.beginPath()
-          ctx.moveTo(leftMargin + canvas.width / 100 + 4 * canvas.width / 20, topMargin + canvas.width / 15 + 10 + canvas.height / 9)
-          ctx.lineTo(leftMargin + canvas.width / 100 + 4 * canvas.width / 20 + this.itemPrice.split('.')[0].length * canvas.width / 28, topMargin + canvas.width / 15 + 10 + canvas.height / 9)
-          ctx.stroke()
-          ctx.beginPath()
-          ctx.moveTo(leftMargin + canvas.width / 100 + 4 * canvas.width / 20 + this.itemPrice.split('.')[0].length * canvas.width / 28, topMargin + canvas.width / 15 + 10 + canvas.height / 9 - canvas.height / 100)
-          ctx.lineTo(leftMargin + canvas.width / 100 + 4 * canvas.width / 20 + this.itemPrice.split('.')[0].length * canvas.width / 28 + this.itemOnSalePrice.split('.')[1].length * canvas.width / 34, topMargin + canvas.width / 15 + 10 + canvas.height / 9 - canvas.height / 100)
-          ctx.stroke()
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('线段', 86 * widthRadius, 70 * heightRadius, 0, 0, 1, '', '', '', 'normal', '微软雅黑', 2, 0, '', 0, this.itemPrice.split('.')[0], 14 * widthRadius)
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('线段', 86 * widthRadius, 67 * heightRadius, 0, 0, 1, '', '', '', 'normal', '微软雅黑', 2, 0, this.itemPrice.split('.')[0], 14 * widthRadius, this.itemPrice.split('.')[1], 12 * widthRadius)
           ctx.fillStyle = 'red'
           // '现价：￥'
-          ctx.font = canvas.width / 20 + 'px 微软雅黑'
-          ctx.fillText('现价：￥', leftMargin + canvas.width / 100, canvas.height * 0.5)
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('', 6 * widthRadius, 150 * heightRadius, 0, 0, 1, '现价：￥', '', '', 'normal', '微软雅黑', 2, 20 * widthRadius)
           // 现价整
-          ctx.font = 'bold ' + canvas.width / 6 + 'px 微软雅黑'
-          ctx.fillText(this.itemOnSalePrice.split('.')[0] + '.', leftMargin + canvas.width / 100 + 4 * canvas.width / 20, canvas.height * 0.5)
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('', 82 * widthRadius, 150 * heightRadius, 0, 0, 1, this.itemOnSalePrice.split('.')[0], '', '.', 'bold', '微软雅黑', 2, 66 * widthRadius)
           // 现价小
-          ctx.font = 'bold ' + canvas.width / 7 + 'px 微软雅黑'
-          ctx.fillText(this.itemOnSalePrice.split('.')[1], leftMargin + canvas.width / 100 + 4 * canvas.width / 20 + this.itemOnSalePrice.split('.')[0].length * canvas.width / 8, canvas.height * 0.5 - canvas.height / 30)
+          this.drawDispms('', 82 * widthRadius, 140 * heightRadius, 0, 0, 1, this.itemOnSalePrice.split('.')[1], '', '', 'bold', '微软雅黑', 2, 57 * widthRadius, this.itemOnSalePrice.split('.')[0], 48 * widthRadius)
           ctx.fillStyle = 'black'
-          ctx.textBaseline = 'hanging'
         } else {
-          ctx.textBaseline = 'hanging'
           // '￥'号
-          ctx.font = canvas.width / 9 + 'px 微软雅黑'
-          ctx.fillText('￥', leftMargin + canvas.width / 100, topMargin + canvas.width / 15 + 10 + canvas.height / 9)
+          ctx.textBaseline = 'alphabetic'
+          this.drawDispms('', 6 * widthRadius, 110 * heightRadius, 0, 0, 1, '￥', '', '', 'normal', '微软雅黑', 0, 44 * widthRadius)
           // 价格整
-          ctx.font = canvas.width / 5 + 'px 微软雅黑'
-          ctx.fillText(this.itemPrice.split('.')[0] + '.', leftMargin + canvas.width / 100 + canvas.width / 10, topMargin + canvas.width / 15 + 10 + canvas.height / 9)
+          this.drawDispms('', 48 * widthRadius, 140 * heightRadius, 0, 0, 1, this.itemPrice.split('.')[0], '', '.', 'normal', '微软雅黑', 0, 80 * widthRadius)
           // 价格小
-          ctx.font = canvas.width / 7 + 'px 微软雅黑'
-          ctx.fillText(this.itemPrice.split('.')[1], leftMargin + canvas.width / 100 + canvas.width / 10 + canvas.width / 7.4 * this.itemPrice.split('.')[0].length, topMargin + canvas.width / 15 + 10 + canvas.height / 9)
+          this.drawDispms('', 64 * widthRadius, 120 * heightRadius, 48 * widthRadius, 0, 1, this.itemPrice.split('.')[1], '', '', 'normal', '微软雅黑', 0, 57 * widthRadius, this.itemPrice.split('.')[0], 48 * widthRadius)
           // '元'
-          ctx.font = canvas.width / 9 + 'px 微软雅黑'
-          ctx.fillText('元', leftMargin + canvas.width / 100 + canvas.width / 10 + canvas.width / 7.4 * this.itemPrice.split('.')[0].length + this.itemPrice.split('.')[1].length * canvas.width / 9, topMargin + canvas.width / 15 + 10 + canvas.height / 9 + canvas.width / 10)
+          this.drawDispms('', 64 * widthRadius, 150 * heightRadius, 0, 0, 1, '元', '', '', 'normal', '微软雅黑', 0, 44 * widthRadius, this.itemPrice.split('.')[0], 50 * widthRadius, this.itemPrice.split('.')[1], 40 * widthRadius)
         }
+        ctx.textBaseline = 'alphabetic'
         // 规格
-        ctx.font = canvas.width / 24 + 'px 微软雅黑'
-        ctx.fillText('规格：' + this.itemNorm, leftMargin + canvas.width / 100, canvas.width / 2 - canvas.width / 40)
+        this.drawDispms('', 6 * widthRadius, 204 * heightRadius, 0, 0, 1, this.itemNorm, '规格：', '', 'normal', '微软雅黑', 0, 17 * widthRadius)
         // 单位
-        ctx.font = canvas.width / 24 + 'px 微软雅黑'
-        ctx.fillText('单位：' + this.itemUnit, canvas.width / 3, canvas.width / 2 - canvas.width / 40)
+        this.drawDispms('', 133 * widthRadius, 204 * heightRadius, 0, 0, 1, this.itemUnit, '单位：', '', 'normal', '微软雅黑', 0, 17 * widthRadius)
         // 产地
-        ctx.font = canvas.width / 24 + 'px 微软雅黑'
-        ctx.fillText('产地：' + this.itemOrigin, leftMargin + canvas.width / 100, canvas.width / 2 - canvas.width / 40 + canvas.width / 10)
+        this.drawDispms('', 6 * widthRadius, 244 * heightRadius, 0, 0, 1, this.itemOrigin, '产地：', '', 'normal', '微软雅黑', 0, 17 * widthRadius)
         // 等级
-        ctx.font = canvas.width / 24 + 'px 微软雅黑'
-        ctx.fillText('等级：' + this.itemCategory, canvas.width / 3, canvas.width / 2 - canvas.width / 40 + canvas.width / 10)
+        this.drawDispms('', 133 * widthRadius, 244 * heightRadius, 0, 0, 1, this.itemCategory, '等级：', '', 'normal', '微软雅黑', 0, 17 * widthRadius)
+        // 二维码
+        this.drawDispms('二维码', 280 * widthRadius, 180 * heightRadius, 100 * heightRadius, 100 * heightRadius, 0, this.itemQRCode, '', '', 0, '', '', 0)
+        // 条形码
+        this.drawDispms('条形码', 6 * widthRadius, 258 * canvas.height / 300, 100 * widthRadius, 30 * heightRadius, 0, this.itemBarCode, '', '', 0, '', '', 67 * widthRadius)
+      } else {
+
+      }
+    },
+    drawDispms (columnType, x, y, width, height, bgColor, text, sText, eText, fontBold, fontFamily, fontColor, fontSize, xpre = '', xprel = 0, xext = '', xextl = 0) {
+      if (columnType === '条形码') {
+        // 条形码
+        barcodecanvas = document.getElementById('barcode')
+        barcodecanvas.width = barcodecanvas.width
+        JsBarcode('#barcode', text, {
+          format: 'EAN13',
+          fontSize: fontSize,
+          margin: 0,
+          textMargin: 0,
+          width: text.length / 3
+        })
+        barcodeimg = convertCanvasToImage(barcodecanvas)
+        barcodeimg.onload = function () { ctx.drawImage(barcodeimg, x, y, width, height) }
+      } else if (columnType === '二维码') {
         // 二维码
         qrcodecanvas = document.getElementById('qrcode')
-        qrcode.toCanvas(qrcodecanvas, this.itemQRCode, function (error) {
+        qrcode.toCanvas(qrcodecanvas, text, function (error) {
           if (error) console.error(error)
         })
         qrcodeimg = convertCanvasToImage(qrcodecanvas)
-        qrcodeimg.onload = function () { ctx.drawImage(qrcodeimg, canvas.width * 0.7, canvas.height * 0.6, canvas.height / 3, canvas.height / 3) }
-        // 条形码
-        barcodecanvas = document.getElementById('barcode')
-        barcodecanvas.width = barcode.width
-        JsBarcode('#barcode', this.itemBarCode, {
-          format: 'EAN13',
-          fontSize: canvas.width / 6,
-          margin: 0,
-          textMargin: 0,
-          width: this.itemBarCode.length / 3
-        })
-        barcodeimg = convertCanvasToImage(barcodecanvas)
-        barcodeimg.onload = function () { ctx.drawImage(barcodeimg, leftMargin + canvas.width / 100, canvas.height * 0.86, canvas.width / 4, canvas.height / 10) }
+        qrcodeimg.onload = function () { ctx.drawImage(qrcodeimg, x, y, width, height) }
+      } else if (columnType === '线段') {
+        // 划线
+        x = x + xpre.length * xprel
+        width = width + xextl * xext.length
+        ctx.beginPath()
+        ctx.moveTo(x, y)
+        ctx.lineTo(x + width, y + height)
+        ctx.stroke()
+      } else if (columnType === '背景') {
+        // bg
+        x = x + xpre.length * xprel
+        width = width + xextl * xext.length
+        if (bgColor === 0) {
+          ctx.fillStyle = 'black'
+        } else if (bgColor === 1) {
+          ctx.fillStyle = 'white'
+        } else {
+          ctx.fillStyle = 'red'
+        }
+        ctx.fillRect(x, y, width, height)
       } else {
-
+        x = x + xpre.length * xprel + xextl * xext.length
+        // 文字
+        if (fontColor === 0) {
+          ctx.fillStyle = 'black'
+        } else if (fontColor === 1) {
+          ctx.fillStyle = 'white'
+        } else {
+          ctx.fillStyle = 'red'
+        }
+        ctx.font = fontBold + ' ' + fontSize + 'px ' + fontFamily
+        ctx.fillText(sText + text + eText, x, y)
       }
     }
   }

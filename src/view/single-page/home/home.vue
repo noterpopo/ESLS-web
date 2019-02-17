@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import e_label from './temp.vue'
+import e_label from './e-lable.vue'
 
 export default {
   components: {
