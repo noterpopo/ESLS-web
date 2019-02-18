@@ -16,12 +16,13 @@
     <Select v-model="item.labelStyle">
       <Option v-for="num in styleList" :value="num" :key="num">{{num}}</Option>
     </Select>
+    <Button type="primary" @click="getLabelData">Primary</Button>
   </div>
 </template>
 
 <script>
 import e_label from './e-lable.vue'
-
+import { getDispms, getStyle } from '@/api/style'
 export default {
   components: {
     e_label
@@ -41,7 +42,7 @@ export default {
         itemisOnSale: false,
         itemPrice: '999.99',
         itemOnSalePrice: '999.99',
-        labelStyle: '3'
+        labelStyle: '1'
       },
       styleList: [
         '1',
@@ -54,6 +55,51 @@ export default {
     }
   },
   methods: {
+    getLabelData () {
+      var that = this
+      getStyle(10).then(res => {
+        const data = res.data.data
+        var dispmsData = [] // 保存数据
+        var len = data.dispms.length // 循环变量
+        var flag = len - 1 // 保证循环后调用initData()
+        for (var i = 0; i < len; ++i) {
+          getDispms(data.dispms[i]).then(res => {
+            const dispData = res.data.data
+            if (dispData.columnType === '名称') {
+              that.item.itemName = dispData.text
+            } else if (dispData.columnType === '价格') {
+              that.item.itemPrice = dispData.text
+            } else if (dispData.columnType === '原价') {
+              that.item.itemPrice = dispData.text
+            } else if (dispData.columnType === '促价') {
+              that.item.itemOnSalePrice = dispData.text
+            } else if (dispData.columnType === '规格') {
+              that.item.itemNorm = dispData.text
+            } else if (dispData.columnType === '类别') {
+              that.item.itemCategory = dispData.text
+            } else if (dispData.columnType === '单位') {
+              that.item.itemUnit = dispData.text
+            } else if (dispData.columnType === '产地') {
+              that.item.itemOrigin = dispData.text
+            } else if (dispData.columnType === '货号') {
+              that.item.itemNo = dispData.text
+            } else if (dispData.columnType === '二维码') {
+              that.item.itemQRCode = dispData.text
+            } else if (dispData.columnType === '条形码') {
+              that.item.itemBarCode = dispData.text
+            } else if (dispData.columnType === '库存') {
+              that.item.itemStock = dispData.text
+            } else {
+
+            }
+            dispmsData.push(dispData)
+            if (!(flag--)) {
+              that.$refs.label_canvas.initData(dispmsData, data.width, data.height)
+            }
+          })
+        }
+      })
+    }
   }
 }
 </script>
