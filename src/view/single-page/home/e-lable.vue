@@ -10,6 +10,7 @@
 import JsBarcode from 'jsbarcode'
 import qrcode from 'qrcode'
 import { convertCanvasToImage } from '@/libs/util'
+import { getDispms, getStyle } from '@/api/style'
 var canvas
 var ctx
 var barcodecanvas
@@ -114,7 +115,7 @@ export default {
     }
   },
   mounted () {
-    this.draw()
+    this.apiTest()
   },
   methods: {
     draw () {
@@ -329,6 +330,30 @@ export default {
         ctx.font = fontBold + ' ' + fontSize + 'px ' + fontFamily
         ctx.fillText(sText + text + eText, x, y)
       }
+    },
+    apiTest () {
+      var widthRadius
+      var heightRadius
+      canvas = this.$refs.canvas
+      ctx = canvas.getContext('2d')
+      if (!ctx) return
+      ctx.textBaseline = 'alphabetic'
+      var that = this
+      getStyle(10).then(res => {
+        const data = res.data.data
+        console.info(data.id)
+        canvas.width = data.width
+        canvas.height = data.height
+        widthRadius = canvas.width / 250
+        heightRadius = canvas.height / 122
+        var len = data.dispms.length
+        for (var i = 0; i < len; ++i) {
+          getDispms(data.dispms[i]).then(res => {
+            const dispData = res.data.data
+            that.drawDispms(dispData.columnType, dispData.x * widthRadius, dispData.y * heightRadius, dispData.width * widthRadius, dispData.height * heightRadius, dispData.backgroundColor, dispData.text, dispData.startText, dispData.endText, dispData.fontBold, dispData.fontFamily, dispData.fontColor, dispData.fontSize * widthRadius)
+          })
+        }
+      })
     }
   }
 }
