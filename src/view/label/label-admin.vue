@@ -1,10 +1,17 @@
 <template>
   <div>
-    <div>
-      <e_label class="e-label" v-bind="item" ref="label_canvas" >
-        <Spin size="large" fix v-if="isLabelLoading"></Spin>
-      </e_label>
-    </div>
+      <div class="top">
+          <Card :bordered="false" class="e-lable-card">
+            <p slot="title">价签样式预览</p>
+            <e_label class="e-label" v-bind="item" ref="label_canvas" >
+                    <Spin size="large" fix v-if="isLabelLoading"></Spin>
+                </e_label>
+        </Card>
+        <Card :bordered="false" class="e-lable-table-card">
+            <p slot="title">价签样式列表</p>
+            <super_table class="e-label-table"></super_table>
+        </Card>
+      </div>
     <Input type="text" v-model="item.itemName" />
     <Input type="text" v-model="item.itemUnit" />
     <Input type="text" v-model="item.itemNorm" />
@@ -26,10 +33,12 @@
 
 <script>
 import e_label from '@/components/e-label/e-lable.vue'
+import super_table from '@/components/table/supertable.vue'
 import { getDispms, getStyle } from '@/api/style'
 export default {
   components: {
-    e_label
+    e_label,
+    super_table
   },
   data () {
     return {
@@ -112,8 +121,26 @@ export default {
 </script>
 
 <style scoped>
+.top{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+    align-content: center;
+
+}
 .e-label{
-  width: 400px;
+  width: 100%;
   height: 300px;
+}
+.e-label-table{
+    height: 300px;
+    width: 100%;
+}
+.e-lable-card{
+    width: 432px;
+}
+.e-lable-table-card{
+    width: 432px;
 }
 </style>
