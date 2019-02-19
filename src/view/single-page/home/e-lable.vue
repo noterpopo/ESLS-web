@@ -1,5 +1,6 @@
 <template>
-    <div>
+    <div class ="label-canvas">
+      <slot></slot>
       <canvas id="label" ref="canvas">您的浏览器不支持canvas！</canvas>
       <canvas id="barcode">您的浏览器不支持canvas！</canvas>
       <canvas id="qrcode">您的浏览器不支持canvas！</canvas>
@@ -147,7 +148,6 @@ export default {
           this.drawDispms('背景', 57 * widthRadius, 56 * heightRadius, 96 * widthRadius, 32 * heightRadius, 2, '', '', '', 'bold', '微软雅黑', 2, 16 * widthRadius)
           // 促价整
           this.drawDispms('', 10 * widthRadius, 80 * heightRadius, 0, 0, 1, '现价：', '', '', 'bold', '微软雅黑', 2, 16 * widthRadius)
-          ctx.fillStyle = 'white'
           this.drawDispms('', 57 * widthRadius, 80 * heightRadius, 0, 0, 1, this.itemOnSalePrice.split('.')[0], '￥', '.', 'bold', '微软雅黑', 1, 21 * widthRadius)
           // 促价小
           this.drawDispms('', 88 * widthRadius, 77 * heightRadius, 0, 0, 1, this.itemOnSalePrice.split('.')[1], '', '', 'bold', '微软雅黑', 1, 18 * widthRadius, this.itemOnSalePrice.split('.')[0], 12 * widthRadius)
@@ -240,7 +240,7 @@ export default {
           this.drawDispms('', 130 * widthRadius, 112 * heightRadius, 0, 0, 1, this.itemOnSalePrice.split('.')[0], '', '.', 'bold', '微软雅黑', 1, 40 * widthRadius)
           // 现价小
           this.drawDispms('', 146 * widthRadius, 104 * heightRadius, 0, 0, 1, this.itemOnSalePrice.split('.')[1], '', '', 'bold', '微软雅黑', 1, 32 * widthRadius, this.itemOnSalePrice.split('.')[0], 22 * widthRadius)
-          // ’原价‘
+          // '原价'
           this.drawDispms('', 104 * widthRadius, 60 * heightRadius, 0, 0, 1, '原价', '', '', 'normal', '微软雅黑', 0, 14 * widthRadius)
           // 原价整
           this.drawDispms('', 200 * widthRadius, 62 * heightRadius, 0, 0, 1, this.itemPrice.split('.')[0], '', '.', 'oblique', '微软雅黑', 0, 16 * widthRadius)
@@ -330,8 +330,8 @@ export default {
       }
     },
     drawLabel () {
-      canvas.width = canvas.width // 清空画布
       if (!isDataReady) return
+      canvas.width = canvas.width // 清空画布
       var integer
       var decimal
       var intx
@@ -356,7 +356,7 @@ export default {
           // 整
           this.drawDispms(dispmsData[i].columnType, intx * widthRadius, inty * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, integer, dispmsData[i].startText, '.', dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, intfs * widthRadius)
           // 小
-          this.drawDispms(dispmsData[i].columnType, decx * widthRadius, decy * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, decimal, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, decfs * widthRadius, integer, dispmsData[i].width * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, decx * widthRadius, decy * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, decimal, '', dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, decfs * widthRadius, integer, dispmsData[i].width * widthRadius)
         } else if (dispmsData[i].columnType === '原价') {
           integer = this.itemPrice.split('.')[0]
           decimal = this.itemPrice.split('.')[1]
@@ -366,14 +366,16 @@ export default {
           decy = parseInt(dispmsData[i].y.split('/')[1])
           intfs = parseInt(dispmsData[i].fontSize.split('/')[0])
           decfs = parseInt(dispmsData[i].fontSize.split('/')[1])
+          var lineIntY = parseInt(dispmsData[i].y.split('/')[2])
+          var lineDecY = parseInt(dispmsData[i].y.split('/')[3])
           // 整
           this.drawDispms(dispmsData[i].columnType, intx * widthRadius, inty * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, integer, dispmsData[i].startText, '.', dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, intfs * widthRadius)
           // 小
-          this.drawDispms(dispmsData[i].columnType, decx * widthRadius, decy * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, decimal, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, decfs * widthRadius, integer, dispmsData[i].width * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, decx * widthRadius, decy * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, decimal, '', dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, decfs * widthRadius, integer, dispmsData[i].width * widthRadius)
           // 划线整
-          this.drawDispms('线段', dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, integer, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius, integer, dispmsData[i].width * widthRadius)
+          this.drawDispms('线段', intx * widthRadius, lineIntY * heightRadius, 0, 0, dispmsData[i].backgroundColor, integer, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius, '', 0, integer, dispmsData[i].width * widthRadius)
           // 划线小
-          this.drawDispms('线段', dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, decimal, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius, integer, dispmsData[i].width * widthRadius, decimal, dispmsData[i].height)
+          this.drawDispms('线段', decx * widthRadius, lineDecY * heightRadius, 0, 0, dispmsData[i].backgroundColor, decimal, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius, integer, dispmsData[i].width * widthRadius, decimal, dispmsData[i].height)
         } else if (dispmsData[i].columnType === '促价') {
           integer = this.itemOnSalePrice.split('.')[0]
           decimal = this.itemOnSalePrice.split('.')[1]
@@ -386,7 +388,7 @@ export default {
           // 整
           this.drawDispms(dispmsData[i].columnType, intx * widthRadius, inty * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, integer, dispmsData[i].startText, '.', dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, intfs * widthRadius)
           // 小
-          this.drawDispms(dispmsData[i].columnType, decx * widthRadius, decy * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, decimal, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, decfs * widthRadius, integer, dispmsData[i].width * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, decx * widthRadius, decy * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, decimal, '', dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, decfs * widthRadius, integer, dispmsData[i].width * widthRadius)
         } else if (dispmsData[i].columnType === '规格') {
           this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemNorm, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
         } else if (dispmsData[i].columnType === '类别') {
@@ -404,13 +406,22 @@ export default {
         } else if (dispmsData[i].columnType === '库存') {
           this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemStock, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
         } else {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, dispmsData[i].text, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
         }
       }
     },
     initData (data, width, height) {
       isDataReady = true
-      dispmsData = data
+      dispmsData = data.sort((a, b) => {
+        if (a.columnType === '背景') {
+          return -1
+        } else if (b.columnType === '背景') {
+          return 1
+        } else {
+          return 0
+        }
+      })
+      console.info(dispmsData)
       canvas = this.$refs.canvas
       canvas.width = width // TODO
       canvas.height = height // TODO
@@ -426,10 +437,19 @@ export default {
 </script>
 
 <style>
+#label{
+  position: relative;
+  margin: auto;
+}
 #barcode{
   display: none;
 }
 #qrcode{
   display: none;
+}
+.label-canvas{
+  display: flex;
+  position: relative;
+  text-align: center;
 }
 </style>

@@ -1,6 +1,10 @@
 <template>
   <div>
-    <e_label v-bind="item" ref="label_canvas" ></e_label>
+    <div>
+      <e_label class="e-label" v-bind="item" ref="label_canvas" >
+        <Spin size="large" fix v-if="isLabelLoading"></Spin>
+      </e_label>
+    </div>
     <Input type="text" v-model="item.itemName" />
     <Input type="text" v-model="item.itemUnit" />
     <Input type="text" v-model="item.itemNorm" />
@@ -51,12 +55,14 @@ export default {
         '4',
         '5',
         '6'
-      ]
+      ],
+      isLabelLoading: false
     }
   },
   methods: {
     getLabelData () {
       var that = this
+      that.isLabelLoading = true
       getStyle(10).then(res => {
         const data = res.data.data
         var dispmsData = [] // 保存数据
@@ -94,6 +100,7 @@ export default {
             }
             dispmsData.push(dispData)
             if (!(flag--)) {
+              that.isLabelLoading = false
               that.$refs.label_canvas.initData(dispmsData, data.width, data.height)
             }
           })
@@ -103,3 +110,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.e-label{
+  width: 400px;
+  height: 300px;
+}
+</style>
