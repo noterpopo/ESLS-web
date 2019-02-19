@@ -1,17 +1,39 @@
 <template>
-  <div>
-      <div class="top">
-          <Card :bordered="false" class="e-lable-card">
-            <p slot="title">价签样式预览</p>
-            <e_label class="e-label" v-bind="item" ref="label_canvas" >
-                    <Spin size="large" fix v-if="isLabelLoading"></Spin>
-                </e_label>
-        </Card>
-        <Card :bordered="false" class="e-lable-table-card">
+  <div class="container">
+      <div class="left">
+        <Card :bordered="false" class="e-lable-table-card card">
             <p slot="title">价签样式列表</p>
-            <super_table class="e-label-table"></super_table>
+            <super_table class="e-label-table" @on-search="onSearch" :data="styleData" :columns="tableColumns"></super_table>
         </Card>
       </div>
+      <div class="right">
+        <Card :bordered="false" class="e-lable-card card">
+          <p slot="title">价签样式预览</p>
+          <div>
+            <e_label class="e-label" v-bind="item" ref="label_canvas" >
+                <Spin size="large" fix v-if="isLabelLoading"></Spin>
+            </e_label>
+            <Button type="primary" @click="getLabelData(10)" style="margin: 10px; float: right;">刷新</Button>
+          </div>
+        </Card>
+        <Card :bordered="false" class="card input-card">
+          <p slot="title">信息修改</p>
+          <div>
+            <Input type="text" v-model="item.itemName" />
+            <Input type="text" v-model="item.itemUnit" />
+            <Input type="text" v-model="item.itemNorm" />
+            <Input type="text" v-model="item.itemCategory" />
+            <Input type="text" v-model="item.itemOrigin" />
+            <Input type="text" v-model="item.itemNo" />
+            <Input type="text" v-model="item.itemQRCode" />
+            <Input type="text" v-model="item.itemBarCode" />
+            <Input type="text" v-model="item.itemStock" />
+            <Input type="text" v-model="item.itemPrice" />
+            <Input type="text" v-model="item.itemOnSalePrice" />
+          </div>
+        </Card>
+      </div>
+      <!--
     <Input type="text" v-model="item.itemName" />
     <Input type="text" v-model="item.itemUnit" />
     <Input type="text" v-model="item.itemNorm" />
@@ -28,6 +50,7 @@
       <Option v-for="num in styleList" :value="num" :key="num">{{num}}</Option>
     </Select>
     <Button type="primary" @click="getLabelData(10)">Primary</Button>
+    -->
   </div>
 </template>
 
@@ -65,8 +88,137 @@ export default {
         '5',
         '6'
       ],
-      isLabelLoading: false
+      isLabelLoading: false,
+      styleData: [],
+      tableColumns: [
+        {
+          title: '样式id',
+          key: 'styleid',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '尺寸(英寸)',
+          key: 'size',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '价签绑定',
+          key: 'bind_eLabel',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '小样式',
+          key: 'dispms',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '操作',
+          key: 'action',
+          align: 'center',
+          render: (h, params) => {
+            return h('Button', {
+              props: {
+                type: 'error',
+                size: 'small'
+              },
+              on: {
+                click: () => {
+                  this.remove(params.index)
+                }
+              }
+            }, '删除')
+          }
+        }
+      ]
     }
+  },
+  created () {
+    this.styleData = [
+      {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }, {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }, {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }, {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }, {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }, {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }, {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }, {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }, {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }, {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }, {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }, {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }, {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }, {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }, {
+        styleid: '2333',
+        size: '4.7',
+        bind_eLabel: '11,22,44,66,77',
+        dispms: '1212,555,666,000'
+      }
+    ]
   },
   methods: {
     getLabelData (id) {
@@ -115,32 +267,65 @@ export default {
           })
         }
       })
+    },
+    onSearch (search) {
+      alert('查询条件：' + JSON.stringify(search, null, 4))
+    },
+    remove (index) {
+
     }
   }
 }
 </script>
 
 <style scoped>
-.top{
+.card{
+  margin: 10px;
+}
+.container{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    align-items: center;
+    align-items: stretch;
     align-content: center;
 
+}
+.left{
+  flex-grow: 2;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+}
+.right{
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
 }
 .e-label{
   width: 100%;
   height: 300px;
 }
 .e-label-table{
-    height: 300px;
-    width: 100%;
+  width: 100%;
 }
 .e-lable-card{
     width: 432px;
+    height: auto;
 }
 .e-lable-table-card{
-    width: 432px;
+    width: auto;
+    height: auto;
 }
+.input-card{
+  width: 432px;
+  height: auto;
+}
+
 </style>

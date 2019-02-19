@@ -1,7 +1,12 @@
 <template>
     <div>
-        <Table border :data="filters" :columns="tableColumnsFilters" stripe></Table>
-        <Table border :data="data" :columns="columns" stripe></Table>
+        <Table size="small" border :data="filters" :columns="tableColumnsFilters" stripe></Table>
+        <Table size="small" :show-header=false border :data="data" :columns="columns" stripe></Table>
+        <div style="margin: 10px;overflow: hidden">
+        <div style="float: right;">
+            <Page :total="100" :current="1" @on-change="changePage"></Page>
+        </div>
+    </div>
     </div>
 </template>
 
@@ -31,7 +36,7 @@ export default {
       }
       let render = (h) => {}
       if (this.columns[index].filter) {
-        if (this.columns[index].filter.type && this.columns[index].filter.type === 'select') {
+        if (this.columns[index].filter.type && this.columns[index].filter.type === 'Select') {
           render = (h) => {
             return h(this.columns[index].filter.type, {
               props: {
@@ -53,10 +58,10 @@ export default {
         } else {
           render = (h) => {
             let inputValue = {}
-            return h(this.columns[index].type, {
+            return h(this.columns[index].filter.type, {
               props: {
                 placeholder: '输入' + this.columns[index].title,
-                icon: 'ios-search-strong'
+                icon: 'ios-search'
               },
               on: {
                 input: val => {
@@ -82,7 +87,6 @@ export default {
   },
   methods: {
     createOptionsRender (index, h) {
-      // 选项渲染
       let optionRender = []
       if (this.columns[index].filter.option) {
         let option = this.columns[index].filter.option
@@ -96,12 +100,9 @@ export default {
       }
       return optionRender
     },
-    // 重新加载数据
     load () {
-      // 会执行一个load的事件
       this.$emit('on-search', this.search)
     },
-    // 验证输入框的值
     validInputValue (index, inputValue) {
       if (!inputValue) {
         this.$delete(this.search, this.columns[index].key)
@@ -110,6 +111,9 @@ export default {
       }
       this.$set(this.search, this.columns[index].key, inputValue)
       this.load()
+    },
+    changePage () {
+
     }
   }
 }
