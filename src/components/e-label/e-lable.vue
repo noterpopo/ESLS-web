@@ -269,6 +269,40 @@ export default {
           // 条形码
           this.drawDispms('条形码', 140 * widthRadius, 100 * heightRadius, 100 * widthRadius, 20 * heightRadius, 0, this.itemBarCode, '', '', 0, '', '', 67 * widthRadius)
         }
+      } else if (this.labelStyle === '4') {
+        canvas.width = 212
+        canvas.height = 104
+        widthRadius = canvas.width / 212
+        heightRadius = canvas.height / 104
+        // '名称'
+        this.drawDispms('', 4 * widthRadius, 20 * heightRadius, 0, 0, 1, this.itemName, '', '', 'bold', '微软雅黑', 0, 20 * widthRadius)
+        // 条形码
+        this.drawDispms('条形码', 2 * widthRadius, 30 * heightRadius, 90 * widthRadius, 20 * heightRadius, 0, this.itemBarCode, '', '', 0, '', '', 67 * widthRadius)
+        // 货号
+        this.drawDispms('', 4 * widthRadius, 76 * heightRadius, 0, 0, 1, this.itemNo, '货号：', '', 'bold', '微软雅黑', 0, 16 * widthRadius)
+        // 库存
+        this.drawDispms('', 4 * widthRadius, 96 * heightRadius, 0, 0, 1, this.itemStock, '库存：', '', 'bold', '微软雅黑', 0, 16 * widthRadius)
+      } else if (this.labelStyle === '5') {
+        canvas.width = 250
+        canvas.height = 122
+        widthRadius = canvas.width / 250
+        heightRadius = canvas.height / 122
+        // '名称'
+        this.drawDispms('', 4 * widthRadius, 20 * heightRadius, 0, 0, 1, this.itemName, '', '', 'bold', '微软雅黑', 0, 22 * widthRadius)
+        // 单位
+        this.drawDispms('', 4 * widthRadius, 40 * heightRadius, 0, 0, 1, this.itemUnit, '单位：', '', 'normal', '微软雅黑', 0, 12 * widthRadius)
+        // 规格
+        this.drawDispms('', 76 * widthRadius, 40 * heightRadius, 0, 0, 1, this.itemNorm, '规格：', '', 'normal', '微软雅黑', 0, 12 * widthRadius)
+        // 产地
+        this.drawDispms('', 4 * widthRadius, 56 * heightRadius, 0, 0, 1, this.itemOrigin, '产地：', '', 'normal', '微软雅黑', 0, 12 * widthRadius)
+        // 货号
+        this.drawDispms('', 76 * widthRadius, 56 * heightRadius, 0, 0, 1, this.itemNo, '货号：', '', 'normal', '微软雅黑', 0, 12 * widthRadius)
+        // 价格整
+        this.drawDispms('', 4 * widthRadius, 110 * heightRadius, 0, 0, 1, this.itemPrice.split('.')[0], '', '.', 'bold', '微软雅黑', 0, 50 * widthRadius)
+        // 价格小
+        this.drawDispms('', 26 * widthRadius, 100 * heightRadius, 48 * widthRadius, 0, 1, this.itemPrice.split('.')[1], '', '', 'bold', '微软雅黑', 0, 44 * widthRadius, this.itemPrice.split('.')[0], 28 * widthRadius)
+        // 二维码
+        this.drawDispms('二维码', 170 * widthRadius, 9 * heightRadius, 80 * heightRadius, 80 * heightRadius, 0, this.itemQRCode, '', '', 0, '', '', 0)
       } else {
 
       }
@@ -343,7 +377,7 @@ export default {
       var len = dispmsData.length
       for (var i = 0; i < len; ++i) {
         if (dispmsData[i].columnType === '名称') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, parseInt(dispmsData[i].x) * widthRadius, parseInt(dispmsData[i].y) * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(dispmsData[i].fontSize) * widthRadius)
         } else if (dispmsData[i].columnType === '价格') {
           integer = this.itemPrice.split('.')[0]
           decimal = this.itemPrice.split('.')[1]
@@ -373,9 +407,9 @@ export default {
           // 小
           this.drawDispms(dispmsData[i].columnType, decx * widthRadius, decy * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, decimal, '', dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, decfs * widthRadius, integer, dispmsData[i].width * widthRadius)
           // 划线整
-          this.drawDispms('线段', intx * widthRadius, lineIntY * heightRadius, 0, 0, dispmsData[i].backgroundColor, integer, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius, '', 0, integer, dispmsData[i].width * widthRadius)
+          this.drawDispms('线段', intx * widthRadius, lineIntY * heightRadius, 0, 0, dispmsData[i].backgroundColor, integer, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(dispmsData[i].fontSize) * widthRadius, '', 0, integer, dispmsData[i].width * widthRadius)
           // 划线小
-          this.drawDispms('线段', decx * widthRadius, lineDecY * heightRadius, 0, 0, dispmsData[i].backgroundColor, decimal, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius, integer, dispmsData[i].width * widthRadius, decimal, dispmsData[i].height)
+          this.drawDispms('线段', decx * widthRadius, lineDecY * heightRadius, 0, 0, dispmsData[i].backgroundColor, decimal, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(dispmsData[i].fontSize) * widthRadius, integer, dispmsData[i].width * widthRadius, decimal, dispmsData[i].height)
         } else if (dispmsData[i].columnType === '促价') {
           integer = this.itemOnSalePrice.split('.')[0]
           decimal = this.itemOnSalePrice.split('.')[1]
@@ -390,23 +424,23 @@ export default {
           // 小
           this.drawDispms(dispmsData[i].columnType, decx * widthRadius, decy * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, decimal, '', dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, decfs * widthRadius, integer, dispmsData[i].width * widthRadius)
         } else if (dispmsData[i].columnType === '规格') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemNorm, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, parseInt(dispmsData[i].x) * widthRadius, parseInt(dispmsData[i].y) * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemNorm, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(dispmsData[i].fontSize) * widthRadius)
         } else if (dispmsData[i].columnType === '类别') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemCategory, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, parseInt(dispmsData[i].x) * widthRadius, parseInt(dispmsData[i].y) * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemCategory, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(dispmsData[i].fontSize) * widthRadius)
         } else if (dispmsData[i].columnType === '单位') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemUnit, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, parseInt(dispmsData[i].x) * widthRadius, parseInt(dispmsData[i].y) * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemUnit, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(dispmsData[i].fontSize) * widthRadius)
         } else if (dispmsData[i].columnType === '产地') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemOrigin, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, parseInt(dispmsData[i].x) * widthRadius, parseInt(dispmsData[i].y) * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemOrigin, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(dispmsData[i].fontSize) * widthRadius)
         } else if (dispmsData[i].columnType === '货号') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemNo, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, parseInt(dispmsData[i].x) * widthRadius, parseInt(dispmsData[i].y) * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemNo, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(dispmsData[i].fontSize) * widthRadius)
         } else if (dispmsData[i].columnType === '二维码') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemQRCode, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, parseInt(dispmsData[i].x) * widthRadius, parseInt(dispmsData[i].y) * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemQRCode, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(dispmsData[i].fontSize) * widthRadius)
         } else if (dispmsData[i].columnType === '条形码') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemBarCode, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, parseInt(dispmsData[i].x) * widthRadius, parseInt(dispmsData[i].y) * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemBarCode, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(dispmsData[i].fontSize) * widthRadius)
         } else if (dispmsData[i].columnType === '库存') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemStock, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, parseInt(dispmsData[i].x) * widthRadius, parseInt(dispmsData[i].y) * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemStock, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(dispmsData[i].fontSize) * widthRadius)
         } else {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, dispmsData[i].text, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, parseInt(dispmsData[i].x) * widthRadius, parseInt(dispmsData[i].y) * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, dispmsData[i].text, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontBold, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(dispmsData[i].fontSize) * widthRadius)
         }
       }
     },
