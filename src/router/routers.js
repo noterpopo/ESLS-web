@@ -218,51 +218,22 @@ export default [
   //   ]
   // },
   {
-    path: '/update',
-    name: 'update',
-    meta: {
-      icon: 'md-cloud-upload',
-      title: '数据上传'
-    },
-    component: Main,
-    children: [
-      {
-        path: 'update_table_page',
-        name: 'update_table_page',
-        meta: {
-          icon: 'ios-document',
-          title: '上传Csv'
-        },
-        component: () => import('@/view/update/update-table.vue')
-      },
-      {
-        path: 'update_paste_page',
-        name: 'update_paste_page',
-        meta: {
-          icon: 'md-clipboard',
-          title: '粘贴表格数据'
-        },
-        component: () => import('@/view/update/update-paste.vue')
-      }
-    ]
-  },
-  {
-    path: '/excel',
-    name: 'excel',
+    path: '/good',
+    name: 'good',
     meta: {
       icon: 'ios-stats',
-      title: 'EXCEL导入导出'
+      title: '商品'
     },
     component: Main,
     children: [
       {
-        path: 'upload-excel',
-        name: 'upload-excel',
+        path: 'good-admin',
+        name: 'good-admin',
         meta: {
           icon: 'md-add',
-          title: '导入EXCEL'
+          title: '商品管理'
         },
-        component: () => import('@/view/excel/upload-excel.vue')
+        component: () => import('@/view/good/good-admin.vue')
       },
       {
         path: 'export-excel',
@@ -272,6 +243,35 @@ export default [
           title: '导出EXCEL'
         },
         component: () => import('@/view/excel/export-excel.vue')
+      }
+    ]
+  },
+  {
+    path: '/label',
+    name: 'label',
+    meta: {
+      icon: 'md-cloud-upload',
+      title: '价签管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'label_bind',
+        name: 'label_bind',
+        meta: {
+          icon: 'ios-document',
+          title: '价签绑定'
+        },
+        component: () => import('@/view/label/label-bind.vue')
+      },
+      {
+        path: 'label_admin',
+        name: 'label_admin',
+        meta: {
+          icon: 'md-clipboard',
+          title: '价签管理'
+        },
+        component: () => import('@/view/label/label-admin.vue')
       }
     ]
   },

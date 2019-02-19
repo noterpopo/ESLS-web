@@ -421,7 +421,6 @@ export default {
           return 0
         }
       })
-      console.info(dispmsData)
       canvas = this.$refs.canvas
       canvas.width = width // TODO
       canvas.height = height // TODO
