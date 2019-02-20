@@ -79,46 +79,47 @@ export default {
   },
   watch: {
     'itemName': function () {
-      this.drawLabel()
+      this.draw()
     },
     'itemUnit': function () {
-      this.drawLabel()
+      this.draw()
     },
     'itemNorm': function () {
-      this.drawLabel()
+      this.draw()
     },
     'itemCategory': function () {
-      this.drawLabel()
+      this.draw()
     },
     'itemOrigin': function () {
-      this.drawLabel()
+      this.draw()
     },
     'itemNo': function () {
-      this.drawLabel()
+      this.draw()
     },
     'itemQRCode': function () {
-      this.drawLabel()
+      this.draw()
     },
     'itemBarCode': function () {
-      this.drawLabel()
+      this.draw()
     },
     'itemStock': function () {
-      this.drawLabel()
+      this.draw()
     },
     'itemisOnSale': function () {
-      this.drawLabel()
+      this.draw()
     },
     'itemPrice': function () {
-      this.drawLabel()
+      this.draw()
     },
     'itemOnSalePrice': function () {
-      this.drawLabel()
+      this.draw()
     },
     'labelStyle': function () {
-      this.drawLabel()
+      this.draw()
     }
   },
   mounted () {
+    this.draw()
   },
   methods: {
     draw () {

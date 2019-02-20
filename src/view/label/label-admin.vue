@@ -1,9 +1,9 @@
 <template>
-  <div class="container">
+  <div class="container" ref="container">
       <div class="left">
-        <Card :bordered="false" class="e-lable-table-card card">
+        <Card :bordered="false" class="e-lable-table-card card" v-bind:style="{ width: windowWidth*2/3 + 'px' }">
             <p slot="title">价签样式列表</p>
-            <super_table class="e-label-table" @on-search="onSearch" :data="styleData" :columns="tableColumns"></super_table>
+            <super_table class="e-label-table" @onSearch="onTableSearch" @onClick="onTableClick" :data="styleData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
         </Card>
       </div>
       <div class="right">
@@ -30,9 +30,19 @@
             <Input type="text" v-model="item.itemStock" />
             <Input type="text" v-model="item.itemPrice" />
             <Input type="text" v-model="item.itemOnSalePrice" />
+            <i-switch v-model="item.itemisOnSale"  />
+            <Select v-model="item.labelStyle">
+              <Option v-for="num in styleList" :value="num" :key="num">{{num}}</Option>
+            </Select>
           </div>
         </Card>
       </div>
+      <Modal
+        v-model="isModal"
+        title="样式编辑器"
+        class-name="modal-style-designer">
+        <modal_style_designer ref="designer"></modal_style_designer>
+    </Modal>
       <!--
     <Input type="text" v-model="item.itemName" />
     <Input type="text" v-model="item.itemUnit" />
@@ -57,14 +67,17 @@
 <script>
 import e_label from '@/components/e-label/e-lable.vue'
 import super_table from '@/components/table/supertable.vue'
-import { getDispms, getStyle } from '@/api/style'
+import modal_style_designer from '@/components/modal/modal-style-designer.vue'
+import { getDispms, getStyle, getAllStyle } from '@/api/style'
 export default {
   components: {
     e_label,
-    super_table
+    super_table,
+    modal_style_designer
   },
   data () {
     return {
+      windowWidth: 0,
       item: {
         itemName: '测试商品名称1',
         itemUnit: '盒',
@@ -89,6 +102,9 @@ export default {
         '6'
       ],
       isLabelLoading: false,
+      isTableLoading: false,
+      isModal: false,
+      pageNum: 1,
       styleData: [],
       tableColumns: [
         {
@@ -124,101 +140,48 @@ export default {
           key: 'action',
           align: 'center',
           render: (h, params) => {
-            return h('Button', {
-              props: {
-                type: 'error',
-                size: 'small'
-              },
-              on: {
-                click: () => {
-                  this.remove(params.index)
+            return h('div', [
+              h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                style: {
+                  marginRight: '5px'
+                },
+                on: {
+                  'click': (event) => {
+                    event.stopPropagation()
+                    this.editStyle(params.row.styleid)
+                  }
                 }
-              }
-            }, '删除')
+              }, '修改'),
+              h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small'
+                },
+                on: {
+                  'click': (event) => {
+                    event.stopPropagation()
+                    this.remove(params.row.styleid)
+                  }
+                }
+              }, '删除')
+            ])
           }
         }
       ]
     }
   },
   created () {
-    this.styleData = [
-      {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }, {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }, {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }, {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }, {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }, {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }, {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }, {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }, {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }, {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }, {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }, {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }, {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }, {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }, {
-        styleid: '2333',
-        size: '4.7',
-        bind_eLabel: '11,22,44,66,77',
-        dispms: '1212,555,666,000'
-      }
-    ]
+    this.getStyleTableData()
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.windowWidth = this.$refs.container.offsetWidth
+      console.info(this.windowWidth)
+    })
   },
   methods: {
     getLabelData (id) {
@@ -268,17 +231,33 @@ export default {
         }
       })
     },
-    onSearch (search) {
+    getStyleTableData () {
+      var that = this
+      that.isTableLoading = true
+      getAllStyle().then(res => {
+        const data = res.data.data
+        that.styleData = data
+        that.isTableLoading = false
+      })
+    },
+    onTableSearch (search) {
       alert('查询条件：' + JSON.stringify(search, null, 4))
     },
+    onTableClick (currentRow) {
+      this.getLabelData(currentRow.styleid)
+    },
     remove (index) {
-
+      this.$Message.info('delete' + index)
+    },
+    editStyle (styleid) {
+      this.isModal = true
+      this.$refs.designer.getStyleData(styleid)
     }
   }
 }
 </script>
 
-<style scoped>
+<style lang="less">
 .card{
   margin: 10px;
 }
@@ -310,22 +289,29 @@ export default {
 }
 .e-label{
   width: 100%;
-  height: 300px;
+  height: auto;
 }
 .e-label-table{
   width: 100%;
 }
 .e-lable-card{
-    width: 432px;
+    width: auto;
     height: auto;
 }
 .e-lable-table-card{
-    width: auto;
     height: auto;
 }
 .input-card{
   width: 432px;
   height: auto;
 }
+.modal-style-designer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
+  .ivu-modal{
+      top: 0;
+  }
+}
 </style>

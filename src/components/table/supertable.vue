@@ -1,10 +1,10 @@
 <template>
     <div>
         <Table size="small" border :data="filters" :columns="tableColumnsFilters" stripe></Table>
-        <Table size="small" :show-header=false border :data="data" :columns="columns" stripe></Table>
+        <Table size="small" @on-row-click="handleClick" :show-header=false border :data="data" :columns="columns" :loading="isLoading" stripe></Table>
         <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
-            <Page :total="100" :current="1" @on-change="changePage"></Page>
+            <Page :total="pageNum" :current="1" @on-change="changePage"></Page>
         </div>
     </div>
     </div>
@@ -16,7 +16,9 @@ export default {
   name: 'super_table',
   props: {
     columns: Array,
-    data: Array
+    data: Array,
+    isLoading: Boolean,
+    pageNum: Number
   },
   data () {
     return {
@@ -101,7 +103,7 @@ export default {
       return optionRender
     },
     load () {
-      this.$emit('on-search', this.search)
+      this.$emit('onSearch', this.search)
     },
     validInputValue (index, inputValue) {
       if (!inputValue) {
@@ -114,6 +116,9 @@ export default {
     },
     changePage () {
 
+    },
+    handleClick (currentRow) {
+      this.$emit('onClick', currentRow)
     }
   }
 }

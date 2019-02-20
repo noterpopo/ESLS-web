@@ -13,3 +13,10 @@ export const getStyle = (id) => {
     method: 'get'
   })
 }
+
+export const getAllStyle = () => {
+  return axios.request({
+    url: 'styles/',
+    method: 'get'
+  })
+}
