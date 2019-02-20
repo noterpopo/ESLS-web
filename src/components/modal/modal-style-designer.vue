@@ -1,15 +1,17 @@
 <template>
     <div class="container">
-        <div>
-            <div></div>
+        <div class="left">
+            <div class="inputarea">
+                <p>kkk</p>
+            </div>
+        </div>
+        <div class="right">
             <div class="editor">
-                <vue-draggable-resizable :w="100" :h="100" :parent="true" :resizable="true">
+                <vue-draggable-resizable style="{position:'relative;'}" >
                     <p>Hello! I'm a flexible component. You can drag me around and you can resize me.<br></p>
                 </vue-draggable-resizable>
                 <Spin size="large" fix v-if="isLoading"></Spin>
             </div>
-        </div>
-        <div>
         </div>
     </div>
 </template>
@@ -17,6 +19,7 @@
 // https://github.com/mauricius/vue-draggable-resizable
 import { getDispms, getStyle } from '@/api/style'
 import VueDraggableResizable from 'vue-draggable-resizable'
+import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 export default {
   name: 'modal_style_designer',
   components: {
@@ -55,9 +58,38 @@ export default {
 </script>
 <style>
 .container{
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: stretch;
+    align-content: center;
+}
+.left{
+    margin: 10px;
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+
+}
+.inputarea{
+    width: 400px;
+    height: auto;
+}
+.right{
+    margin: 10px;
+    flex-grow: 2;
+    display: flex;
+    flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
 }
 .editor{
-    width: 400px;
-    height: 400px;
+    width: 800px;
+    height: 600px;
 }
 </style>

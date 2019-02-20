@@ -39,6 +39,7 @@
       </div>
       <Modal
         v-model="isModal"
+        width="auto"
         title="样式编辑器"
         class-name="modal-style-designer">
         <modal_style_designer ref="designer"></modal_style_designer>
