@@ -70,9 +70,9 @@ export default {
     flex-grow: 1;
     display: flex;
     flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: center;
-  align-content: center;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
 
 }
 .inputarea{
@@ -84,9 +84,9 @@ export default {
     flex-grow: 2;
     display: flex;
     flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: center;
-  align-content: center;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
 }
 .editor{
     width: 800px;
