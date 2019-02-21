@@ -148,7 +148,7 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  marginRight: '5px'
+                  margin: '2px'
                 },
                 on: {
                   'click': (event) => {
@@ -161,6 +161,9 @@ export default {
                 props: {
                   type: 'error',
                   size: 'small'
+                },
+                style: {
+                  margin: '2px'
                 },
                 on: {
                   'click': (event) => {
@@ -179,10 +182,14 @@ export default {
     this.getStyleTableData()
   },
   mounted () {
+    var that = this
     this.$nextTick(() => {
       this.windowWidth = this.$refs.container.offsetWidth
       console.info(this.windowWidth)
     })
+    window.onresize = function () {
+      that.windowWidth = that.$refs.container.offsetWidth
+    }
   },
   methods: {
     getLabelData (id) {

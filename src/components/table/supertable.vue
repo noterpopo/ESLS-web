@@ -62,8 +62,7 @@ export default {
             let inputValue = {}
             return h(this.columns[index].filter.type, {
               props: {
-                placeholder: '输入' + this.columns[index].title,
-                icon: 'ios-search'
+                placeholder: '输入' + this.columns[index].title
               },
               on: {
                 input: val => {
