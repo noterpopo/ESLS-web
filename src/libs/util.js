@@ -21,6 +21,15 @@ export const convertCanvasToImage = (canvas) => {
   image.src = canvas.toDataURL('image/png')
   return image
 }
+export const coppyArray = (arr) => {
+  return arr.map((e) => {
+    if (typeof e === 'object') {
+      return Object.assign({}, e)
+    } else {
+      return e
+    }
+  })
+}
 
 export const hasChild = (item) => {
   return item.children && item.children.length !== 0

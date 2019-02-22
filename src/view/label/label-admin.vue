@@ -266,6 +266,9 @@ export default {
 </script>
 
 <style lang="less">
+Input{
+  margin: 2px
+}
 .card{
   margin: 10px;
 }
