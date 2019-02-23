@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+      <canvas id="canvas" ref="canvas"></canvas>
         <div class="left">
             <div class="inputarea">
                 <Input type="text" v-model="item.itemName" />
@@ -17,11 +18,78 @@
             </div>
         </div>
         <div class="right">
-            <div class="editorarea" v-if="reRenderFlag">
-              <Poptip v-for="(item,index) in currentDispmsData" :key="index" trigger="click" title="Title" content="content" class="poptipWarp" :style="{ position: 'absolute',left: item.x+'px',top: item.y+'px'}">
+            <div class="editorarea" v-if="reRenderFlag" :style="{width:editAreaWidth+'px',height:editAreaHeight+'px'}">
+              <Poptip v-for="(item,index) in currentDispmsData" :key="index" trigger="click" title="编辑框" class="poptipWarp" :style="{ position: 'absolute',left: item.x+'px',top: item.y+'px'}">
                   <vue-draggable-resizable :style="{ position: 'absolute',left: 0+'px',top: 0+'px'}" :x="item.x" :y="item.y" :w="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
-                      <span :style="{ fontSize :item.width+'px', lineHeight:item.height+'px'}">Hello</span>
+                      <span v-if="item.columnType === '字符串'" :style="{ fontSize :item.fontSize+'px', lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontStyle}">{{item.startText + item.text + item.endText}}</span>
+                      <span v-else-if="item.columnType === '数字左侧'" :style="{ fontSize :item.fontSize+'px', lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontStyle}">{{item.startText + item.text + item.endText}}.</span>
+                      <span v-else-if="item.columnType === '数字右侧'" :style="{ fontSize : item.fontSize+'px', lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontStyle}">{{item.startText + item.text + item.endText}}</span>
+                      <Divider v-else-if="item.columnType === '线段'"></Divider>
+                      <img v-else-if="item.columnType === '二维码'" ref="qrCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
+                      <img v-else-if="item.columnType === '条形码'" ref="barCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
+                      <img v-else-if="item.columnType === '图片'" ref="img" :style="{ width:item.width+'px', height:item.height+'px'}"/>
                   </vue-draggable-resizable>
+                  <div slot="content">
+                    <div v-if="item.columnType === '二维码'||item.columnType === '条形码'||item.columnType === '图片'||item.columnType === '线段'" class="float-edit-img">
+                      <div>
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">x:</span>
+                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.x"/>
+                      </div>
+                      <div>
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">y:</span>
+                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.y"/>
+                      </div>
+                      <div>
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">宽:</span>
+                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.width"/>
+                      </div>
+                      <div>
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">高:</span>
+                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.height"/>
+                      </div>
+                    </div>
+                    <div v-else class="float-edit-text">
+                      <div>
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">x:</span>
+                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.x"/>
+                      </div>
+                      <div>
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">y:</span>
+                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.y"/>
+                      </div>
+                      <div>
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">宽:</span>
+                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.width"/>
+                      </div>
+                      <div>
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">高:</span>
+                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.height"/>
+                      </div>
+                      <div>
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">字号:</span>
+                        <InputNumber size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontSize"/>
+                      </div>
+                      <div>
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">字体:</span>
+                        <Select size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontFamily">
+                          <Option value="微软雅黑">微软雅黑</Option>
+                          <Option value="宋体">宋体</Option>
+                        </Select>
+                      </div>
+                      <div>
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">字体样式:</span>
+                        <Select size="small" type="text" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontStyle">
+                          <Option value="normal">Normal</Option>
+                          <Option value="bold">Bold</Option>
+                          <Option value="oblique">Oblique</Option>
+                        </Select>
+                      </div>
+                      <div>
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">文本:</span>
+                        <Input size="small" type="text" :style="{width:'76px',marginRight: '4px'}" v-model="item.text"/>
+                      </div>
+                    </div>
+                  </div>
               </Poptip>
                 <Spin size="large" fix v-if="isLoading"></Spin>
             </div>
@@ -31,9 +99,13 @@
 <script>
 // https://github.com/mauricius/vue-draggable-resizable
 import { getDispms, getStyle } from '@/api/style'
-import { coppyArray } from '@/libs/util'
+import { coppyArray, convertCanvasToImage } from '@/libs/util'
 import VueDraggableResizable from 'vue-draggable-resizable'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
+import JsBarcode from 'jsbarcode'
+import qrcode from 'qrcode'
+var qrcodeimg
+var barcodeimg
 export default {
   name: 'modal_style_designer',
   components: {
@@ -44,10 +116,8 @@ export default {
       styleid: 0,
       isLoading: false,
       reRenderFlag: true,
-      x: 0,
-      y: 0,
-      width: 200,
-      height: 200,
+      editAreaWidth: 800,
+      editAreaHeight: 600,
       dispmsData: [],
       currentDispmsData: [],
       item: {
@@ -80,13 +150,74 @@ export default {
       getStyle(id).then(res => {
         const data = res.data.data
         var dispmsData = [] // 保存数据
+        var priceLeft = ''
+        var priceRight = ''
+        var onSalePriceLeft = ''
+        var onSalePriceRight = ''
         var len = data.dispms.length // 循环变量
         var flag = len - 1 // 保证循环后调用initData()
         for (var i = 0; i < len; ++i) {
           getDispms(data.dispms[i]).then(res => {
             const dispData = res.data.data
+            dispData.x = dispData.x * 2
+            dispData.y = dispData.y * 2
+            dispData.width = dispData.width * 2
+            dispData.height = dispData.height * 2
+            dispData.fontSize = dispData.fontSize * 2
+            if (dispData.sourceColumn === 'price') {
+              priceLeft = dispData.text + '.'
+            } else if (dispData.sourceColumn === 'price_right') {
+              priceRight = dispData.text
+            } else if (dispData.sourceColumn === 'promotePriceLeft') {
+              onSalePriceLeft = dispData.text + '.'
+            } else if (dispData.sourceColumn === 'promotePriceRight') {
+              onSalePriceRight = dispData.text
+            } else if (dispData.sourceColumn === 'barCode') {
+              that.$Message.info('barCode')
+              var canvas = document.getElementById('canvas')
+              JsBarcode('#canvas', dispData.text, {
+                format: 'EAN13',
+                fontSize: 0,
+                margin: 0,
+                textMargin: 0,
+                width: 2
+              })
+              barcodeimg = convertCanvasToImage(canvas)
+              barcodeimg.onload = function () {
+                console.log(that.$refs.barCodeImg)
+                that.$refs.barCodeImg.src = barcodeimg
+              }
+            } else if (dispData.sourceColumn === 'qrCode') {
+              var qrcodecanvas = document.getElementById('canvas')
+              qrcode.toCanvas(qrcodecanvas, dispData.text, function (error) {
+                if (error) console.error(error)
+              })
+              qrcodeimg = convertCanvasToImage(qrcodecanvas)
+              qrcodeimg.onload = function () {
+                console.log(that.$refs.qrCodeImg)
+                that.$refs.qrCodeImg.src = qrcodeimg
+              }
+            } else {
+
+            }
+
             dispmsData.push(dispData)
             if (!(flag--)) {
+              var offset = 0
+              that.item.itemPrice = priceLeft + priceRight
+              that.item.itemOnSalePrice = onSalePriceLeft + onSalePriceRight
+              for (var i = 0; i < dispmsData.length; ++i) {
+                if (dispmsData[i].sourceColumn === 'price_right') {
+                  offset = dispmsData[i].backUp.split('/')[1]
+                  dispmsData[i].x = dispmsData[i].x + that.item.itemPrice.split('.')[0].length * offset * 2
+                }
+              }
+              for (var j = 0; j < dispmsData.length; ++j) {
+                if (dispmsData[j].sourceColumn === 'promotePriceRight') {
+                  offset = dispmsData[j].backUp.split('/')[1]
+                  dispmsData[j].x = dispmsData[j].x + that.item.itemOnSalePrice.split('.')[0].length * offset * 2
+                }
+              }
               that.isLoading = false
               that.currentDispmsData = dispmsData
               that.dispmsData = coppyArray(dispmsData)
@@ -100,7 +231,6 @@ export default {
       console.log('Actived')
     },
     onDrag ([x, y], index) {
-      console.info(x + ' ' + this.currentDispmsData[index].x + this.dispmsData[index].x)
       this.$set(this.currentDispmsData[index], 'x', x)
       this.$set(this.currentDispmsData[index], 'y', y)
     },
@@ -110,12 +240,16 @@ export default {
       this.$set(this.currentDispmsData[index], 'width', width)
       this.$set(this.currentDispmsData[index], 'height', height)
     }
+
   }
 }
 </script>
 <style>
+#canvas{
+  display: none
+}
 Input{
-  margin: 10px;
+  margin: 10px；
 }
 .container{
     width: 100%;
@@ -151,8 +285,6 @@ Input{
 }
 .editorarea{
     position: relative;
-    width: 800px;
-    height: 600px;
 }
 .poptipWarp{
 }
@@ -162,5 +294,23 @@ Input{
 .draggerItem-active-class{
   position: absolute;
   border: 1px dashed black;
+}
+.float-edit-text{
+  width: 280px;
+  height: 82px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  align-content: center;
+}
+.float-edit-img{
+  width: 280px;
+  height: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  align-content: center;
 }
 </style>

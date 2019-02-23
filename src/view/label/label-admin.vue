@@ -81,18 +81,18 @@ export default {
       windowWidth: 0,
       item: {
         itemName: '测试商品名称1',
-        itemUnit: '盒',
-        itemNorm: '250g',
-        itemCategory: '食品',
-        itemOrigin: '上海',
+        itemUnit: '罐',
+        itemNorm: '205g',
+        itemCategory: '衣物',
+        itemOrigin: '北京',
         itemNo: '00012',
         itemQRCode: '692226641428',
         itemBarCode: '692226641428',
         itemStock: '110',
-        itemisOnSale: false,
-        itemPrice: '999.99',
-        itemOnSalePrice: '999.99',
-        labelStyle: '5'
+        itemisOnSale: true,
+        itemPrice: '10.19',
+        itemOnSalePrice: '444.44',
+        labelStyle: '1'
       },
       styleList: [
         '1',
@@ -198,40 +198,48 @@ export default {
       getStyle(id).then(res => {
         const data = res.data.data
         var dispmsData = [] // 保存数据
+        var priceLeft = ''
+        var priceRight = ''
+        var onSalePriceLeft = ''
+        var onSalePriceRight = ''
         var len = data.dispms.length // 循环变量
         var flag = len - 1 // 保证循环后调用initData()
         for (var i = 0; i < len; ++i) {
           getDispms(data.dispms[i]).then(res => {
             const dispData = res.data.data
-            if (dispData.columnType === '名称') {
+            if (dispData.sourceColumn === 'name') {
               that.item.itemName = dispData.text
-            } else if (dispData.columnType === '价格') {
-              that.item.itemPrice = dispData.text
-            } else if (dispData.columnType === '原价') {
-              that.item.itemPrice = dispData.text
-            } else if (dispData.columnType === '促价') {
-              that.item.itemOnSalePrice = dispData.text
-            } else if (dispData.columnType === '规格') {
+            } else if (dispData.sourceColumn === 'price_left') {
+              priceLeft = dispData.text + '.'
+            } else if (dispData.sourceColumn === 'price_right') {
+              priceRight = dispData.text
+            } else if (dispData.sourceColumn === 'promotePriceLeft') {
+              onSalePriceLeft = dispData.text + '.'
+            } else if (dispData.sourceColumn === 'promotePriceRight') {
+              onSalePriceRight = dispData.text
+            } else if (dispData.sourceColumn === 'normal') {
               that.item.itemNorm = dispData.text
-            } else if (dispData.columnType === '类别') {
+            } else if (dispData.sourceColumn === 'class') {
               that.item.itemCategory = dispData.text
-            } else if (dispData.columnType === '单位') {
+            } else if (dispData.sourceColumn === 'unit') {
               that.item.itemUnit = dispData.text
-            } else if (dispData.columnType === '产地') {
+            } else if (dispData.sourceColumn === 'origin') {
               that.item.itemOrigin = dispData.text
-            } else if (dispData.columnType === '货号') {
+            } else if (dispData.sourceColumn === '货号') {
               that.item.itemNo = dispData.text
-            } else if (dispData.columnType === '二维码') {
+            } else if (dispData.sourceColumn === 'qrCode') {
               that.item.itemQRCode = dispData.text
-            } else if (dispData.columnType === '条形码') {
+            } else if (dispData.sourceColumn === 'barCode') {
               that.item.itemBarCode = dispData.text
-            } else if (dispData.columnType === '库存') {
+            } else if (dispData.sourceColumn === '库存') {
               that.item.itemStock = dispData.text
             } else {
 
             }
             dispmsData.push(dispData)
             if (!(flag--)) {
+              that.item.itemPrice = priceLeft + priceRight
+              that.item.itemOnSalePrice = onSalePriceLeft + onSalePriceRight
               that.isLabelLoading = false
               that.$refs.label_canvas.initData(dispmsData, data.width, data.height)
             }
