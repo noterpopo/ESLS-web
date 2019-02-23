@@ -15,6 +15,7 @@
                 <Input type="text" v-model="item.itemPrice" />
                 <Input type="text" v-model="item.itemOnSalePrice" />
                 <i-switch v-model="item.itemisOnSale"  />
+                <Button type="primary" @click="reset">恢复默认值</Button>
             </div>
         </div>
         <div class="right">
@@ -25,9 +26,9 @@
                       <span v-else-if="item.columnType === '数字左侧'" :style="{ fontSize :item.fontSize+'px', lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontStyle}">{{item.startText + item.text + item.endText}}.</span>
                       <span v-else-if="item.columnType === '数字右侧'" :style="{ fontSize : item.fontSize+'px', lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontStyle}">{{item.startText + item.text + item.endText}}</span>
                       <Divider v-else-if="item.columnType === '线段'"></Divider>
-                      <img v-else-if="item.columnType === '二维码'" ref="qrCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
-                      <img v-else-if="item.columnType === '条形码'" ref="barCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
-                      <img v-else-if="item.columnType === '图片'" ref="img" :style="{ width:item.width+'px', height:item.height+'px'}"/>
+                      <img v-else-if="item.columnType === '二维码'" id="qrCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
+                      <img v-else-if="item.columnType === '条形码'" id="barCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
+                      <img v-else-if="item.columnType === '图片'" id="img" :style="{ width:item.width+'px', height:item.height+'px'}"/>
                   </vue-draggable-resizable>
                   <div slot="content">
                     <div v-if="item.columnType === '二维码'||item.columnType === '条形码'||item.columnType === '图片'||item.columnType === '线段'" class="float-edit-img">
@@ -99,13 +100,11 @@
 <script>
 // https://github.com/mauricius/vue-draggable-resizable
 import { getDispms, getStyle } from '@/api/style'
-import { coppyArray, convertCanvasToImage } from '@/libs/util'
+import { coppyArray } from '@/libs/util'
 import VueDraggableResizable from 'vue-draggable-resizable'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 import JsBarcode from 'jsbarcode'
 import qrcode from 'qrcode'
-var qrcodeimg
-var barcodeimg
 export default {
   name: 'modal_style_designer',
   components: {
@@ -137,6 +136,32 @@ export default {
       }
     }
   },
+  watch: {
+    // 必须watch才能正确获取element
+    currentDispmsData: function () {
+      this.$nextTick(function () {
+        var qrCodeEle = document.getElementById('qrCodeImg')
+        var barCodeEle = document.getElementById('barCodeImg')
+        console.log('hhh ')
+        var canvas = document.getElementById('canvas')
+        qrcode.toCanvas(canvas, this.item.itemQRCode, function (error) {
+          if (error) console.error(error)
+        })
+        var qrcodeimg = canvas.toDataURL('image/png')
+        qrCodeEle.setAttribute('src', qrcodeimg)
+
+        JsBarcode('#canvas', this.item.itemBarCode, {
+          format: 'EAN13',
+          fontSize: 0,
+          margin: 0,
+          textMargin: 0,
+          width: 2
+        })
+        var barcodeimg = canvas.toDataURL('image/png')
+        barCodeEle.setAttribute('src', barcodeimg)
+      })
+    }
+  },
   methods: {
     getStyleData (id) {
       // 重新渲染editorarea
@@ -163,7 +188,7 @@ export default {
             dispData.y = dispData.y * 2
             dispData.width = dispData.width * 2
             dispData.height = dispData.height * 2
-            dispData.fontSize = dispData.fontSize * 2
+            dispData.fontSize = dispData.fontSize * 1.414
             if (dispData.sourceColumn === 'price') {
               priceLeft = dispData.text + '.'
             } else if (dispData.sourceColumn === 'price_right') {
@@ -173,34 +198,12 @@ export default {
             } else if (dispData.sourceColumn === 'promotePriceRight') {
               onSalePriceRight = dispData.text
             } else if (dispData.sourceColumn === 'barCode') {
-              that.$Message.info('barCode')
-              var canvas = document.getElementById('canvas')
-              JsBarcode('#canvas', dispData.text, {
-                format: 'EAN13',
-                fontSize: 0,
-                margin: 0,
-                textMargin: 0,
-                width: 2
-              })
-              barcodeimg = convertCanvasToImage(canvas)
-              barcodeimg.onload = function () {
-                console.log(that.$refs.barCodeImg)
-                that.$refs.barCodeImg.src = barcodeimg
-              }
+              that.item.itemBarCode = dispData.text
             } else if (dispData.sourceColumn === 'qrCode') {
-              var qrcodecanvas = document.getElementById('canvas')
-              qrcode.toCanvas(qrcodecanvas, dispData.text, function (error) {
-                if (error) console.error(error)
-              })
-              qrcodeimg = convertCanvasToImage(qrcodecanvas)
-              qrcodeimg.onload = function () {
-                console.log(that.$refs.qrCodeImg)
-                that.$refs.qrCodeImg.src = qrcodeimg
-              }
+              that.item.itemQRCode = dispData.text
             } else {
 
             }
-
             dispmsData.push(dispData)
             if (!(flag--)) {
               var offset = 0
@@ -228,7 +231,6 @@ export default {
       })
     },
     onActivated (index) {
-      console.log('Actived')
     },
     onDrag ([x, y], index) {
       this.$set(this.currentDispmsData[index], 'x', x)
@@ -239,6 +241,9 @@ export default {
       this.$set(this.currentDispmsData[index], 'y', y)
       this.$set(this.currentDispmsData[index], 'width', width)
       this.$set(this.currentDispmsData[index], 'height', height)
+    },
+    reset () {
+      this.currentDispmsData = coppyArray(this.dispmsData)
     }
 
   }
