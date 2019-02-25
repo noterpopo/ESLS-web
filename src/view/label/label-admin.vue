@@ -13,7 +13,6 @@
             <e_label class="e-label" v-bind="item" ref="label_canvas" >
                 <Spin size="large" fix v-if="isLabelLoading"></Spin>
             </e_label>
-            <Button type="primary" @click="getLabelData(10)" style="margin: 10px; float: right;">刷新</Button>
           </div>
         </Card>
         <Card :bordered="false" class="card input-card">
@@ -30,10 +29,6 @@
             <Input type="text" v-model="item.itemStock" />
             <Input type="text" v-model="item.itemPrice" />
             <Input type="text" v-model="item.itemOnSalePrice" />
-            <i-switch v-model="item.itemisOnSale"  />
-            <Select v-model="item.labelStyle">
-              <Option v-for="num in styleList" :value="num" :key="num">{{num}}</Option>
-            </Select>
           </div>
         </Card>
       </div>
@@ -69,7 +64,7 @@
 import e_label from '@/components/e-label/e-lable.vue'
 import super_table from '@/components/table/supertable.vue'
 import modal_style_designer from '@/components/modal/modal-style-designer.vue'
-import { getDispms, getStyle, getAllStyle } from '@/api/style'
+import { getStyle, getAllStyle, deleteStyle } from '@/api/style'
 export default {
   components: {
     e_label,
@@ -105,33 +100,34 @@ export default {
       isLabelLoading: false,
       isTableLoading: false,
       isModal: false,
-      pageNum: 1,
+      pageNum: 0,
+      countPerPage: 10,
       styleData: [],
       tableColumns: [
         {
           title: '样式id',
-          key: 'styleid',
+          key: 'id',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '尺寸(英寸)',
-          key: 'size',
+          title: '样式名称',
+          key: 'styleType',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '价签绑定',
-          key: 'bind_eLabel',
+          title: '宽度',
+          key: 'width',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '小样式',
-          key: 'dispms',
+          title: '高度',
+          key: 'height',
           filter: {
             type: 'Input'
           }
@@ -153,7 +149,7 @@ export default {
                 on: {
                   'click': (event) => {
                     event.stopPropagation()
-                    this.editStyle(params.row.styleid)
+                    this.editStyle(params.row.id, params.row.width, params.row.height)
                   }
                 }
               }, '修改'),
@@ -168,7 +164,7 @@ export default {
                 on: {
                   'click': (event) => {
                     event.stopPropagation()
-                    this.remove(params.row.styleid)
+                    this.remove(params.row.id)
                   }
                 }
               }, '删除')
@@ -179,95 +175,82 @@ export default {
     }
   },
   created () {
-    this.getStyleTableData()
+    this.getStyleTableData({ page: this.pageNum, count: this.countPerPage })
   },
   mounted () {
     var that = this
     this.$nextTick(() => {
       this.windowWidth = this.$refs.container.offsetWidth
-      console.info(this.windowWidth)
     })
     window.onresize = function () {
       that.windowWidth = that.$refs.container.offsetWidth
     }
   },
   methods: {
-    getLabelData (id) {
+    getLabelData (id, w, h) {
       var that = this
       that.isLabelLoading = true
       getStyle(id).then(res => {
-        const data = res.data.data
-        var dispmsData = [] // 保存数据
-        var priceLeft = ''
-        var priceRight = ''
-        var onSalePriceLeft = ''
-        var onSalePriceRight = ''
-        var len = data.dispms.length // 循环变量
-        var flag = len - 1 // 保证循环后调用initData()
+        const dispData = res.data.data
+        var len = dispData.length // 循环变量
+        console.log(dispData)
         for (var i = 0; i < len; ++i) {
-          getDispms(data.dispms[i]).then(res => {
-            const dispData = res.data.data
-            if (dispData.sourceColumn === 'name') {
-              that.item.itemName = dispData.text
-            } else if (dispData.sourceColumn === 'price_left') {
-              priceLeft = dispData.text + '.'
-            } else if (dispData.sourceColumn === 'price_right') {
-              priceRight = dispData.text
-            } else if (dispData.sourceColumn === 'promotePriceLeft') {
-              onSalePriceLeft = dispData.text + '.'
-            } else if (dispData.sourceColumn === 'promotePriceRight') {
-              onSalePriceRight = dispData.text
-            } else if (dispData.sourceColumn === 'normal') {
-              that.item.itemNorm = dispData.text
-            } else if (dispData.sourceColumn === 'class') {
-              that.item.itemCategory = dispData.text
-            } else if (dispData.sourceColumn === 'unit') {
-              that.item.itemUnit = dispData.text
-            } else if (dispData.sourceColumn === 'origin') {
-              that.item.itemOrigin = dispData.text
-            } else if (dispData.sourceColumn === '货号') {
-              that.item.itemNo = dispData.text
-            } else if (dispData.sourceColumn === 'qrCode') {
-              that.item.itemQRCode = dispData.text
-            } else if (dispData.sourceColumn === 'barCode') {
-              that.item.itemBarCode = dispData.text
-            } else if (dispData.sourceColumn === '库存') {
-              that.item.itemStock = dispData.text
-            } else {
+          if (dispData[i].sourceColumn === 'name') {
+            that.item.itemName = dispData[i].text
+          } else if (dispData[i].sourceColumn === 'price') {
+            that.item.itemPrice = dispData[i].text
+          } else if (dispData[i].sourceColumn === 'promotePrice') {
+            that.item.itemOnSalePrice = dispData[i].text
+          } else if (dispData[i].sourceColumn === 'spec') {
+            that.item.itemNorm = dispData[i].text
+          } else if (dispData[i].sourceColumn === 'class') {
+            that.item.itemCategory = dispData[i].text
+          } else if (dispData[i].sourceColumn === 'unit') {
+            that.item.itemUnit = dispData[i].text
+          } else if (dispData[i].sourceColumn === 'origin') {
+            that.item.itemOrigin = dispData[i].text
+          } else if (dispData[i].sourceColumn === 'shelfNumber') {
+            that.item.itemNo = dispData[i].text
+          } else if (dispData[i].sourceColumn === 'qrCode') {
+            that.item.itemQRCode = dispData[i].text
+          } else if (dispData[i].sourceColumn === 'barCode') {
+            that.item.itemBarCode = dispData[i].text
+          } else if (dispData[i].sourceColumn === 'stock') {
+            that.item.itemStock = dispData[i].text
+          } else {
 
-            }
-            dispmsData.push(dispData)
-            if (!(flag--)) {
-              that.item.itemPrice = priceLeft + priceRight
-              that.item.itemOnSalePrice = onSalePriceLeft + onSalePriceRight
-              that.isLabelLoading = false
-              that.$refs.label_canvas.initData(dispmsData, data.width, data.height)
-            }
-          })
+          }
         }
+        that.isLabelLoading = false
+        that.$refs.label_canvas.initData(dispData, w, h)
       })
     },
-    getStyleTableData () {
+    getStyleTableData (page, count) {
       var that = this
       that.isTableLoading = true
-      getAllStyle().then(res => {
+      getAllStyle(page, count).then(res => {
         const data = res.data.data
         that.styleData = data
         that.isTableLoading = false
       })
     },
     onTableSearch (search) {
-      alert('查询条件：' + JSON.stringify(search, null, 4))
+      var key = Object.keys(search)
+      var value = search[key]
+      this.getStyleTableData({ queryId: key[0], queryString: value })
     },
     onTableClick (currentRow) {
-      this.getLabelData(currentRow.styleid)
+      this.getLabelData(currentRow.id, currentRow.width, currentRow.height)
     },
-    remove (index) {
-      this.$Message.info('delete' + index)
+    remove (id) {
+      deleteStyle(id)
+        .then(() => {
+          this.getStyleTableData({ page: this.pageNum, count: this.countPerPage })
+        })
     },
-    editStyle (styleid) {
+    editStyle (styleid, w, h) {
       this.isModal = true
-      this.$refs.designer.getStyleData(styleid)
+      this.$refs.designer.getStyleData(styleid, w, h)
     }
   }
 }

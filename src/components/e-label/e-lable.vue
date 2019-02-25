@@ -119,7 +119,6 @@ export default {
     }
   },
   mounted () {
-    this.draw()
   },
   methods: {
     draw () {
@@ -368,61 +367,39 @@ export default {
     drawLabel () {
       if (!isDataReady) return
       canvas.width = canvas.width // 清空画布
-      var priceOffset
-      var onSalePriceOffset
-      var priceRightData
-      var onSalePriceRightData
       var len = dispmsData.length
       for (var i = 0; i < len; ++i) {
         if (dispmsData[i].sourceColumn === 'name') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontStyle, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
-        } else if (dispmsData[i].sourceColumn === 'price_left') {
+          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+        } else if (dispmsData[i].sourceColumn === 'price') {
           if (dispmsData[i].backUp === '1') {
-            this.drawDispms('线段', dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontStyle, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+            this.drawDispms('线段', dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
           }
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemPrice.split('.')[0] + '.', dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontStyle, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
-        } else if (dispmsData[i].sourceColumn === 'price_right') {
-          priceRightData = dispmsData[i]
-          priceOffset = parseInt(dispmsData[i].backUp.split('/')[1])
-        } else if (dispmsData[i].sourceColumn === 'promotePriceLeft') {
+          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemPrice, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+        } else if (dispmsData[i].sourceColumn === 'promotePrice') {
           if (dispmsData[i].backUp === '1') {
-            this.drawDispms('线段', dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemOnSalePrice.split('.')[0] + '.', dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontStyle, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+            this.drawDispms('线段', dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemOnSalePrice, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
           }
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemOnSalePrice.split('.')[0] + '.', dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontStyle, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
-        } else if (dispmsData[i].sourceColumn === 'promotePriceRight') {
-          onSalePriceRightData = dispmsData[i]
-          onSalePriceOffset = parseInt(dispmsData[i].backUp.split('/')[1])
+          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemOnSalePrice, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
         } else if (dispmsData[i].sourceColumn === 'normal') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemNorm, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontStyle, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
-        } else if (dispmsData[i].sourceColumn === 'class') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemCategory, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontStyle, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemNorm, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+        } else if (dispmsData[i].sourceColumn === 'category') {
+          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemCategory, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
         } else if (dispmsData[i].sourceColumn === 'unit') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemUnit, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontStyle, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemUnit, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
         } else if (dispmsData[i].sourceColumn === 'origin') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemOrigin, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontStyle, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
-        } else if (dispmsData[i].sourceColumn === '货号') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemNo, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontStyle, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemOrigin, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+        } else if (dispmsData[i].sourceColumn === 'shelfNumber') {
+          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemNo, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
         } else if (dispmsData[i].sourceColumn === 'qrCode') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemQRCode, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontStyle, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemQRCode, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
         } else if (dispmsData[i].sourceColumn === 'barCode') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemBarCode, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontStyle, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
-        } else if (dispmsData[i].sourceColumn === '库存') {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemStock, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontStyle, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemBarCode, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+        } else if (dispmsData[i].sourceColumn === 'stock') {
+          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemStock, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
         } else {
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, dispmsData[i].text, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontStyle, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, dispmsData[i].text, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
         }
-      }
-      if (priceRightData) {
-        if (priceRightData.backUp.split('/')[0] === '1') {
-          this.drawDispms('线段', (priceRightData.x + priceOffset * this.itemPrice.split('.')[0].length) * widthRadius, priceRightData.y * heightRadius, priceRightData.width * widthRadius, priceRightData.height * heightRadius, priceRightData.backgroundColor, this.itemPrice.split('.')[1], priceRightData.startText, priceRightData.endText, priceRightData.fontStyle, priceRightData.fontFamily, priceRightData.fontColor, priceRightData.fontSize * widthRadius)
-        }
-        this.drawDispms(priceRightData.columnType, (priceRightData.x + priceOffset * this.itemPrice.split('.')[0].length) * widthRadius, priceRightData.y * heightRadius, priceRightData.width * widthRadius, priceRightData.height * heightRadius, priceRightData.backgroundColor, this.itemPrice.split('.')[1], priceRightData.startText, priceRightData.endText, priceRightData.fontStyle, priceRightData.fontFamily, priceRightData.fontColor, priceRightData.fontSize * widthRadius)
-      }
-      if (onSalePriceRightData) {
-        if (onSalePriceRightData.backUp.split('/')[0] === '1') {
-          this.drawDispms('线段', (onSalePriceRightData.x + onSalePriceOffset * this.itemOnSalePrice.split('.')[0].length) * widthRadius, onSalePriceRightData.y * heightRadius, onSalePriceRightData.width * widthRadius, onSalePriceRightData.height * heightRadius, onSalePriceRightData.backgroundColor, this.itemOnSalePrice.split('.')[1], onSalePriceRightData.startText, onSalePriceRightData.endText, onSalePriceRightData.fontStyle, onSalePriceRightData.fontFamily, onSalePriceRightData.fontColor, onSalePriceRightData.fontSize * widthRadius)
-        }
-        this.drawDispms(onSalePriceRightData.columnType, (onSalePriceRightData.x + onSalePriceOffset * this.itemOnSalePrice.split('.')[0].length) * widthRadius, onSalePriceRightData.y * heightRadius, onSalePriceRightData.width * widthRadius, onSalePriceRightData.height * heightRadius, onSalePriceRightData.backgroundColor, this.itemOnSalePrice.split('.')[1], onSalePriceRightData.startText, onSalePriceRightData.endText, onSalePriceRightData.fontStyle, onSalePriceRightData.fontFamily, onSalePriceRightData.fontColor, onSalePriceRightData.fontSize * widthRadius)
       }
     },
     initData (data, width, height) {

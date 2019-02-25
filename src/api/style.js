@@ -9,14 +9,27 @@ export const getDispms = (id) => {
 
 export const getStyle = (id) => {
   return axios.request({
-    url: 'style/' + id,
+    url: '/style/dispms/' + id,
     method: 'get'
   })
 }
 
-export const getAllStyle = () => {
+export const getAllStyle = ({ page, count, queryId, queryString }) => {
   return axios.request({
     url: 'styles/',
-    method: 'get'
+    method: 'get',
+    params: {
+      query: queryId,
+      queryString: queryString,
+      page: page,
+      count: count
+    }
+  })
+}
+
+export const deleteStyle = (id) => {
+  return axios.request({
+    url: '/style/' + id,
+    method: 'delete'
   })
 }
