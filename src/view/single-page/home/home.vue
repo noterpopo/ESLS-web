@@ -1,6 +1,6 @@
 <template>
   <div>
-    <corn-selector></corn-selector>
+    <corn-selector>选择定时任务</corn-selector>
   </div>
 </template>
 

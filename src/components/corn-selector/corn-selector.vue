@@ -1,85 +1,86 @@
 <template>
     <div class="container">
-        <Button :style="{margin:'10px'}" type="primary" @click="isShow=true">选择定时任务</Button>
+        <Button :style="{margin:'10px'}" type="primary" @click="isShow=true"><slot></slot></Button>
+        <p>{{cronExp}}</p>
         <Modal v-model="isShow" :mask-closable="false">
             <Tabs :animated="false">
                 <TabPane label="秒">
-                    <RadioGroup vertical v-model="second.radioSelected" class="radio-group">
+                    <RadioGroup vertical v-model="second.radioSelected" class="radio-group" @on-change="onSecSelctChange">
                         <Radio label="everySec" class="radio">
                             每一秒钟
                         </Radio>
                         <Radio label="fromXstepYSec" class="radio">
                             每隔
-                            <InputNumber :max="60" :min="1" v-model="second.step"></InputNumber>
+                            <InputNumber :max="60" :min="1" v-model="second.step"  @on-change="onSecSelctChange"></InputNumber>
                             秒执行 从
-                            <InputNumber :max="59" :min="0" v-model="second.from"></InputNumber>
+                            <InputNumber :max="59" :min="0" v-model="second.from"  @on-change="onSecSelctChange"></InputNumber>
                             秒开始
                         </Radio>
                         <Radio label="selectedSec" class="radio">
                             具体秒数（可多选）
-                            <Select v-model="second.selectedData" multiple transfer @click.native="(event)=>{event.preventDefault()}">
+                            <Select v-model="second.selectedData" multiple transfer @click.native="(event)=>{event.preventDefault()}" @on-change="onSecSelctChange">
                                 <Option v-for="n in 60" :value="n" :key="n">{{ n-1 }}</Option>
                             </Select>
                         </Radio>
                         <Radio label="fromXtoYSec" class="radio">
                             周期从
-                            <InputNumber :max="60" :min="1" v-model="second.start"></InputNumber>
+                            <InputNumber :max="60" :min="1" v-model="second.start"  @on-change="onSecSelctChange"></InputNumber>
                             到
-                            <InputNumber :max="59" :min="0" v-model="second.end"></InputNumber>
+                            <InputNumber :max="59" :min="0" v-model="second.end"  @on-change="onSecSelctChange"></InputNumber>
                             秒
                         </Radio>
                     </RadioGroup>
                 </TabPane>
                 <TabPane label="分">
-                    <RadioGroup vertical v-model="minute.radioSelected" class="radio-group">
+                    <RadioGroup vertical v-model="minute.radioSelected" class="radio-group"  @on-change="onMinSelctChange">
                         <Radio label="everyMin" class="radio">
                             每一分钟
                         </Radio>
                         <Radio label="fromXstepYMin" class="radio">
                             每隔
-                            <InputNumber :max="60" :min="1" v-model="minute.step"></InputNumber>
+                            <InputNumber :max="60" :min="1" v-model="minute.step" @on-change="onMinSelctChange"></InputNumber>
                             分执行 从
-                            <InputNumber :max="59" :min="0" v-model="minute.from"></InputNumber>
+                            <InputNumber :max="59" :min="0" v-model="minute.from" @on-change="onMinSelctChange"></InputNumber>
                             分开始
                         </Radio>
                         <Radio label="selectedMin" class="radio">
                             具体分钟数（可多选）
-                            <Select v-model="minute.selectedData" multiple transfer @click.native="(event)=>{event.preventDefault()}">
+                            <Select v-model="minute.selectedData" multiple transfer @click.native="(event)=>{event.preventDefault()}" @on-change="onMinSelctChange">
                                 <Option v-for="n in 60" :value="n" :key="n">{{ n-1 }}</Option>
                             </Select>
                         </Radio>
                         <Radio label="fromXtoYMin" class="radio">
                             周期从
-                            <InputNumber :max="60" :min="1" v-model="minute.start"></InputNumber>
+                            <InputNumber :max="60" :min="1" v-model="minute.start" @on-change="onMinSelctChange"></InputNumber>
                             到
-                            <InputNumber :max="59" :min="0" v-model="minute.end"></InputNumber>
+                            <InputNumber :max="59" :min="0" v-model="minute.end" @on-change="onMinSelctChange"></InputNumber>
                             分
                         </Radio>
                     </RadioGroup>
                 </TabPane>
                 <TabPane label="时">
-                    <RadioGroup vertical v-model="hour.radioSelected" class="radio-group">
-                        <Radio label="everyHour" class="radio">
+                    <RadioGroup vertical v-model="hour.radioSelected" class="radio-group" @on-change="onHourSelctChange">
+                        <Radio label="everyHour" class="radio" >
                             每一小时
                         </Radio>
                         <Radio label="fromXstepYHour" class="radio">
                             每隔
-                            <InputNumber :max="24" :min="1" v-model="hour.step"></InputNumber>
+                            <InputNumber :max="24" :min="1" v-model="hour.step" @on-change="onHourSelctChange"></InputNumber>
                             小时执行 从
-                            <InputNumber :max="23" :min="0" v-model="hour.from"></InputNumber>
+                            <InputNumber :max="23" :min="0" v-model="hour.from" @on-change="onHourSelctChange"></InputNumber>
                             小时开始
                         </Radio>
                         <Radio label="selectedHour" class="radio">
                             具体小时数（可多选）
-                            <Select v-model="hour.selectedData" multiple transfer @click.native="(event)=>{event.preventDefault()}">
+                            <Select v-model="hour.selectedData" multiple transfer @click.native="(event)=>{event.preventDefault()}" @on-change="onHourSelctChange">
                                 <Option v-for="n in 24" :value="n" :key="n">{{ n-1 }}</Option>
                             </Select>
                         </Radio>
                         <Radio label="fromXtoYHour" class="radio">
                             周期从
-                            <InputNumber :max="24" :min="1" v-model="hour.start"></InputNumber>
+                            <InputNumber :max="24" :min="1" v-model="hour.start" @on-change="onHourSelctChange"></InputNumber>
                             到
-                            <InputNumber :max="23" :min="0" v-model="hour.end"></InputNumber>
+                            <InputNumber :max="23" :min="0" v-model="hour.end" @on-change="onHourSelctChange"></InputNumber>
                             小时
                         </Radio>
                     </RadioGroup>
@@ -237,6 +238,12 @@ export default {
   data () {
     return {
       isShow: false,
+      cronSec: '*',
+      cronMin: '*',
+      cronHour: '*',
+      cronDay: '*',
+      cronMonth: '*',
+      cornYear: '*',
       second: {
         radioSelected: 'everySec',
         from: 1,
@@ -296,7 +303,81 @@ export default {
       }
     }
   },
+  computed: {
+    cronExp: function () {
+      return this.cronSec + ' ' + this.cronMin + ' ' + this.cronHour + ' ' + this.cronDay + ' ' + this.cronMonth + ' ' + this.cornYear
+    }
+  },
   methods: {
+    onSecSelctChange () {
+      var val = this.second.radioSelected
+      if (val === 'everySec') {
+        this.cronSec = '*'
+      } else if (val === 'fromXstepYSec') {
+        this.cronSec = this.second.from + '/' + this.second.step
+      } else if (val === 'selectedSec') {
+        var temp = ''
+        var len = this.second.selectedData.length
+        if (len === 0) {
+          return
+        }
+        for (var i = 0; i < len - 1; ++i) {
+          temp = temp + this.second.selectedData[i] + ','
+        }
+        temp = temp + this.second.selectedData[len - 1]
+        this.cronSec = temp
+      } else if (val === 'fromXtoYSec') {
+        this.cronSec = this.second.start + '-' + this.second.end
+      } else {
+        console.error('error in onSecSelctChange')
+      }
+    },
+    onMinSelctChange () {
+      var val = this.minute.radioSelected
+      if (val === 'everyMin') {
+        this.cronMin = '*'
+      } else if (val === 'fromXstepYMin') {
+        this.cronMin = this.minute.from + '/' + this.minute.step
+      } else if (val === 'selectedMin') {
+        var temp = ''
+        var len = this.minute.selectedData.length
+        if (len === 0) {
+          return
+        }
+        for (var i = 0; i < len - 1; ++i) {
+          temp = temp + this.minute.selectedData[i] + ','
+        }
+        temp = temp + this.minute.selectedData[len - 1]
+        this.cronMin = temp
+      } else if (val === 'fromXtoYMin') {
+        this.cronMin = this.minute.start + '-' + this.minute.end
+      } else {
+        console.error('error in onMinSelctChange')
+      }
+    },
+    onHourSelctChange () {
+      var val = this.hour.radioSelected
+      if (val === 'everyHour') {
+        this.cronHour = '*'
+      } else if (val === 'fromXstepYHour') {
+        this.cronHour = this.hour.from + '/' + this.hour.step
+      } else if (val === 'selectedHour') {
+        var temp = ''
+        var len = this.hour.selectedData.length
+        if (len === 0) {
+          return
+        }
+        for (var i = 0; i < len - 1; ++i) {
+          temp = temp + this.hour.selectedData[i] + ','
+        }
+        temp = temp + this.hour.selectedData[len - 1]
+        this.cronHour = temp
+      } else if (val === 'fromXtoYHour') {
+        this.cronHour = this.hour.start + '-' + this.hour.end
+      } else {
+        console.error('error in onMinSelctChange')
+      }
+    }
 
   }
 }
