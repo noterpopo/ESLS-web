@@ -5,10 +5,10 @@
             <div class="infoarea">
               <Card dis-hover>
                 <p slot="title">样式信息</p>
-                <p>样式id：{{styleData.id}}</p>
-                <p>样式宽度：</p>
-                <p>样式高度：</p>
-                <Button type="primary" @click="reset">恢复默认值</Button>
+                <p :style="{fontSize: '20px'}">样式id：{{styleid}}</p>
+                <p :style="{fontSize: '20px'}">样式宽度：{{styleWidth}}</p>
+                <p :style="{fontSize: '20px'}">样式高度：{{styleHeight}}</p>
+                <Button :style="{marginTop:'10px'}" type="primary" @click="reset">恢复默认值</Button>
             </Card>
             </div>
         </div>
@@ -106,6 +106,8 @@ export default {
   data () {
     return {
       styleid: 0,
+      styleWidth: 0,
+      styleHeight: 0,
       isLoading: false,
       reRenderFlag: true,
       editAreaWidth: 800,
@@ -160,11 +162,12 @@ export default {
   methods: {
     getStyleData (id, w, h) {
       this.styleid = id
+      this.styleWidth = w
+      this.styleHeight = h
       this.isLoading = true
       var that = this
       getStyle(id).then(res => {
         const data = res.data.data
-        that.styleData = data
         that.editAreaWidth = w * 2
         that.editAreaHeight = h * 2
         // 重新渲染editorarea
