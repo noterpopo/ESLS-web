@@ -1,0 +1,287 @@
+<template>
+    <div class="container" ref="container">
+        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
+          <div slot="title">
+            <Row type="flex" justify="center" align="middle">
+                <Col span="22"><p>商品信息</p></Col>
+                <Col span="2"><Button type="primary">一键改价</Button></Col>
+            </Row>
+          </div>
+          <super_table  @onSearch="onTableSearch" @onClick="onTableClick" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
+        </Card>
+        <Modal v-model="editModal" title="修改商品信息" :loading="editOkLoading" @on-ok="asyncEditOK">
+          <div>
+            <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>名称：</p></Col>
+                <Col span="21"><Input type="text" v-model="currentSelectedRow.name"/></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>产地：</p></Col>
+                <Col span="21"><Input type="text" v-model="currentSelectedRow.origin" /></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>供应商：</p></Col>
+                <Col span="21"><Input type="text" v-model="currentSelectedRow.provider" /></Col>
+            </Row>
+            <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>单位：</p></Col>
+                <Col span="21"><Input type="text" v-model="currentSelectedRow.unit" /></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>操作员：</p></Col>
+                <Col span="21"><Input type="text" v-model="currentSelectedRow.operator" /></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>价格：</p></Col>
+                <Col span="21"><Input type="text" v-model="currentSelectedRow.price" /></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>促销价：</p></Col>
+                <Col span="21"><Input type="text" v-model="currentSelectedRow.promotePrice" /></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>货号：</p></Col>
+                <Col span="21"><Input type="text" v-model="currentSelectedRow.shelfNumber" /></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>规格：</p></Col>
+                <Col span="21"><Input type="text" v-model="currentSelectedRow.spec" /></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>类别：</p></Col>
+                <Col span="21"><Input type="text" v-model="currentSelectedRow.category" /></Col>
+            </Row>
+          </div>
+        </Modal>
+    </div>
+</template>
+<script>
+import super_table from '@/components/table/supertable.vue'
+import { getAllGood, updateGood } from '@/api/good'
+export default {
+  components: {
+    super_table
+  },
+  data () {
+    return {
+      windowWidth: 0,
+      isTableLoading: false,
+      editOkLoading: true,
+      pageNum: 0,
+      countPerPage: 16,
+      goodData: [],
+      tableColumns: [
+        {
+          title: 'id',
+          key: 'id',
+          width: '70',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '名称',
+          key: 'name',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '产地',
+          key: 'origin',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '供货商',
+          key: 'provider',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '单位',
+          key: 'unit',
+          width: '70',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '操作员',
+          key: 'operator',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '价格',
+          key: 'price',
+          width: '100',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '促销价',
+          key: 'promotePrice',
+          width: '100',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '货号',
+          key: 'shelfNumber',
+          width: '100',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '规格',
+          key: 'spec',
+          width: '70',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '类别',
+          key: 'category',
+
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '绑定价签',
+          key: 'tagIdList',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '状态',
+          key: 'waitUpdate',
+          width: '140',
+          render: (h, params) => {
+            const row = params.row
+            const color = row.waitUpdate === 1 ? 'primary' : 'error'
+            const text = row.waitUpdate === 1 ? '已经更新' : '等待更新'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          },
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '操作',
+          key: 'action',
+          align: 'center',
+          width: '150',
+          render: (h, params) => {
+            return h('div', [
+              h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                style: {
+                  margin: '2px'
+                },
+                on: {
+                  'click': (event) => {
+                    event.stopPropagation()
+                    this.editStyle(params.row.id, params.row.width, params.row.height)
+                  }
+                }
+              }, '绑定'),
+              h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small'
+                },
+                style: {
+                  margin: '2px'
+                },
+                on: {
+                  'click': (event) => {
+                    event.stopPropagation()
+                    this.remove(params.row.id)
+                  }
+                }
+              }, '删除')
+            ])
+          }
+        }
+      ],
+      editModal: false,
+      currentSelectedRow: {}
+    }
+  },
+  mounted () {
+    var that = this
+    this.$nextTick(() => {
+      this.windowWidth = this.$refs.container.offsetWidth
+    })
+    window.onresize = function () {
+      that.windowWidth = that.$refs.container.offsetWidth
+    }
+  },
+  created () {
+    this.getGoodTableData({ page: this.pageNum, count: this.countPerPage })
+  },
+  methods: {
+    getGoodTableData (page, count) {
+      var that = this
+      that.isTableLoading = true
+      getAllGood(page, count).then(res => {
+        const data = res.data.data
+        that.goodData = data
+        that.isTableLoading = false
+      })
+    },
+    onTableSearch (search) {
+      var key = Object.keys(search)
+      var value = search[key]
+      this.getGoodTableData({ queryId: key[0], queryString: value })
+    },
+    onTableClick (currentRow) {
+      this.currentSelectedRow = currentRow
+      this.editModal = true
+    },
+    remove (id) {
+
+    },
+    asyncEditOK () {
+      var that = this
+      updateGood(that.currentSelectedRow).then(res => { that.editModal = false; that.getGoodTableData({ page: this.pageNum, count: this.countPerPage }) })
+    }
+
+  }
+
+}
+</script>
+<style scoped>
+.Row{
+  margin-bottom: 6px;
+}
+</style>
+
+<style>
+.container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: stretch;
+    align-content: center;
+}
+</style>

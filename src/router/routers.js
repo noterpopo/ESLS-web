@@ -33,7 +33,6 @@ export default [
     redirect: '/home',
     component: Main,
     meta: {
-      hideInMenu: true,
       notCache: true
     },
     children: [
@@ -41,7 +40,6 @@ export default [
         path: '/home',
         name: 'home',
         meta: {
-          hideInMenu: true,
           title: '首页',
           notCache: true,
           icon: 'md-home'
@@ -95,6 +93,64 @@ export default [
           title: '消息中心'
         },
         component: () => import('@/view/single-page/message/index.vue')
+      }
+    ]
+  },
+  {
+    path: '/good',
+    name: 'good',
+    meta: {
+      icon: 'md-basket',
+      title: '商品'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'good-admin',
+        name: 'good-admin',
+        meta: {
+          icon: 'ios-albums',
+          title: '商品管理'
+        },
+        component: () => import('@/view/good/good-admin.vue')
+      },
+      {
+        path: 'good-bind',
+        name: 'export-excel',
+        meta: {
+          icon: 'good-bind',
+          title: '商品绑定'
+        },
+        component: () => import('@/view/good/good-bind.vue')
+      }
+    ]
+  },
+  {
+    path: '/label',
+    name: 'label',
+    meta: {
+      icon: 'ios-albums',
+      title: '价签管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'label_admin',
+        name: 'label_admin',
+        meta: {
+          icon: 'ios-albums',
+          title: '价签管理'
+        },
+        component: () => import('@/view/label/label-admin.vue')
+      },
+      {
+        path: 'label_bind',
+        name: 'label_bind',
+        meta: {
+          icon: 'ios-bookmark',
+          title: '价签绑定'
+        },
+        component: () => import('@/view/label/label-bind.vue')
       }
     ]
   },
@@ -217,64 +273,7 @@ export default [
   //     }
   //   ]
   // },
-  {
-    path: '/good',
-    name: 'good',
-    meta: {
-      icon: 'ios-stats',
-      title: '商品'
-    },
-    component: Main,
-    children: [
-      {
-        path: 'good-admin',
-        name: 'good-admin',
-        meta: {
-          icon: 'md-add',
-          title: '商品管理'
-        },
-        component: () => import('@/view/good/good-admin.vue')
-      },
-      {
-        path: 'export-excel',
-        name: 'export-excel',
-        meta: {
-          icon: 'md-download',
-          title: '导出EXCEL'
-        },
-        component: () => import('@/view/excel/export-excel.vue')
-      }
-    ]
-  },
-  {
-    path: '/label',
-    name: 'label',
-    meta: {
-      icon: 'md-cloud-upload',
-      title: '价签管理'
-    },
-    component: Main,
-    children: [
-      {
-        path: 'label_bind',
-        name: 'label_bind',
-        meta: {
-          icon: 'ios-document',
-          title: '价签绑定'
-        },
-        component: () => import('@/view/label/label-bind.vue')
-      },
-      {
-        path: 'label_admin',
-        name: 'label_admin',
-        meta: {
-          icon: 'md-clipboard',
-          title: '价签管理'
-        },
-        component: () => import('@/view/label/label-admin.vue')
-      }
-    ]
-  },
+
   // {
   //   path: '/tools_methods',
   //   name: 'tools_methods',
