@@ -20,3 +20,16 @@ export const updateGood = (data) => {
     data: data
   })
 }
+
+export const submitUpdate = () => {
+  return axios.request({
+    url: '/good/update',
+    method: 'put'
+  })
+}
+export const deleteGood = (id) => {
+  return axios.request({
+    url: '/good/' + id,
+    method: 'delete'
+  })
+}

@@ -126,8 +126,8 @@ export default [
     ]
   },
   {
-    path: '/label',
-    name: 'label',
+    path: '/tag',
+    name: 'tag',
     meta: {
       icon: 'ios-albums',
       title: '价签管理'
@@ -135,20 +135,49 @@ export default [
     component: Main,
     children: [
       {
-        path: 'label_admin',
-        name: 'label_admin',
+        path: 'tag_admin',
+        name: 'tag_admin',
         meta: {
           icon: 'ios-albums',
           title: '价签管理'
         },
-        component: () => import('@/view/label/label-admin.vue')
+        component: () => import('@/view/tag/tag-admin.vue')
       },
       {
-        path: 'label_bind',
-        name: 'label_bind',
+        path: 'tag_bind',
+        name: 'tag_bind',
         meta: {
           icon: 'ios-bookmark',
           title: '价签绑定'
+        },
+        component: () => import('@/view/tag/tag-bind.vue')
+      }
+    ]
+  },
+  {
+    path: '/style',
+    name: 'style',
+    meta: {
+      icon: 'ios-albums',
+      title: '样式管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'style_admin',
+        name: 'style_admin',
+        meta: {
+          icon: 'ios-albums',
+          title: '样式管理'
+        },
+        component: () => import('@/view/label/label-admin.vue')
+      },
+      {
+        path: 'style_bind',
+        name: 'style_bind',
+        meta: {
+          icon: 'ios-bookmark',
+          title: '样式绑定'
         },
         component: () => import('@/view/label/label-bind.vue')
       }

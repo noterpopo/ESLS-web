@@ -3,8 +3,9 @@
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
-                <Col span="22"><p>商品信息</p></Col>
-                <Col span="2"><Button type="primary">一键改价</Button></Col>
+                <Col span="20"><p>商品信息</p></Col>
+                <Col span="2"><Button type="primary" @click="submitUpdate">一键改价</Button></Col>
+                <Col span="2"><Button type="primary" @click="addGood">添加商品</Button></Col>
             </Row>
           </div>
           <super_table  @onSearch="onTableSearch" @onClick="onTableClick" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
@@ -53,11 +54,63 @@
             </Row>
           </div>
         </Modal>
+        <Modal v-model="addModal" title="添加商品" :loading="addOkLoading" @on-ok="asyncAddOK">
+          <div>
+            <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>名称：</p></Col>
+                <Col span="21"><Input type="text" v-model="addGooddata.name"/></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>产地：</p></Col>
+                <Col span="21"><Input type="text" v-model="addGooddata.origin" /></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>供应商：</p></Col>
+                <Col span="21"><Input type="text" v-model="addGooddata.provider" /></Col>
+            </Row>
+            <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>单位：</p></Col>
+                <Col span="21"><Input type="text" v-model="addGooddata.unit" /></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>操作员：</p></Col>
+                <Col span="21"><Input type="text" v-model="addGooddata.operator" /></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>价格：</p></Col>
+                <Col span="21"><Input type="text" v-model="addGooddata.price" /></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>促销价：</p></Col>
+                <Col span="21"><Input type="text" v-model="addGooddata.promotePrice" /></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>货号：</p></Col>
+                <Col span="21"><Input type="text" v-model="addGooddata.shelfNumber" /></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>规格：</p></Col>
+                <Col span="21"><Input type="text" v-model="addGooddata.spec" /></Col>
+            </Row>
+             <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>类别：</p></Col>
+                <Col span="21"><Input type="text" v-model="addGooddata.category" /></Col>
+            </Row>
+            <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>条形码：</p></Col>
+                <Col span="21"><Input type="text" v-model="addGooddata.barCode" /></Col>
+            </Row>
+            <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>二维码：</p></Col>
+                <Col span="21"><Input type="text" v-model="addGooddata.qrCode" /></Col>
+            </Row>
+          </div>
+        </Modal>
     </div>
 </template>
 <script>
 import super_table from '@/components/table/supertable.vue'
-import { getAllGood, updateGood } from '@/api/good'
+import { getAllGood, updateGood, submitUpdate, deleteGood } from '@/api/good'
 export default {
   components: {
     super_table
@@ -67,8 +120,10 @@ export default {
       windowWidth: 0,
       isTableLoading: false,
       editOkLoading: true,
+      addOkLoading: true,
+      addModal: false,
       pageNum: 0,
-      countPerPage: 16,
+      countPerPage: 14,
       goodData: [],
       tableColumns: [
         {
@@ -224,7 +279,31 @@ export default {
         }
       ],
       editModal: false,
-      currentSelectedRow: {}
+      currentSelectedRow: {},
+      addGooddata: {
+        barCode: '默认条形码',
+        category: '默认种类',
+        id: 0,
+        imageUrl: '',
+        name: '默认名字',
+        operator: '默认操作员',
+        origin: '默认产地',
+        price: 0,
+        promotePrice: 0,
+        promotionReason: '默认促销理由',
+        provider: '默认供应商',
+        qrCode: '默认二维码',
+        regionNames: '',
+        rfu01: '',
+        rfu02: '',
+        rfus01: '',
+        rfus02: '',
+        shelfNumber: '默认货号',
+        spec: '默认规格',
+        status: 0,
+        unit: '默认单位',
+        waitUpdate: 0
+      }
     }
   },
   mounted () {
@@ -259,11 +338,23 @@ export default {
       this.editModal = true
     },
     remove (id) {
-
+      var that = this
+      deleteGood(id).then(res => { that.getGoodTableData({ page: this.pageNum, count: this.countPerPage }) })
     },
     asyncEditOK () {
       var that = this
       updateGood(that.currentSelectedRow).then(res => { that.editModal = false; that.getGoodTableData({ page: this.pageNum, count: this.countPerPage }) })
+    },
+    submitUpdate () {
+      var that = this
+      submitUpdate().then(res => { that.getGoodTableData({ page: this.pageNum, count: this.countPerPage }) })
+    },
+    addGood () {
+      this.addModal = true
+    },
+    asyncAddOK () {
+      var that = this
+      updateGood(that.addGooddata).then(res => { that.addModal = false; that.getGoodTableData({ page: this.pageNum, count: this.countPerPage }) })
     }
 
   }
