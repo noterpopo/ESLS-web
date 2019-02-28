@@ -8,16 +8,41 @@
           </div>
           <super_table  @onSearch="onTableSearch" @onClick="onTableClick" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
         </Card>
-        <Modal v-model="settingModal" title="设置价签" :loading="settingOkLoading" @on-ok="asyncSettingOK">
-          <div>
-            <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>定期刷新：</p></Col>
-                <Col span="17"><Input type="text" v-model="cronExp" /></Col>
-                <Col span="4"><corn-selector @onOk="onCron" style="margin-right:4px">选择时间</corn-selector></Col>
+        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px', marginTop:'10px'}">
+          <div slot="title">
+            <Row type="flex" justify="center" align="middle">
+                <Col span="24"><p>设置面板</p></Col>
             </Row>
-
           </div>
-        </Modal>
+          <div>
+            <Row type="flex" justify="start" align="middle" class="Row">
+                <Col span="2"><p>定期刷新：</p></Col>
+                <Col span="4">
+                  <Select v-model="flushMode" style="width:220px">
+                      <Option :value="0" >对标签刷新</Option>
+                      <Option :value="1" >为对指定路由器的所有标签刷新</Option>
+                      <Option :value="3" >对标签定期刷新</Option>
+                      <Option :value="4" >对路由器定期刷新</Option>
+                  </Select>
+                </Col>
+                <Col span="6">
+                <Input type="text" v-model="flushQueryStr"  placeholder="筛选条件" style="width: 300px" >
+                  <Select v-model="flushQuery" slot="prepend" style="width: 100px">
+                      <Option value="id">id</Option>
+                  </Select>
+                </Input></Col>
+                <Col span="7">
+                <Input  v-model="flushCronExp" placeholder="输入cron表达式" >
+                  <Button slot="append" @click="isCronModalShow=true">选择时间</Button>
+                </Input>
+
+                </Input></Col>
+                <Col span=" "><Button type="primary" @click="onFlush">刷新</Button></Col>
+
+            </Row>
+          </div>
+          <corn-selector :isModalShow="isCronModalShow" @onOk="onCron" @onIsShow="onIsShow"></corn-selector>
+        </Card>
     </div>
 </template>
 <script>
@@ -33,10 +58,8 @@ export default {
     return {
       windowWidth: 0,
       isTableLoading: false,
-      settingOkLoading: true,
-      settingModal: false,
       pageNum: 0,
-      countPerPage: 14,
+      countPerPage: 10,
       tagData: [],
       tableColumns: [
         {
@@ -193,7 +216,11 @@ export default {
           }
         }
       ],
-      cronExp: ''
+      flushCronExp: '',
+      flushQueryStr: '',
+      flushQuery: 'id',
+      flushMode: 0,
+      isCronModalShow: false
 
     }
   },
@@ -228,7 +255,10 @@ export default {
       this.getTagTableData({ queryId: key[0], queryString: value })
     },
     onCron (data) {
-      this.cronExp = data
+      this.flushCronExp = data
+    },
+    onIsShow (val) {
+      this.isCronModalShow = val
     }
   }
 

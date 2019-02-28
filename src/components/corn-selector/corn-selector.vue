@@ -1,6 +1,5 @@
 <template>
     <div class="container">
-        <Button :style="{margin:'10px', width:width+'px',height:height+'px'}" type="primary" @click="isShow=true"><slot></slot></Button>
         <Modal v-model="isShow" :mask-closable="false" draggable title="定时任务设置" @on-ok="onOk">
             <Tabs :animated="false">
                 <TabPane label="秒">
@@ -235,6 +234,9 @@
 export default {
   name: 'cron-selector',
   props: {
+    isModalShow: {
+      default: false
+    },
     width: {
       default: 100
     },
@@ -244,7 +246,7 @@ export default {
   },
   data () {
     return {
-      isShow: false,
+      isShow: this.isModalShow,
       cronSec: '*',
       cronMin: '*',
       cronHour: '*',
@@ -309,6 +311,14 @@ export default {
         start: 2019,
         end: 2019
       }
+    }
+  },
+  watch: {
+    isModalShow (val) {
+      this.isShow = val
+    },
+    isShow (val) {
+      this.$emit('onIsShow', val)
     }
   },
   computed: {
