@@ -32,16 +32,110 @@
                   </Select>
                 </Input></Col>
                 <Col span="7">
-                <Input  v-model="flushCronExp" placeholder="输入cron表达式" >
-                  <Button slot="append" @click="isCronModalShow=true">选择时间</Button>
-                </Input>
-
+                <Input  v-model="flushCronExp" placeholder="输入cron表达式" style="width: 360px" >
+                  <Button slot="append" @click="isFlushCronModalShow=true">选择时间</Button>
                 </Input></Col>
-                <Col span=" "><Button type="primary" @click="onFlush">刷新</Button></Col>
+                <Col span="1"><Button type="primary" @click="onFlush">刷新</Button></Col>
 
             </Row>
           </div>
-          <corn-selector :isModalShow="isCronModalShow" @onOk="onCron" @onIsShow="onIsShow"></corn-selector>
+
+          <div>
+            <Row type="flex" justify="start" align="middle" class="Row">
+                <Col span="2"><p>闪灯：</p></Col>
+                <Col span="4">
+                  <Select v-model="lightMode" style="width:220px">
+                      <Option :value="0" >对标签</Option>
+                      <Option :value="1" >对路由器</Option>
+                  </Select>
+                </Col>
+                <Col span="6">
+                <Input type="text" v-model="lightQueryStr"  placeholder="筛选条件" style="width: 300px" >
+                  <Select v-model="lightQuery" slot="prepend" style="width: 100px">
+                      <Option value="id">id</Option>
+                  </Select>
+                </Input></Col>
+                <Col span="2">
+                  <Select v-model="isLight" style="width: 100px">
+                      <Option :value="0">结束闪灯</Option>
+                      <Option :value="1">闪灯</Option>
+                  </Select>
+                </Col>
+                <Col span="1"><Button type="primary" @click="onLight">闪灯</Button></Col>
+
+            </Row>
+          </div>
+          <div>
+            <Row type="flex" justify="start" align="middle" class="Row">
+                <Col span="2"><p>移除：</p></Col>
+                <Col span="4">
+                  <Select v-model="removeMode" style="width:220px">
+                      <Option :value="0" >对标签</Option>
+                      <Option :value="1" >对路由器</Option>
+                  </Select>
+                </Col>
+                <Col span="6">
+                <Input type="text" v-model="removeQueryStr"  placeholder="筛选条件" style="width: 300px" >
+                  <Select v-model="removeQuery" slot="prepend" style="width: 100px">
+                      <Option value="id">id</Option>
+                  </Select>
+                </Input></Col>
+                <Col span="1"><Button type="primary" @click="onLight">移除</Button></Col>
+
+            </Row>
+          </div>
+          <div>
+            <Row type="flex" justify="start" align="middle" class="Row">
+                <Col span="2"><p>定期巡检：</p></Col>
+                <Col span="4">
+                  <Select v-model="scanMode" style="width:220px">
+                      <Option :value="0" >对标签巡检</Option>
+                      <Option :value="1" >为对指定路由器的所有标签巡检</Option>
+                      <Option :value="3" >对标签定期巡检</Option>
+                      <Option :value="4" >对路由器定期巡检</Option>
+                  </Select>
+                </Col>
+                <Col span="6">
+                <Input type="text" v-model="scanQueryStr"  placeholder="筛选条件" style="width: 300px" >
+                  <Select v-model="scanQuery" slot="prepend" style="width: 100px">
+                      <Option value="id">id</Option>
+                  </Select>
+                </Input></Col>
+                <Col span="7">
+                <Input  v-model="scanCronExp" placeholder="输入cron表达式" style="width: 360px" >
+                  <Button slot="append" @click="isScanCronModalShow=true">选择时间</Button>
+                </Input></Col>
+                <Col span="1"><Button type="primary" @click="onFlush">巡检</Button></Col>
+
+            </Row>
+          </div>
+          <div>
+            <Row type="flex" justify="start" align="middle" class="Row">
+                <Col span="2"><p>状态：</p></Col>
+                <Col span="4">
+                  <Select v-model="statusMode" style="width:220px">
+                      <Option :value="0" >对标签</Option>
+                      <Option :value="1" >对路由器</Option>
+                  </Select>
+                </Col>
+                <Col span="6">
+                <Input type="text" v-model="statusQueryStr"  placeholder="筛选条件" style="width: 300px" >
+                  <Select v-model="statusQuery" slot="prepend" style="width: 100px">
+                      <Option value="id">id</Option>
+                  </Select>
+                </Input></Col>
+                <Col span="2">
+                  <Select v-model="isStatus" style="width: 100px">
+                      <Option :value="0">禁用</Option>
+                      <Option :value="1">启用</Option>
+                  </Select>
+                </Col>
+                <Col span="1"><Button type="primary" @click="onLight">修改</Button></Col>
+
+            </Row>
+          </div>
+          <corn-selector :isModalShow="isFlushCronModalShow" @onOk="onFlushCron" @onIsShow="onFlushIsShow"></corn-selector>
+          <corn-selector :isModalShow="isScanCronModalShow" @onOk="onScanCron" @onIsShow="onScanIsShow"></corn-selector>
         </Card>
     </div>
 </template>
@@ -220,7 +314,23 @@ export default {
       flushQueryStr: '',
       flushQuery: 'id',
       flushMode: 0,
-      isCronModalShow: false
+      lightQueryStr: '',
+      lightQuery: 'id',
+      lightMode: 0,
+      isLight: 0,
+      removeQueryStr: '',
+      removeQuery: 'id',
+      removeMode: 0,
+      scanCronExp: '',
+      scanQueryStr: '',
+      scanQuery: 'id',
+      scanMode: 0,
+      statusQueryStr: '',
+      statusQuery: 'id',
+      statusMode: 0,
+      isStatus: 0,
+      isFlushCronModalShow: false,
+      isScanCronModalShow: false
 
     }
   },
@@ -254,11 +364,17 @@ export default {
       var value = search[key]
       this.getTagTableData({ queryId: key[0], queryString: value })
     },
-    onCron (data) {
+    onFlushCron (data) {
       this.flushCronExp = data
     },
-    onIsShow (val) {
-      this.isCronModalShow = val
+    onFlushIsShow (val) {
+      this.isFlushCronModalShow = val
+    },
+    onScanCron (data) {
+      this.scanCronExp = data
+    },
+    onScanIsShow (val) {
+      this.isScanCronModalShow = val
     }
   }
 
