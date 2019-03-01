@@ -6,7 +6,21 @@
                 <Col span="24"><p>价签信息</p></Col>
             </Row>
           </div>
-          <super_table  @onSearch="onTableSearch" @onClick="onTableClick" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
+          <super_table  @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
+          <Modal v-model="isBindModalShow" title="绑定" width="1400" @on-ok="currentStep=0">
+            <Steps :current="currentStep">
+                <Step title="绑定商品" content="这一步绑定显示在价签上的商品">
+
+                </Step>
+                <Step title="绑定样式" content="这一步绑定显示在价签上的样式"></Step>
+                <Step title="预览价签" content="预览选择继续修改或完成"></Step>
+            </Steps>
+            <super_table key="1" v-if="currentStep===0" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageNum="modalGoodPageNum"></super_table>
+            <super_table key="2" v-if="currentStep===1" @onSearch="onModalStyleTableSearch" @onClick="onMoadlStyleTableClick" :data="styleData" :columns="tableModalStyleColumns" :isLoading="isModalStyleTableLoading" :pageNum="modalStylePageNum"></super_table>
+            <e_label v-if="currentStep===2" v-bind="item" ref="label_canvas" >
+            </e_label>
+            <Button v-if="currentStep===0||currentStep===1" @click="onNextStep">下一步</Button>
+        </Modal>
         </Card>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px', marginTop:'10px'}">
           <div slot="title">
@@ -15,7 +29,7 @@
             </Row>
           </div>
           <div>
-            <Row type="flex" justify="start" align="middle" class="Row">
+            <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
                 <Col span="2"><p>定期刷新：</p></Col>
                 <Col span="4">
                   <Select v-model="flushMode" style="width:220px">
@@ -41,7 +55,7 @@
           </div>
 
           <div>
-            <Row type="flex" justify="start" align="middle" class="Row">
+            <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
                 <Col span="2"><p>闪灯：</p></Col>
                 <Col span="4">
                   <Select v-model="lightMode" style="width:220px">
@@ -66,7 +80,7 @@
             </Row>
           </div>
           <div>
-            <Row type="flex" justify="start" align="middle" class="Row">
+            <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
                 <Col span="2"><p>移除：</p></Col>
                 <Col span="4">
                   <Select v-model="removeMode" style="width:220px">
@@ -85,7 +99,7 @@
             </Row>
           </div>
           <div>
-            <Row type="flex" justify="start" align="middle" class="Row">
+            <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
                 <Col span="2"><p>定期巡检：</p></Col>
                 <Col span="4">
                   <Select v-model="scanMode" style="width:220px">
@@ -110,7 +124,7 @@
             </Row>
           </div>
           <div>
-            <Row type="flex" justify="start" align="middle" class="Row">
+            <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
                 <Col span="2"><p>状态：</p></Col>
                 <Col span="4">
                   <Select v-model="statusMode" style="width:220px">
@@ -137,14 +151,20 @@
           <corn-selector :isModalShow="isFlushCronModalShow" @onOk="onFlushCron" @onIsShow="onFlushIsShow"></corn-selector>
           <corn-selector :isModalShow="isScanCronModalShow" @onOk="onScanCron" @onIsShow="onScanIsShow"></corn-selector>
         </Card>
+
     </div>
+
 </template>
 <script>
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
-import { getAllTag } from '@/api/tag'
+import e_label from '@/components/e-label/e-lable.vue'
+import { getAllTag, flushTag } from '@/api/tag'
+import { getAllGood, getGood } from '@/api/good'
+import { getAllStyle, getStyle } from '@/api/style'
 export default {
   components: {
+    e_label,
     super_table,
     'corn-selector': cronSelector
   },
@@ -152,7 +172,11 @@ export default {
     return {
       windowWidth: 0,
       isTableLoading: false,
+      isModalGoodTableLoading: false,
+      isModalStyleTableLoading: false,
       pageNum: 0,
+      modalGoodPageNum: 0,
+      modalStylePageNum: 0,
       countPerPage: 10,
       tagData: [],
       tableColumns: [
@@ -287,7 +311,7 @@ export default {
                 on: {
                   'click': (event) => {
                     event.stopPropagation()
-                    this.editStyle(params.row.id, params.row.width, params.row.height)
+                    this.onBind(params.row.id)
                   }
                 }
               }, '绑定'),
@@ -307,6 +331,137 @@ export default {
                 }
               }, '删除')
             ])
+          }
+        }
+      ],
+      goodData: [],
+      tableModalGoodColumns: [
+        {
+          title: 'id',
+          key: 'id',
+          width: '70',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '名称',
+          key: 'name',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '产地',
+          key: 'origin',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '供货商',
+          key: 'provider',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '单位',
+          key: 'unit',
+          width: '70',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '价格',
+          key: 'price',
+          width: '100',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '促销价',
+          key: 'promotePrice',
+          width: '100',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '货号',
+          key: 'shelfNumber',
+          width: '100',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '规格',
+          key: 'spec',
+          width: '70',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '类别',
+          key: 'category',
+
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '状态',
+          key: 'waitUpdate',
+          width: '140',
+          render: (h, params) => {
+            const row = params.row
+            const color = row.waitUpdate === 1 ? 'primary' : 'error'
+            const text = row.waitUpdate === 1 ? '已经更新' : '等待更新'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          },
+          filter: {
+            type: 'Input'
+          }
+        }
+      ],
+      styleData: [],
+      tableModalStyleColumns: [
+        {
+          title: '样式id',
+          key: 'id',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '样式名称',
+          key: 'styleType',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '宽度',
+          key: 'width',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '高度',
+          key: 'height',
+          filter: {
+            type: 'Input'
           }
         }
       ],
@@ -330,8 +485,26 @@ export default {
       statusMode: 0,
       isStatus: 0,
       isFlushCronModalShow: false,
-      isScanCronModalShow: false
-
+      isScanCronModalShow: false,
+      isBindModalShow: false,
+      currentStep: 0,
+      bindGoodSelectId: 0,
+      bindStyleSelectId: 0,
+      item: {
+        itemName: '测试商品名称1',
+        itemUnit: '罐',
+        itemNorm: '205g',
+        itemCategory: '衣物',
+        itemOrigin: '北京',
+        itemNo: '00012',
+        itemQRCode: '692226641428',
+        itemBarCode: '692226641428',
+        itemStock: '110',
+        itemisOnSale: true,
+        itemPrice: '10.19',
+        itemOnSalePrice: '444.44',
+        labelStyle: '1'
+      }
     }
   },
   mounted () {
@@ -356,8 +529,8 @@ export default {
         that.isTableLoading = false
       })
     },
-    onTableClick () {
-      this.settingModal = true
+    remove (id) {
+
     },
     onTableSearch (search) {
       var key = Object.keys(search)
@@ -375,6 +548,89 @@ export default {
     },
     onScanIsShow (val) {
       this.isScanCronModalShow = val
+    },
+    onBind (id) {
+      this.isBindModalShow = true
+      this.getGoodTableData({ page: this.modalGoodPageNum, count: 8 })
+    },
+    getGoodTableData ({ page, count, queryId, queryString }) {
+      var that = this
+      that.isModalGoodTableLoading = true
+      getAllGood({ page: page, count: count, queryId: queryId, queryString: queryString }).then(res => {
+        const data = res.data.data
+        that.goodData = data
+        that.isModalGoodTableLoading = false
+      })
+    },
+    getStyleTableData ({ page, count, queryId, queryString }) {
+      var that = this
+      that.isModalStyleTableLoading = true
+      getAllStyle({ page: page, count: count, queryId: queryId, queryString: queryString }).then(res => {
+        const data = res.data.data
+        that.styleData = data
+        that.isModalStyleTableLoading = false
+      })
+    },
+    onModalGoodTableSearch (search) {
+      var key = Object.keys(search)
+      var value = search[key]
+      this.getGoodTableData({ page: this.modalGoodPageNum, count: 8, queryId: key[0], queryString: value })
+    },
+    onMoadlGoodTableClick (rowData) {
+      this.bindGoodSelectId = rowData.id
+    },
+    onModalStyleTableSearch (search) {
+      var key = Object.keys(search)
+      var value = search[key]
+      this.getStyleTableData({ page: this.modalGoodPageNum, count: 8, queryId: key[0], queryString: value })
+    },
+    onMoadlStyleTableClick (rowData) {
+      this.bindStyleSelectId = rowData.id
+    },
+    getLabelData (gid, sid, w, h) {
+      var that = this
+      that.isLabelLoading = true
+      getStyle(sid).then(res => {
+        const dispData = res.data.data
+        console.log(dispData)
+        getGood(gid).then(res => {
+          that.isLabelLoading = false
+          that.$refs.label_canvas.initData(dispData, w, h)
+        })
+      })
+    },
+    onNextStep () {
+      if (this.currentStep === 1) {
+        if (this.bindStyleSelectId === 0) {
+          this.$Modal.error({
+            title: '错误',
+            content: '请选择绑定的样式'
+          })
+        } else {
+          this.getLabelData()
+          this.currentStep = this.currentStep + 1
+        }
+      } else if (this.currentStep === 0) {
+        if (this.bindGoodSelectId === 0) {
+          this.$Modal.error({
+            title: '错误',
+            content: '请选择绑定的商品'
+          })
+        } else {
+          this.currentStep = this.currentStep + 1
+          this.getStyleTableData({ page: this.modalStylePageNum, count: 8 })
+        }
+      }
+    },
+    onFlush () {
+      let params = {}
+      this.$set(params, 'cron', this.flushCronExp)
+      this.$set(params, 'query', this.flushQuery)
+      this.$set(params, 'queryString', this.flushQueryStr)
+      flushTag(params, this.flushMode)
+    },
+    onLight () {
+
     }
   }
 

@@ -246,21 +246,6 @@ export default {
             return h('div', [
               h('Button', {
                 props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  margin: '2px'
-                },
-                on: {
-                  'click': (event) => {
-                    event.stopPropagation()
-                    this.editStyle(params.row.id, params.row.width, params.row.height)
-                  }
-                }
-              }, '绑定'),
-              h('Button', {
-                props: {
                   type: 'error',
                   size: 'small'
                 },
@@ -331,7 +316,7 @@ export default {
     onTableSearch (search) {
       var key = Object.keys(search)
       var value = search[key]
-      this.getGoodTableData({ queryId: key[0], queryString: value })
+      this.getGoodTableData({ page: this.pageNum, count: this.countPerPage, queryId: key[0], queryString: value })
     },
     onTableClick (currentRow) {
       this.currentSelectedRow = currentRow

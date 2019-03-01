@@ -12,3 +12,21 @@ export const getAllTag = ({ page, count, queryId, queryString }) => {
     }
   })
 }
+
+export const flushTag = (data, mode) => {
+  return axios.request({
+    url: 'tag/flush',
+    method: 'put',
+    params: {
+      requestBean: data,
+      mode: mode
+    }
+  })
+}
+
+export const deleteTag = (id) => {
+  return axios.request({
+    url: 'tag/' + id,
+    method: 'delete'
+  })
+}

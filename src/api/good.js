@@ -13,6 +13,13 @@ export const getAllGood = ({ page, count, queryId, queryString }) => {
   })
 }
 
+export const getGood = (id) => {
+  return axios.request({
+    url: 'goods/' + id,
+    method: 'get'
+  })
+}
+
 export const updateGood = (data) => {
   return axios.request({
     url: 'good/',

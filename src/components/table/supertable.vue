@@ -1,7 +1,7 @@
 <template>
     <div>
         <Table size="small" border :data="filters" :columns="tableColumnsFilters" stripe></Table>
-        <Table size="small" @on-row-click="handleClick" :show-header=false border :data="data" :columns="columns" :loading="isLoading" stripe></Table>
+        <Table size="small" highlight-row @on-row-click="handleClick" :show-header=false border :data="data" :columns="columns" :loading="isLoading" stripe></Table>
         <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
             <Page :total="pageNum" :current="1" @on-change="changePage"></Page>
