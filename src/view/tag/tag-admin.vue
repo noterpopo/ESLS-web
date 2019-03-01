@@ -8,9 +8,8 @@
           </div>
           <super_table  @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
           <Modal v-model="isBindModalShow" title="绑定" width="1400" @on-ok="currentStep=0">
-            <Steps :current="currentStep">
-                <Step title="绑定商品" content="这一步绑定显示在价签上的商品">
-
+            <Steps :current="currentStep"  style="marginBottom:16px;">
+                <Step  title="绑定商品" content="这一步绑定显示在价签上的商品">
                 </Step>
                 <Step title="绑定样式" content="这一步绑定显示在价签上的样式"></Step>
                 <Step title="预览价签" content="预览选择继续修改或完成"></Step>
@@ -19,7 +18,7 @@
             <super_table key="2" v-if="currentStep===1" @onSearch="onModalStyleTableSearch" @onClick="onMoadlStyleTableClick" :data="styleData" :columns="tableModalStyleColumns" :isLoading="isModalStyleTableLoading" :pageNum="modalStylePageNum"></super_table>
             <e_label v-if="currentStep===2" v-bind="item" ref="label_canvas" >
             </e_label>
-            <Button v-if="currentStep===0||currentStep===1" @click="onNextStep">下一步</Button>
+            <Button style="position:absolute; top:540px;" v-if="currentStep===0||currentStep===1" @click="onNextStep">下一步</Button>
         </Modal>
         </Card>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px', marginTop:'10px'}">
@@ -311,7 +310,7 @@ export default {
                 on: {
                   'click': (event) => {
                     event.stopPropagation()
-                    this.onBind(params.row.id)
+                    this.onBind(params.row.id, params.row.width, params.row.height)
                   }
                 }
               }, '绑定'),
@@ -549,11 +548,11 @@ export default {
     onScanIsShow (val) {
       this.isScanCronModalShow = val
     },
-    onBind (id) {
+    onBind (id, w, h) {
       this.isBindModalShow = true
       this.getGoodTableData({ page: this.modalGoodPageNum, count: 8 })
     },
-    getGoodTableData ({ page, count, queryId, queryString }) {
+    getGoodTableData ({ page, count, queryId, queryString }, w, h) {
       var that = this
       that.isModalGoodTableLoading = true
       getAllGood({ page: page, count: count, queryId: queryId, queryString: queryString }).then(res => {
@@ -587,13 +586,23 @@ export default {
     onMoadlStyleTableClick (rowData) {
       this.bindStyleSelectId = rowData.id
     },
-    getLabelData (gid, sid, w, h) {
+    getLabelData (gid, sid) {
       var that = this
       that.isLabelLoading = true
       getStyle(sid).then(res => {
         const dispData = res.data.data
-        console.log(dispData)
         getGood(gid).then(res => {
+          const goodInfo = res.data.data[0]
+          this.item.itemName = goodInfo.name
+          this.item.itemUnit = goodInfo.unit
+          this.item.itemNorm = goodInfo.spec
+          this.item.itemCategory = goodInfo.category
+          this.item.itemOrigin = goodInfo.origin
+          this.item.itemNo = goodInfo.shelfNumber
+          this.item.itemQRCode = goodInfo.qrCode
+          this.item.itemBarCode = goodInfo.barCode
+          this.item.itemPrice = goodInfo.price
+          this.itemOnSalePrice = goodInfo.promotePrice
           that.isLabelLoading = false
           that.$refs.label_canvas.initData(dispData, w, h)
         })
@@ -607,7 +616,7 @@ export default {
             content: '请选择绑定的样式'
           })
         } else {
-          this.getLabelData()
+          this.getLabelData(this.bindGoodSelectId, this.bindStyleSelectId, 400, 300)
           this.currentStep = this.currentStep + 1
         }
       } else if (this.currentStep === 0) {

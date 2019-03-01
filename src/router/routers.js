@@ -113,15 +113,6 @@ export default [
           title: '商品管理'
         },
         component: () => import('@/view/good/good-admin.vue')
-      },
-      {
-        path: 'good-bind',
-        name: 'export-excel',
-        meta: {
-          icon: 'good-bind',
-          title: '商品绑定'
-        },
-        component: () => import('@/view/good/good-bind.vue')
       }
     ]
   },
@@ -142,15 +133,6 @@ export default [
           title: '价签管理'
         },
         component: () => import('@/view/tag/tag-admin.vue')
-      },
-      {
-        path: 'tag_bind',
-        name: 'tag_bind',
-        meta: {
-          icon: 'ios-bookmark',
-          title: '价签绑定'
-        },
-        component: () => import('@/view/tag/tag-bind.vue')
       }
     ]
   },
@@ -171,15 +153,6 @@ export default [
           title: '样式管理'
         },
         component: () => import('@/view/label/label-admin.vue')
-      },
-      {
-        path: 'style_bind',
-        name: 'style_bind',
-        meta: {
-          icon: 'ios-bookmark',
-          title: '样式绑定'
-        },
-        component: () => import('@/view/label/label-bind.vue')
       }
     ]
   },
