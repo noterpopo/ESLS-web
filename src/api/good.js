@@ -28,10 +28,13 @@ export const updateGood = (data) => {
   })
 }
 
-export const submitUpdate = () => {
+export const submitUpdate = (data) => {
   return axios.request({
     url: '/good/update',
-    method: 'put'
+    method: 'put',
+    data: {
+      item: data
+    }
   })
 }
 export const deleteGood = (id) => {

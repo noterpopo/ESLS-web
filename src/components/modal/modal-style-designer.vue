@@ -92,6 +92,7 @@
 </template>
 <script>
 // https://github.com/mauricius/vue-draggable-resizable
+// TODO:字体颜色
 import { getStyle } from '@/api/style'
 import { coppyArray } from '@/libs/util'
 import VueDraggableResizable from 'vue-draggable-resizable'
@@ -179,8 +180,8 @@ export default {
         for (var i = 0; i < len; ++i) {
           data[i].x = data[i].x * 2
           data[i].y = data[i].y * 2
-          data[i].width = data[i].width * 2
-          data[i].height = data[i].height * 2
+          data[i].width = data[i].width * 1.6
+          data[i].height = data[i].height * 1.4
           data[i].fontSize = data[i].fontSize * 1.414
           if (data[i].sourceColumn === 'barCode') {
             that.item.itemBarCode = data[i].text

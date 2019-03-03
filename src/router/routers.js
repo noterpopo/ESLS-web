@@ -113,6 +113,15 @@ export default [
           title: '商品管理'
         },
         component: () => import('@/view/good/good-admin.vue')
+      },
+      {
+        path: 'good-watch',
+        name: 'good-watch',
+        meta: {
+          icon: 'ios-albums',
+          title: '变价监控'
+        },
+        component: () => import('@/view/good/good-watch.vue')
       }
     ]
   },

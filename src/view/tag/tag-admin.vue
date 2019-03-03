@@ -6,7 +6,7 @@
                 <Col span="24"><p>价签信息</p></Col>
             </Row>
           </div>
-          <super_table  @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
+          <super_table  @onClick="onTableClick" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
           <Modal v-model="isBindModalShow" title="绑定" width="1400" @on-ok="currentStep=0">
             <Steps :current="currentStep"  style="marginBottom:16px;">
                 <Step  title="绑定商品" content="这一步绑定显示在价签上的商品">
@@ -19,6 +19,57 @@
             <e_label v-if="currentStep===2" v-bind="item" ref="label_canvas" >
             </e_label>
             <Button style="position:absolute; top:540px;" v-if="currentStep===0||currentStep===1" @click="onNextStep">下一步</Button>
+        </Modal>
+        <Modal v-model="infoModal" title="标签信息">
+          <div>
+            <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>id：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.id"/></Col>
+            </Row>
+              <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>电量：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.power"/></Col>
+            </Row> <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>标签信号：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.tagRssi"/></Col>
+            </Row> <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>路由信号：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.apRssi"/></Col>
+            </Row> <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>硬件版本：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.hardwareVersion"/></Col>
+            </Row> <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>软件版本：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.softwareVersion"/></Col>
+            </Row> <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>运行时间：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.execTime"/></Col>
+            </Row> <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>更新时间：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.completeTime"/></Col>
+            </Row> <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>条码：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.barCode"/></Col>
+            </Row> <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>地址：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.tagAddress"/></Col>
+            </Row> <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>宽：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.resolutionWidth"/></Col>
+            </Row> <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>高：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.resolutionHeight"/></Col>
+            </Row> <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>绑定商品：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.goodId"/></Col>
+            </Row> <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>绑定样式：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.styleId"/></Col>
+            </Row> <Row type="flex" justify="center" align="middle" class="Row">
+                <Col span="3"><p>路由：</p></Col>
+                <Col span="21"><Input type="text" v-model="selectedData.routerId"/></Col>
+            </Row>
+          </div>
         </Modal>
         </Card>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px', marginTop:'10px'}">
@@ -259,7 +310,7 @@ export default {
         {
           title: '绑定样式',
           key: 'styleId',
-          width: '70',
+          width: '110',
           filter: {
             type: 'Input'
           }
@@ -310,7 +361,7 @@ export default {
                 on: {
                   'click': (event) => {
                     event.stopPropagation()
-                    this.onBind(params.row.id, params.row.width, params.row.height)
+                    this.onBind(params.row.id)
                   }
                 }
               }, '绑定'),
@@ -489,6 +540,7 @@ export default {
       currentStep: 0,
       bindGoodSelectId: 0,
       bindStyleSelectId: 0,
+      bindTagId: 0,
       item: {
         itemName: '测试商品名称1',
         itemUnit: '罐',
@@ -503,7 +555,9 @@ export default {
         itemPrice: '10.19',
         itemOnSalePrice: '444.44',
         labelStyle: '1'
-      }
+      },
+      selectedData: {},
+      infoModal: false
     }
   },
   mounted () {
@@ -548,11 +602,12 @@ export default {
     onScanIsShow (val) {
       this.isScanCronModalShow = val
     },
-    onBind (id, w, h) {
+    onBind (id) {
+      this.bindTagId = id
       this.isBindModalShow = true
       this.getGoodTableData({ page: this.modalGoodPageNum, count: 8 })
     },
-    getGoodTableData ({ page, count, queryId, queryString }, w, h) {
+    getGoodTableData ({ page, count, queryId, queryString }) {
       var that = this
       that.isModalGoodTableLoading = true
       getAllGood({ page: page, count: count, queryId: queryId, queryString: queryString }).then(res => {
@@ -593,18 +648,20 @@ export default {
         const dispData = res.data.data
         getGood(gid).then(res => {
           const goodInfo = res.data.data[0]
-          this.item.itemName = goodInfo.name
-          this.item.itemUnit = goodInfo.unit
-          this.item.itemNorm = goodInfo.spec
-          this.item.itemCategory = goodInfo.category
-          this.item.itemOrigin = goodInfo.origin
-          this.item.itemNo = goodInfo.shelfNumber
-          this.item.itemQRCode = goodInfo.qrCode
-          this.item.itemBarCode = goodInfo.barCode
-          this.item.itemPrice = goodInfo.price
-          this.itemOnSalePrice = goodInfo.promotePrice
+          that.item.itemName = goodInfo.name
+          that.item.itemUnit = goodInfo.unit
+          that.item.itemNorm = goodInfo.spec
+          that.item.itemCategory = goodInfo.category
+          that.item.itemOrigin = goodInfo.origin
+          that.item.itemNo = goodInfo.shelfNumber
+          that.item.itemQRCode = goodInfo.qrCode
+          that.item.itemBarCode = goodInfo.barCode
+          that.item.itemPrice = goodInfo.price + ''
+          that.itemOnSalePrice = goodInfo.promotePrice + ''
           that.isLabelLoading = false
-          that.$refs.label_canvas.initData(dispData, w, h)
+          let id = that.bindTagId
+          let currentSelectTag = that.tagData.find(function (item) { return item.id === id })
+          that.$refs.label_canvas.initData(dispData, currentSelectTag.resolutionWidth, currentSelectTag.resolutionHeight)
         })
       })
     },
@@ -616,7 +673,7 @@ export default {
             content: '请选择绑定的样式'
           })
         } else {
-          this.getLabelData(this.bindGoodSelectId, this.bindStyleSelectId, 400, 300)
+          this.getLabelData(this.bindGoodSelectId, this.bindStyleSelectId)
           this.currentStep = this.currentStep + 1
         }
       } else if (this.currentStep === 0) {
@@ -630,6 +687,10 @@ export default {
           this.getStyleTableData({ page: this.modalStylePageNum, count: 8 })
         }
       }
+    },
+    onTableClick (currentRow) {
+      this.infoModal = true
+      this.selectedData = this.tagData.find(function (item) { return item.id === currentRow.id })
     },
     onFlush () {
       let params = {}
