@@ -13,6 +13,18 @@ export const getAllGood = ({ page, count, queryId, queryString }) => {
   })
 }
 
+export const getBindedTags = ({ queryId, queryString }) => {
+  return axios.request({
+    url: 'good/binded',
+    method: 'get',
+    params: {
+      query: queryId,
+      connection: '=',
+      queryString: queryString
+    }
+  })
+}
+
 export const getGood = (id) => {
   return axios.request({
     url: 'goods/' + id,

@@ -1,77 +1,110 @@
 <template>
     <div class="container" ref="container">
-        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
-          <div slot="title">
-            <Row type="flex" justify="center" align="middle">
-                <Col span="24"><p>价签信息</p></Col>
-            </Row>
-          </div>
-          <super_table  @onClick="onTableClick" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
-          <Modal v-model="isBindModalShow" title="绑定" width="1400" @on-ok="currentStep=0">
-            <Steps :current="currentStep"  style="marginBottom:16px;">
-                <Step  title="绑定商品" content="这一步绑定显示在价签上的商品">
-                </Step>
-                <Step title="绑定样式" content="这一步绑定显示在价签上的样式"></Step>
-                <Step title="预览价签" content="预览选择继续修改或完成"></Step>
-            </Steps>
-            <super_table key="1" v-if="currentStep===0" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageNum="modalGoodPageNum"></super_table>
-            <super_table key="2" v-if="currentStep===1" @onSearch="onModalStyleTableSearch" @onClick="onMoadlStyleTableClick" :data="styleData" :columns="tableModalStyleColumns" :isLoading="isModalStyleTableLoading" :pageNum="modalStylePageNum"></super_table>
-            <e_label v-if="currentStep===2" v-bind="item" ref="label_canvas" >
-            </e_label>
-            <Button style="position:absolute; top:540px;" v-if="currentStep===0||currentStep===1" @click="onNextStep">下一步</Button>
-        </Modal>
-        <Modal v-model="infoModal" title="标签信息">
-          <div>
-            <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>id：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.id"/></Col>
-            </Row>
-              <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>电量：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.power"/></Col>
-            </Row> <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>标签信号：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.tagRssi"/></Col>
-            </Row> <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>路由信号：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.apRssi"/></Col>
-            </Row> <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>硬件版本：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.hardwareVersion"/></Col>
-            </Row> <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>软件版本：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.softwareVersion"/></Col>
-            </Row> <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>运行时间：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.execTime"/></Col>
-            </Row> <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>更新时间：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.completeTime"/></Col>
-            </Row> <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>条码：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.barCode"/></Col>
-            </Row> <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>地址：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.tagAddress"/></Col>
-            </Row> <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>宽：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.resolutionWidth"/></Col>
-            </Row> <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>高：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.resolutionHeight"/></Col>
-            </Row> <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>绑定商品：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.goodId"/></Col>
-            </Row> <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>绑定样式：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.styleId"/></Col>
-            </Row> <Row type="flex" justify="center" align="middle" class="Row">
-                <Col span="3"><p>路由：</p></Col>
-                <Col span="21"><Input type="text" v-model="selectedData.routerId"/></Col>
-            </Row>
-          </div>
-        </Modal>
-        </Card>
+        <div class="left">
+            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.45 + 'px' }">
+                <div slot="title">
+                <Row type="flex" justify="center" align="middle">
+                    <Col span="22"><p>价签信息</p></Col>
+                    <Col span="2"><Button type="primary" @click="tagReload">刷新</Button></Col>
+                </Row>
+                </div>
+            <super_table  @onDoubleClick="onTableClick" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
+            <Modal @on-cancel="currentStep=0" v-model="isBindModalShow" title="绑定" width="1400" @on-ok="currentStep=0">
+                <Steps :current="currentStep"  style="marginBottom:16px;">
+                    <Step  title="绑定商品" content="这一步绑定显示在价签上的商品">
+                    </Step>
+                    <Step title="绑定样式" content="这一步绑定显示在价签上的样式"></Step>
+                    <Step title="预览价签" content="预览选择继续修改或完成"></Step>
+                </Steps>
+                <super_table  key="1" v-if="currentStep===0" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageNum="modalGoodPageNum"></super_table>
+                <super_table key="2" v-if="currentStep===1" @onSearch="onModalStyleTableSearch" @onClick="onMoadlStyleTableClick" :data="styleData" :columns="tableModalStyleColumns" :isLoading="isModalStyleTableLoading" :pageNum="modalStylePageNum"></super_table>
+                <div v-if="currentStep===2" style="display: flex;justify-content:center;align-items:Center;">
+                    <e_label v-bind="item" ref="label_canvas" >
+                    </e_label>
+                </div>
+                <Button v-if="currentStep===2" @click="onPreStep">上一步</Button>
+                <Button style="position:absolute; top:540px;" v-if="currentStep===0" @click="onNextStep">下一步</Button>
+                <Button style="position:absolute; top:540px;left:100px;" v-if="currentStep===1" @click="onNextStep">下一步</Button>
+                <Button style="position:absolute; top:540px;" v-if="currentStep===1" @click="onPreStep">上一步</Button>
+            </Modal>
+            <Modal v-model="infoModal" title="标签信息">
+            <div>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>id：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.id"/></Col>
+                </Row>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>电量：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.power"/></Col>
+                </Row>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>标签信号：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.tagRssi"/></Col>
+                </Row>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>路由信号：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.apRssi"/></Col>
+                </Row>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>硬件版本：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.hardwareVersion"/></Col>
+                </Row>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>软件版本：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.softwareVersion"/></Col>
+                </Row>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>运行时间：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.execTime"/></Col>
+                </Row>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>更新时间：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.completeTime"/></Col>
+                </Row>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>条码：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.barCode"/></Col>
+                </Row>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>地址：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.tagAddress"/></Col>
+                </Row>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>宽：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.resolutionWidth"/></Col>
+                </Row>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>高：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.resolutionHeight"/></Col>
+                </Row>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>绑定商品：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.goodId"/></Col>
+                </Row>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>绑定样式：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.styleId"/></Col>
+                </Row>
+                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                    <Col span="3"><p>路由：</p></Col>
+                    <Col span="21"><Input type="text" v-model="selectedData.routerId"/></Col>
+                </Row>
+            </div>
+            </Modal>
+            </Card>
+        </div>
+        <div class="right">
+            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.45 + 'px' }">
+                <div slot="title">
+                <Row type="flex" justify="start" align="middle">
+                    <Col span="18"><p>商品信息</p></Col>
+                    <Col span="3"><Button type="primary" @click="goodReload">刷新</Button></Col>
+                    <Col span="3"><Button type="primary" @click="addGood">添加商品</Button></Col>
+                </Row>
+                </div>
+                <super_table :pageSize="countPerPage" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
+            </Card>
+        </div>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px', marginTop:'10px'}">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
@@ -661,6 +694,7 @@ export default {
           that.isLabelLoading = false
           let id = that.bindTagId
           let currentSelectTag = that.tagData.find(function (item) { return item.id === id })
+
           that.$refs.label_canvas.initData(dispData, currentSelectTag.resolutionWidth, currentSelectTag.resolutionHeight)
         })
       })
@@ -688,6 +722,9 @@ export default {
         }
       }
     },
+    onPreStep () {
+      this.currentStep--
+    },
     onTableClick (currentRow) {
       this.infoModal = true
       this.selectedData = this.tagData.find(function (item) { return item.id === currentRow.id })
@@ -713,5 +750,11 @@ export default {
     justify-content: space-evenly;
     align-items: stretch;
     align-content: center;
+}
+.lett{
+  flex-shrink: 1;
+}
+.right{
+  flex-shrink: 1;
 }
 </style>

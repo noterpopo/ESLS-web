@@ -1,10 +1,10 @@
 <template>
     <div>
         <Table size="small" border :data="filters" :columns="tableColumnsFilters" stripe></Table>
-        <Table size="small" highlight-row @on-row-click="handleClick" :show-header=false border :data="data" :columns="columns" :loading="isLoading" stripe></Table>
+        <Table size="small" highlight-row @on-row-click="handleClick" @on-row-dblclick="handleDoubleClick" :show-header=false border :data="data" :columns="columns" :loading="isLoading" stripe></Table>
         <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
-            <Page :total="pageNum" :current="1" @on-change="changePage"></Page>
+            <Page :total="dataNum" :page-size="pageSize" :current="current" @on-change="changePage"></Page>
         </div>
     </div>
     </div>
@@ -18,7 +18,9 @@ export default {
     columns: Array,
     data: Array,
     isLoading: Boolean,
-    pageNum: Number
+    dataNum: Number,
+    current: Number,
+    pageSize: Number
   },
   data () {
     return {
@@ -29,7 +31,7 @@ export default {
       search: {}
     }
   },
-  created () {
+  mounted () {
     for (let index in this.columns) {
       let filter = {}
       this.$set(filter, 'title', this.columns[index].title)
@@ -113,11 +115,14 @@ export default {
       this.$set(this.search, this.columns[index].key, inputValue)
       this.load()
     },
-    changePage () {
-
+    changePage (page) {
+      this.$emit('update:current', page)
     },
     handleClick (currentRow) {
       this.$emit('onClick', currentRow)
+    },
+    handleDoubleClick (currentRow) {
+      this.$emit('onDoubleClick', currentRow)
     }
   }
 }
