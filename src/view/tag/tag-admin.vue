@@ -8,7 +8,7 @@
                     <Col span="2"><Button type="primary" @click="tagReload">刷新</Button></Col>
                 </Row>
                 </div>
-            <super_table  @onDoubleClick="onTableClick" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
+            <super_table @onClick="onTagTableClick" :pageSize="countPerPage" :current.sync="currentTagPage" @onDoubleClick="onTableClick" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="tagDataCount"></super_table>
             <Modal @on-cancel="currentStep=0" v-model="isBindModalShow" title="绑定" width="1400" @on-ok="currentStep=0">
                 <Steps :current="currentStep"  style="marginBottom:16px;">
                     <Step  title="绑定商品" content="这一步绑定显示在价签上的商品">
@@ -16,8 +16,8 @@
                     <Step title="绑定样式" content="这一步绑定显示在价签上的样式"></Step>
                     <Step title="预览价签" content="预览选择继续修改或完成"></Step>
                 </Steps>
-                <super_table  key="1" v-if="currentStep===0" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageNum="modalGoodPageNum"></super_table>
-                <super_table key="2" v-if="currentStep===1" @onSearch="onModalStyleTableSearch" @onClick="onMoadlStyleTableClick" :data="styleData" :columns="tableModalStyleColumns" :isLoading="isModalStyleTableLoading" :pageNum="modalStylePageNum"></super_table>
+                <super_table  key="1" v-if="currentStep===0" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageSize="8" :current.sync="currentGoodPage" :dataNum="modalGoodDataCount"></super_table>
+                <super_table key="2" v-if="currentStep===1" @onSearch="onModalStyleTableSearch" @onClick="onMoadlStyleTableClick" :data="styleData" :columns="tableModalStyleColumns" :isLoading="isModalStyleTableLoading" :pageSize="8" :current.sync="currentStylePage" :dataNum="modalStyleDataCount"></super_table>
                 <div v-if="currentStep===2" style="display: flex;justify-content:center;align-items:Center;">
                     <e_label v-bind="item" ref="label_canvas" >
                     </e_label>
@@ -97,12 +97,11 @@
             <Card :bordered="false" v-bind:style="{ width: windowWidth*0.45 + 'px' }">
                 <div slot="title">
                 <Row type="flex" justify="start" align="middle">
-                    <Col span="18"><p>商品信息</p></Col>
-                    <Col span="3"><Button type="primary" @click="goodReload">刷新</Button></Col>
-                    <Col span="3"><Button type="primary" @click="addGood">添加商品</Button></Col>
+                    <Col span="22"><p>商品信息</p></Col>
+                    <Col span="2"><Button type="primary" @click="goodReload">刷新</Button></Col>
                 </Row>
                 </div>
-                <super_table :pageSize="countPerPage" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
+                <super_table :pageSize="countPerPage" @onSearch="onRightGoodTableSearch" @onClick="searchTag" :current.sync="currentRightGoodPage" :data="goodRightData" :columns="tableRightGoodColumns" :isLoading="isRightGoodTableLoading" :dataNum="rightGoodDataCount"></super_table>
             </Card>
         </div>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px', marginTop:'10px'}">
@@ -243,7 +242,7 @@ import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import e_label from '@/components/e-label/e-lable.vue'
 import { getAllTag, flushTag } from '@/api/tag'
-import { getAllGood, getGood } from '@/api/good'
+import { getAllGood, getGood, getBindedTags } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
 export default {
   components: {
@@ -255,11 +254,13 @@ export default {
     return {
       windowWidth: 0,
       isTableLoading: false,
+      isRightGoodTableLoading: false,
       isModalGoodTableLoading: false,
       isModalStyleTableLoading: false,
-      pageNum: 0,
-      modalGoodPageNum: 0,
-      modalStylePageNum: 0,
+      tagDataCount: 0,
+      rightGoodDataCount: 0,
+      modalGoodDataCount: 0,
+      modalStyleDataCount: 0,
       countPerPage: 10,
       tagData: [],
       tableColumns: [
@@ -414,6 +415,106 @@ export default {
                 }
               }, '删除')
             ])
+          }
+        }
+      ],
+      goodRightData: [],
+      tableRightGoodColumns: [
+        {
+          title: 'id',
+          key: 'id',
+          width: '70',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '名称',
+          key: 'name',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '产地',
+          key: 'origin',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '供货商',
+          key: 'provider',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '单位',
+          key: 'unit',
+          width: '70',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '价格',
+          key: 'price',
+          width: '100',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '促销价',
+          key: 'promotePrice',
+          width: '100',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '货号',
+          key: 'shelfNumber',
+          width: '100',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '规格',
+          key: 'spec',
+          width: '70',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '类别',
+          key: 'category',
+
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '状态',
+          key: 'waitUpdate',
+          width: '140',
+          render: (h, params) => {
+            const row = params.row
+            const color = row.waitUpdate === 1 ? 'primary' : 'error'
+            const text = row.waitUpdate === 1 ? '已经更新' : '等待更新'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          },
+          filter: {
+            type: 'Input'
           }
         }
       ],
@@ -590,7 +691,11 @@ export default {
         labelStyle: '1'
       },
       selectedData: {},
-      infoModal: false
+      infoModal: false,
+      currentTagPage: 1,
+      currentGoodPage: 1,
+      currentStylePage: 1,
+      currentRightGoodPage: 1
     }
   },
   mounted () {
@@ -603,7 +708,24 @@ export default {
     }
   },
   created () {
-    this.getTagTableData({ page: this.pageNum, count: this.countPerPage })
+    this.currentTagPage = 1
+    this.currentRightGoodPage = 1
+    this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage })
+    this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
+  },
+  watch: {
+    currentTagPage () {
+      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
+    },
+    currentGoodPage () {
+      this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8 })
+    },
+    currentStylePage () {
+      this.getStyleTableData({ page: this.currentStylePage - 1, count: 8 })
+    },
+    currentRightGoodPage () {
+      this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage })
+    }
   },
   methods: {
     getTagTableData (page, count) {
@@ -611,6 +733,7 @@ export default {
       that.isTableLoading = true
       getAllTag(page, count).then(res => {
         const data = res.data.data
+        that.tagDataCount = res.data.code
         that.tagData = data
         that.isTableLoading = false
       })
@@ -638,13 +761,24 @@ export default {
     onBind (id) {
       this.bindTagId = id
       this.isBindModalShow = true
-      this.getGoodTableData({ page: this.modalGoodPageNum, count: 8 })
+      this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8 })
+    },
+    getRightGoodTableData ({ page, count, queryId, queryString }) {
+      var that = this
+      that.isRightGoodTableLoading = true
+      getAllGood({ page: page, count: count, queryId: queryId, queryString: queryString }).then(res => {
+        const data = res.data.data
+        that.rightGoodDataCount = res.data.code
+        that.goodRightData = data
+        that.isRightGoodTableLoading = false
+      })
     },
     getGoodTableData ({ page, count, queryId, queryString }) {
       var that = this
       that.isModalGoodTableLoading = true
       getAllGood({ page: page, count: count, queryId: queryId, queryString: queryString }).then(res => {
         const data = res.data.data
+        that.modalGoodDataCount = res.data.code
         that.goodData = data
         that.isModalGoodTableLoading = false
       })
@@ -654,6 +788,7 @@ export default {
       that.isModalStyleTableLoading = true
       getAllStyle({ page: page, count: count, queryId: queryId, queryString: queryString }).then(res => {
         const data = res.data.data
+        that.modalStyleDataCount = res.data.code
         that.styleData = data
         that.isModalStyleTableLoading = false
       })
@@ -661,7 +796,7 @@ export default {
     onModalGoodTableSearch (search) {
       var key = Object.keys(search)
       var value = search[key]
-      this.getGoodTableData({ page: this.modalGoodPageNum, count: 8, queryId: key[0], queryString: value })
+      this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8, queryId: key[0], queryString: value })
     },
     onMoadlGoodTableClick (rowData) {
       this.bindGoodSelectId = rowData.id
@@ -669,7 +804,7 @@ export default {
     onModalStyleTableSearch (search) {
       var key = Object.keys(search)
       var value = search[key]
-      this.getStyleTableData({ page: this.modalGoodPageNum, count: 8, queryId: key[0], queryString: value })
+      this.getStyleTableData({ page: this.currentStylePage - 1, count: 8, queryId: key[0], queryString: value })
     },
     onMoadlStyleTableClick (rowData) {
       this.bindStyleSelectId = rowData.id
@@ -718,7 +853,7 @@ export default {
           })
         } else {
           this.currentStep = this.currentStep + 1
-          this.getStyleTableData({ page: this.modalStylePageNum, count: 8 })
+          this.getStyleTableData({ page: this.currentStylePage - 1, count: 8 })
         }
       }
     },
@@ -738,6 +873,32 @@ export default {
     },
     onLight () {
 
+    },
+    searchTag (currentRow) {
+      var that = this
+      that.isTableLoading = true
+      getBindedTags({ queryId: 'barCode', queryString: currentRow.barCode }).then(res => {
+        that.tagDataCount = res.data.code
+        const data = res.data.data
+        that.tagData = data
+        that.isTableLoading = false
+      })
+    },
+    goodReload () {
+      this.getRightGoodTableData({ page: 0, count: this.countPerPage })
+    },
+    tagReload () {
+      this.getTagTableData({ page: 0, count: this.countPerPage })
+    },
+    onTagTableClick (currentRow) {
+      var that = this
+      that.isRightGoodTableLoading = true
+      getGood(currentRow.goodId).then(res => {
+        that.rightGoodDataCount = res.data.code
+        const data = res.data.data
+        that.goodRightData = data
+        that.isRightGoodTableLoading = false
+      })
     }
   }
 
