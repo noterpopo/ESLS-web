@@ -72,7 +72,7 @@
                       <Option value="barCode">条码</Option>
                   </Select>
                 </Input></Col>
-                <Col span="1"><Button type="primary" @click="onLight">移除</Button></Col>
+                <Col span="1"><Button type="primary" @click="onRemove">移除</Button></Col>
 
             </Row>
           </div>
@@ -97,7 +97,7 @@
                 <Input  v-model="scanCronExp" placeholder="输入cron表达式" style="width: 360px" >
                   <Button slot="append" @click="isScanCronModalShow=true">选择时间</Button>
                 </Input></Col>
-                <Col span="1"><Button type="primary" @click="onFlush">巡检</Button></Col>
+                <Col span="1"><Button type="primary" @click="onScan">巡检</Button></Col>
 
             </Row>
           </div>
@@ -133,7 +133,7 @@
 </template>
 <script>
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
-import { flushTag } from '@/api/tag'
+import { flushTag, lightTag, removeTag, scanTag } from '@/api/tag'
 export default {
   components: {
     'corn-selector': cronSelector
@@ -187,14 +187,46 @@ export default {
       this.isScanCronModalShow = val
     },
     onFlush () {
+      let data = {}
       let params = {}
+      let items = []
       this.$set(params, 'cron', this.flushCronExp)
       this.$set(params, 'query', this.flushQuery)
       this.$set(params, 'queryString', this.flushQueryStr)
-      flushTag(params, this.flushMode)
+      items.push(params)
+      this.$set(data, 'items', items)
+      flushTag(data, this.flushMode)
     },
     onLight () {
-
+      let data = {}
+      let params = {}
+      let items = []
+      this.$set(params, 'query', this.lightQuery)
+      this.$set(params, 'queryString', this.lightQueryStr)
+      items.push(params)
+      this.$set(data, 'items', items)
+      lightTag(data, this.isLight, this.lightMode)
+    },
+    onRemove () {
+      let data = {}
+      let params = {}
+      let items = []
+      this.$set(params, 'query', this.removeQuery)
+      this.$set(params, 'queryString', this.removeQueryStr)
+      items.push(params)
+      this.$set(data, 'items', items)
+      removeTag(data, this.removeMode)
+    },
+    onScan () {
+      let data = {}
+      let params = {}
+      let items = []
+      this.$set(params, 'cron', this.scanCronExp)
+      this.$set(params, 'query', this.scanQuery)
+      this.$set(params, 'queryString', this.scanQueryStr)
+      items.push(params)
+      this.$set(data, 'items', items)
+      scanTag(data, this.scanMode)
     }
   }
 
