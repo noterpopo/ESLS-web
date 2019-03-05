@@ -478,10 +478,10 @@ export default {
   },
   methods: {
     goodReload () {
-      this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPage })
+      this.getGoodTableData({ page: 0, count: this.countPerPage })
     },
     tagReload () {
-      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
+      this.getTagTableData({ page: 0, count: this.countPerPage })
     },
     getTagTableData (page, count) {
       var that = this

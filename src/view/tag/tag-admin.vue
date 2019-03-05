@@ -746,6 +746,11 @@ export default {
       var value = search[key]
       this.getTagTableData({ queryId: key[0], queryString: value })
     },
+    onRightGoodTableSearch (search) {
+      var key = Object.keys(search)
+      var value = search[key]
+      this.getRightGoodTableData({ queryId: key[0], queryString: value })
+    },
     onFlushCron (data) {
       this.flushCronExp = data
     },
