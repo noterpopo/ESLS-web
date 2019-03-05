@@ -122,7 +122,7 @@
                       <Option :value="1">启用</Option>
                   </Select>
                 </Col>
-                <Col span="1"><Button type="primary" @click="onLight">修改</Button></Col>
+                <Col span="1"><Button type="primary" @click="onStatus">修改</Button></Col>
 
             </Row>
           </div>
@@ -133,7 +133,7 @@
 </template>
 <script>
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
-import { flushTag, lightTag, removeTag, scanTag } from '@/api/tag'
+import { flushTag, lightTag, removeTag, scanTag, statusTag } from '@/api/tag'
 export default {
   components: {
     'corn-selector': cronSelector
@@ -227,6 +227,16 @@ export default {
       items.push(params)
       this.$set(data, 'items', items)
       scanTag(data, this.scanMode)
+    },
+    onStatus () {
+      let data = {}
+      let params = {}
+      let items = []
+      this.$set(params, 'query', this.statusQuery)
+      this.$set(params, 'queryString', this.statusQueryStr)
+      items.push(params)
+      this.$set(data, 'items', items)
+      statusTag(data, this.statusMode)
     }
   }
 

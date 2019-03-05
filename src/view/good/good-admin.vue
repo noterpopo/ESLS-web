@@ -4,9 +4,9 @@
           <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
             <div slot="title">
               <Row type="flex" justify="start" align="middle">
-                  <Col span="18"><p>商品信息</p></Col>
-                  <Col span="3"><Button type="primary" @click="goodReload">刷新</Button></Col>
-                  <Col span="3"><Button type="primary" @click="addGood">添加商品</Button></Col>
+                  <Col span="21"><p>商品信息</p></Col>
+                  <Col span="1"><Button type="primary" @click="goodReload">刷新</Button></Col>
+                  <Col span="2"><Button type="primary" @click="addGood">添加商品</Button></Col>
               </Row>
             </div>
             <super_table :pageSize="countPerPage" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
@@ -176,14 +176,6 @@ export default {
       tagData: [],
       tableColumns: [
         {
-          title: '条形码',
-          key: 'barCode',
-          width: '180',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
           title: '名称',
           key: 'name',
           filter: {
@@ -191,30 +183,8 @@ export default {
           }
         },
         {
-          title: '产地',
-          key: 'origin',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '供货商',
-          key: 'provider',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '单位',
-          key: 'unit',
-          width: '70',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '操作员',
-          key: 'operator',
+          title: '条形码',
+          key: 'barCode',
           filter: {
             type: 'Input'
           }
@@ -222,7 +192,6 @@ export default {
         {
           title: '价格',
           key: 'price',
-          width: '100',
           filter: {
             type: 'Input'
           }
@@ -230,7 +199,6 @@ export default {
         {
           title: '促销价',
           key: 'promotePrice',
-          width: '100',
           filter: {
             type: 'Input'
           }
@@ -238,30 +206,13 @@ export default {
         {
           title: '货号',
           key: 'shelfNumber',
-          width: '100',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '规格',
-          key: 'spec',
-          width: '70',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '类别',
-          key: 'category',
-
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '绑定价签',
-          key: 'tagIdList',
+          title: '导入时间',
+          key: 'importTime',
           filter: {
             type: 'Input'
           }
@@ -269,7 +220,6 @@ export default {
         {
           title: '状态',
           key: 'waitUpdate',
-          width: '140',
           render: (h, params) => {
             const row = params.row
             const color = row.waitUpdate === 1 ? 'primary' : 'error'
@@ -290,7 +240,6 @@ export default {
           title: '操作',
           key: 'action',
           align: 'center',
-          width: '150',
           render: (h, params) => {
             return h('div', [
               h('Button', {
@@ -315,7 +264,7 @@ export default {
       ],
       tagTableColumns: [
         {
-          title: '条码',
+          title: '价签id',
           key: 'barCode',
           width: '200',
           filter: {
@@ -323,55 +272,47 @@ export default {
           }
         },
         {
-          title: '电量',
-          key: 'power',
+          title: '价签类型',
+          key: 'screenType',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '硬件版本',
-          key: 'hardwareVersion',
+          title: '执行时间',
+          key: 'execTime',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '软件版本',
-          key: 'softwareVersion',
+          title: '完成时间',
+          key: 'completeTime',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '地址',
-          key: 'tagAddress',
+          title: 'AP RSSI',
+          key: 'apRssi',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '宽',
-          key: 'resolutionWidth',
+          title: 'Tag RSSI',
+          key: 'tagRssi',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '高',
-          key: 'resolutionHeight',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '工作状态',
+          title: '禁用',
           key: 'isWorking',
-          width: '140',
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '工作中' : '发生错误'
+            const text = row.isWorking === 1 ? '启用' : '禁用'
 
             return h('Tag', {
               props: {
@@ -385,25 +326,8 @@ export default {
           }
         },
         {
-          title: '绑定样式',
-          key: 'styleId',
-          width: '110',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '路由器',
-          key: 'routerId',
-
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '状态',
+          title: '等待变价',
           key: 'waitUpdate',
-          width: '140',
           render: (h, params) => {
             const row = params.row
             const color = row.waitUpdate === 1 ? 'primary' : 'error'

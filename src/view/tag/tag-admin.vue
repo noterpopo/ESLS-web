@@ -27,6 +27,9 @@
                 <Button style="position:absolute; top:540px;left:100px;" v-if="currentStep===1" @click="onNextStep">下一步</Button>
                 <Button style="position:absolute; top:540px;" v-if="currentStep===1" @click="onPreStep">上一步</Button>
             </Modal>
+            <Modal @on-cancle='onBindGoodCancel' v-model="isBindGoodModalShow" title="绑定商品" width="1400" @on-ok="onBindGood">
+              <super_table  key="3" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageSize="8" :current.sync="currentGoodPage" :dataNum="modalGoodDataCount"></super_table>
+            </Modal>
             <Modal v-model="infoModal" title="标签信息">
             <div>
                 <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
@@ -112,7 +115,7 @@
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import e_label from '@/components/e-label/e-lable.vue'
-import { getAllTag } from '@/api/tag'
+import { getAllTag, bindStyle, bindGood, unBindGood } from '@/api/tag'
 import { getAllGood, getGood, getBindedTags } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
 export default {
@@ -136,7 +139,7 @@ export default {
       tagData: [],
       tableColumns: [
         {
-          title: '条码',
+          title: '价签id',
           key: 'barCode',
           width: '200',
           filter: {
@@ -144,55 +147,72 @@ export default {
           }
         },
         {
-          title: '电量',
-          key: 'power',
+          title: '价签类型',
+          key: 'screenType',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '硬件版本',
-          key: 'hardwareVersion',
+          title: '执行时间',
+          key: 'execTime',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '软件版本',
-          key: 'softwareVersion',
+          title: '完成时间',
+          key: 'completeTime',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '地址',
-          key: 'tagAddress',
+          title: 'AP RSSI',
+          key: 'apRssi',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '宽',
-          key: 'resolutionWidth',
+          title: 'Tag RSSI',
+          key: 'tagRssi',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '高',
-          key: 'resolutionHeight',
-          filter: {
-            type: 'Input'
+          title: '绑定样式',
+          key: 'styleId',
+          render: (h, params) => {
+            return h('Select', {
+              props: {
+                value: params.row.styleId
+              },
+              on: {
+                'on-change': (val) => {
+                  this.onBindStyle(params.row.id, val)
+                }
+              }
+            },
+            this.styleData.map((item) => {
+              return h('Option', {
+                props: {
+                  value: item.id,
+                  label: item.styleType
+                }
+              })
+            })
+            )
           }
         },
         {
-          title: '工作状态',
+          title: '禁用',
           key: 'isWorking',
-          width: '140',
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '工作中' : '发生错误'
+            const text = row.isWorking === 1 ? '启用' : '禁用'
 
             return h('Tag', {
               props: {
@@ -206,32 +226,8 @@ export default {
           }
         },
         {
-          title: '绑定商品',
-          key: 'goodId',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '绑定样式',
-          key: 'styleId',
-          width: '110',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '路由器',
-          key: 'routerId',
-
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '状态',
+          title: '等待变价',
           key: 'waitUpdate',
-          width: '140',
           render: (h, params) => {
             const row = params.row
             const color = row.waitUpdate === 1 ? 'primary' : 'error'
@@ -294,6 +290,63 @@ export default {
       goodRightData: [],
       tableRightGoodColumns: [
         {
+          title: '名称',
+          key: 'name',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '条形码',
+          key: 'barCode',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '价格',
+          key: 'price',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '促销价',
+          key: 'promotePrice',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '货号',
+          key: 'shelfNumber',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '状态',
+          key: 'waitUpdate',
+          render: (h, params) => {
+            const row = params.row
+            const color = row.waitUpdate === 1 ? 'primary' : 'error'
+            const text = row.waitUpdate === 1 ? '已经更新' : '等待更新'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          },
+          filter: {
+            type: 'Input'
+          }
+        }
+      ],
+      goodData: [],
+      tableModalGoodColumns: [
+        {
           title: '条码',
           key: 'barCode',
           width: '200',
@@ -373,107 +426,7 @@ export default {
         {
           title: '状态',
           key: 'waitUpdate',
-          width: '140',
-          render: (h, params) => {
-            const row = params.row
-            const color = row.waitUpdate === 1 ? 'primary' : 'error'
-            const text = row.waitUpdate === 1 ? '已经更新' : '等待更新'
-
-            return h('Tag', {
-              props: {
-                type: 'dot',
-                color: color
-              }
-            }, text)
-          },
-          filter: {
-            type: 'Input'
-          }
-        }
-      ],
-      goodData: [],
-      tableModalGoodColumns: [
-        {
-          title: '条码',
-          key: 'barCode',
-          width: '70',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '名称',
-          key: 'name',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '产地',
-          key: 'origin',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '供货商',
-          key: 'provider',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '单位',
-          key: 'unit',
-          width: '70',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '价格',
-          key: 'price',
-          width: '100',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '促销价',
-          key: 'promotePrice',
-          width: '100',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '货号',
-          key: 'shelfNumber',
-          width: '100',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '规格',
-          key: 'spec',
-          width: '70',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '类别',
-          key: 'category',
-
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '状态',
-          key: 'waitUpdate',
-          width: '140',
+          width: '180',
           render: (h, params) => {
             const row = params.row
             const color = row.waitUpdate === 1 ? 'primary' : 'error'
@@ -523,6 +476,7 @@ export default {
         }
       ],
       isBindModalShow: false,
+      isBindGoodModalShow: false,
       currentStep: 0,
       bindGoodSelectId: 0,
       bindStyleSelectId: 0,
@@ -562,8 +516,12 @@ export default {
   created () {
     this.currentTagPage = 1
     this.currentRightGoodPage = 1
+    this.currentGoodPage = 1
+    this.currentStylePage = 1
     this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage })
     this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
+    this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8 })
+    this.getStyleTableData({ page: this.currentStylePage - 1, count: 8 })
   },
   watch: {
     currentTagPage () {
@@ -615,8 +573,7 @@ export default {
     },
     onBind (id) {
       this.bindTagId = id
-      this.isBindModalShow = true
-      this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8 })
+      this.isBindGoodModalShow = true
     },
     getRightGoodTableData ({ page, count, queryId, queryString }) {
       var that = this
@@ -644,6 +601,7 @@ export default {
       getAllStyle({ page: page, count: count, queryId: queryId, queryString: queryString }).then(res => {
         const data = res.data.data
         that.modalStyleDataCount = res.data.code
+
         that.styleData = data
         that.isModalStyleTableLoading = false
       })
@@ -718,7 +676,6 @@ export default {
           })
         } else {
           this.currentStep = this.currentStep + 1
-          this.getStyleTableData({ page: this.currentStylePage - 1, count: 8 })
         }
       }
     },
@@ -754,6 +711,38 @@ export default {
         that.goodRightData = data
         that.isRightGoodTableLoading = false
       })
+    },
+    onBindStyle (tid, sid) {
+      var that = this
+      bindStyle(tid, sid).then(that.$Modal.success({
+        title: '消息',
+        content: '成功绑定样式'
+      }))
+    },
+    onBindGoodCancel () {
+      this.currentGoodPage = 1
+      this.bindGoodSelectId = 0
+    },
+    onBindGood () {
+      var that = this
+      this.currentGoodPage = 1
+      let temp = this.tagData.find(function (item) { return item.id === that.bindTagId })
+      unBindGood('id', temp.goodId, 'id', temp.id).then(res => {
+        bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId).then(res => {
+          that.$Modal.success({
+            title: '消息',
+            content: '成功绑定商品'
+          })
+          that.isRightGoodTableLoading = true
+          getGood(that.bindGoodSelectId).then(res => {
+            that.rightGoodDataCount = res.data.code
+            const data = res.data.data
+            that.goodRightData = data
+            that.isRightGoodTableLoading = false
+            that.bindGoodSelectId = 0
+          })
+        })
+      })
     }
   }
 
@@ -772,6 +761,7 @@ export default {
   flex-shrink: 1;
 }
 .right{
+  margin-top: 20px;
   flex-shrink: 1;
 }
 </style>
