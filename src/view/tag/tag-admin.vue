@@ -1,7 +1,7 @@
 <template>
     <div class="container" ref="container">
         <div class="left">
-            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.45 + 'px' }">
+            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
                 <div slot="title">
                 <Row type="flex" justify="center" align="middle">
                     <Col span="22"><p>价签信息</p></Col>
@@ -94,7 +94,7 @@
             </Card>
         </div>
         <div class="right">
-            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.45 + 'px' }">
+            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
                 <div slot="title">
                 <Row type="flex" justify="start" align="middle">
                     <Col span="22"><p>商品信息</p></Col>
@@ -104,135 +104,6 @@
                 <super_table :pageSize="countPerPage" @onSearch="onRightGoodTableSearch" @onClick="searchTag" :current.sync="currentRightGoodPage" :data="goodRightData" :columns="tableRightGoodColumns" :isLoading="isRightGoodTableLoading" :dataNum="rightGoodDataCount"></super_table>
             </Card>
         </div>
-        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px', marginTop:'10px'}">
-          <div slot="title">
-            <Row type="flex" justify="center" align="middle">
-                <Col span="24"><p>设置面板</p></Col>
-            </Row>
-          </div>
-          <div>
-            <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
-                <Col span="2"><p>定期刷新：</p></Col>
-                <Col span="4">
-                  <Select v-model="flushMode" style="width:220px">
-                      <Option :value="0" >对标签刷新</Option>
-                      <Option :value="1" >为对指定路由器的所有标签刷新</Option>
-                      <Option :value="3" >对标签定期刷新</Option>
-                      <Option :value="4" >对路由器定期刷新</Option>
-                  </Select>
-                </Col>
-                <Col span="6">
-                <Input type="text" v-model="flushQueryStr"  placeholder="筛选条件" style="width: 300px" >
-                  <Select v-model="flushQuery" slot="prepend" style="width: 100px">
-                      <Option value="id">id</Option>
-                  </Select>
-                </Input></Col>
-                <Col span="7">
-                <Input  v-model="flushCronExp" placeholder="输入cron表达式" style="width: 360px" >
-                  <Button slot="append" @click="isFlushCronModalShow=true">选择时间</Button>
-                </Input></Col>
-                <Col span="1"><Button type="primary" @click="onFlush">刷新</Button></Col>
-
-            </Row>
-          </div>
-
-          <div>
-            <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
-                <Col span="2"><p>闪灯：</p></Col>
-                <Col span="4">
-                  <Select v-model="lightMode" style="width:220px">
-                      <Option :value="0" >对标签</Option>
-                      <Option :value="1" >对路由器</Option>
-                  </Select>
-                </Col>
-                <Col span="6">
-                <Input type="text" v-model="lightQueryStr"  placeholder="筛选条件" style="width: 300px" >
-                  <Select v-model="lightQuery" slot="prepend" style="width: 100px">
-                      <Option value="id">id</Option>
-                  </Select>
-                </Input></Col>
-                <Col span="2">
-                  <Select v-model="isLight" style="width: 100px">
-                      <Option :value="0">结束闪灯</Option>
-                      <Option :value="1">闪灯</Option>
-                  </Select>
-                </Col>
-                <Col span="1"><Button type="primary" @click="onLight">闪灯</Button></Col>
-
-            </Row>
-          </div>
-          <div>
-            <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
-                <Col span="2"><p>移除：</p></Col>
-                <Col span="4">
-                  <Select v-model="removeMode" style="width:220px">
-                      <Option :value="0" >对标签</Option>
-                      <Option :value="1" >对路由器</Option>
-                  </Select>
-                </Col>
-                <Col span="6">
-                <Input type="text" v-model="removeQueryStr"  placeholder="筛选条件" style="width: 300px" >
-                  <Select v-model="removeQuery" slot="prepend" style="width: 100px">
-                      <Option value="id">id</Option>
-                  </Select>
-                </Input></Col>
-                <Col span="1"><Button type="primary" @click="onLight">移除</Button></Col>
-
-            </Row>
-          </div>
-          <div>
-            <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
-                <Col span="2"><p>定期巡检：</p></Col>
-                <Col span="4">
-                  <Select v-model="scanMode" style="width:220px">
-                      <Option :value="0" >对标签巡检</Option>
-                      <Option :value="1" >为对指定路由器的所有标签巡检</Option>
-                      <Option :value="3" >对标签定期巡检</Option>
-                      <Option :value="4" >对路由器定期巡检</Option>
-                  </Select>
-                </Col>
-                <Col span="6">
-                <Input type="text" v-model="scanQueryStr"  placeholder="筛选条件" style="width: 300px" >
-                  <Select v-model="scanQuery" slot="prepend" style="width: 100px">
-                      <Option value="id">id</Option>
-                  </Select>
-                </Input></Col>
-                <Col span="7">
-                <Input  v-model="scanCronExp" placeholder="输入cron表达式" style="width: 360px" >
-                  <Button slot="append" @click="isScanCronModalShow=true">选择时间</Button>
-                </Input></Col>
-                <Col span="1"><Button type="primary" @click="onFlush">巡检</Button></Col>
-
-            </Row>
-          </div>
-          <div>
-            <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
-                <Col span="2"><p>状态：</p></Col>
-                <Col span="4">
-                  <Select v-model="statusMode" style="width:220px">
-                      <Option :value="0" >对标签</Option>
-                      <Option :value="1" >对路由器</Option>
-                  </Select>
-                </Col>
-                <Col span="6">
-                <Input type="text" v-model="statusQueryStr"  placeholder="筛选条件" style="width: 300px" >
-                  <Select v-model="statusQuery" slot="prepend" style="width: 100px">
-                      <Option value="id">id</Option>
-                  </Select>
-                </Input></Col>
-                <Col span="2">
-                  <Select v-model="isStatus" style="width: 100px">
-                      <Option :value="0">禁用</Option>
-                      <Option :value="1">启用</Option>
-                  </Select>
-                </Col>
-                <Col span="1"><Button type="primary" @click="onLight">修改</Button></Col>
-
-            </Row>
-          </div>
-          <corn-selector :isModalShow="isFlushCronModalShow" @onOk="onFlushCron" @onIsShow="onFlushIsShow"></corn-selector>
-          <corn-selector :isModalShow="isScanCronModalShow" @onOk="onScanCron" @onIsShow="onScanIsShow"></corn-selector>
-        </Card>
 
     </div>
 
@@ -241,7 +112,7 @@
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import e_label from '@/components/e-label/e-lable.vue'
-import { getAllTag, flushTag } from '@/api/tag'
+import { getAllTag } from '@/api/tag'
 import { getAllGood, getGood, getBindedTags } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
 export default {
@@ -261,13 +132,13 @@ export default {
       rightGoodDataCount: 0,
       modalGoodDataCount: 0,
       modalStyleDataCount: 0,
-      countPerPage: 10,
+      countPerPage: 5,
       tagData: [],
       tableColumns: [
         {
-          title: 'id',
-          key: 'id',
-          width: '100',
+          title: '条码',
+          key: 'barCode',
+          width: '200',
           filter: {
             type: 'Input'
           }
@@ -395,7 +266,8 @@ export default {
                 on: {
                   'click': (event) => {
                     event.stopPropagation()
-                    this.onBind(params.row.id)
+                    let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
+                    this.onBind(temp.id)
                   }
                 }
               }, '绑定'),
@@ -410,7 +282,8 @@ export default {
                 on: {
                   'click': (event) => {
                     event.stopPropagation()
-                    this.remove(params.row.id)
+                    let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
+                    this.remove(temp.id)
                   }
                 }
               }, '删除')
@@ -421,9 +294,9 @@ export default {
       goodRightData: [],
       tableRightGoodColumns: [
         {
-          title: 'id',
-          key: 'id',
-          width: '70',
+          title: '条码',
+          key: 'barCode',
+          width: '200',
           filter: {
             type: 'Input'
           }
@@ -521,8 +394,8 @@ export default {
       goodData: [],
       tableModalGoodColumns: [
         {
-          title: 'id',
-          key: 'id',
+          title: '条码',
+          key: 'barCode',
           width: '70',
           filter: {
             type: 'Input'
@@ -649,27 +522,6 @@ export default {
           }
         }
       ],
-      flushCronExp: '',
-      flushQueryStr: '',
-      flushQuery: 'id',
-      flushMode: 0,
-      lightQueryStr: '',
-      lightQuery: 'id',
-      lightMode: 0,
-      isLight: 0,
-      removeQueryStr: '',
-      removeQuery: 'id',
-      removeMode: 0,
-      scanCronExp: '',
-      scanQueryStr: '',
-      scanQuery: 'id',
-      scanMode: 0,
-      statusQueryStr: '',
-      statusQuery: 'id',
-      statusMode: 0,
-      isStatus: 0,
-      isFlushCronModalShow: false,
-      isScanCronModalShow: false,
       isBindModalShow: false,
       currentStep: 0,
       bindGoodSelectId: 0,
@@ -743,25 +595,23 @@ export default {
     },
     onTableSearch (search) {
       var key = Object.keys(search)
-      var value = search[key]
+      if (key.length === 0) {
+        this.getTagTableData({ page: 0, count: this.countPerPage })
+        this.currentTagPage = 1
+        return
+      }
+      var value = search[key[0]]
       this.getTagTableData({ queryId: key[0], queryString: value })
     },
     onRightGoodTableSearch (search) {
       var key = Object.keys(search)
-      var value = search[key]
+      if (key.length === 0) {
+        this.currentRightGoodPage = 1
+        this.getRightGoodTableData({ page: 0, count: this.countPerPage })
+        return
+      }
+      var value = search[key[0]]
       this.getRightGoodTableData({ queryId: key[0], queryString: value })
-    },
-    onFlushCron (data) {
-      this.flushCronExp = data
-    },
-    onFlushIsShow (val) {
-      this.isFlushCronModalShow = val
-    },
-    onScanCron (data) {
-      this.scanCronExp = data
-    },
-    onScanIsShow (val) {
-      this.isScanCronModalShow = val
     },
     onBind (id) {
       this.bindTagId = id
@@ -800,7 +650,12 @@ export default {
     },
     onModalGoodTableSearch (search) {
       var key = Object.keys(search)
-      var value = search[key]
+      if (key.length === 0) {
+        this.getGoodTableData({ page: 0, count: 8 })
+        this.currentGoodPage = 1
+        return
+      }
+      var value = search[key[0]]
       this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8, queryId: key[0], queryString: value })
     },
     onMoadlGoodTableClick (rowData) {
@@ -808,6 +663,11 @@ export default {
     },
     onModalStyleTableSearch (search) {
       var key = Object.keys(search)
+      if (key.length === 0) {
+        this.getStyleTableData({ page: 0, count: 8 })
+        this.currentStylePage = 1
+        return
+      }
       var value = search[key]
       this.getStyleTableData({ page: this.currentStylePage - 1, count: 8, queryId: key[0], queryString: value })
     },
@@ -869,16 +729,6 @@ export default {
       this.infoModal = true
       this.selectedData = this.tagData.find(function (item) { return item.id === currentRow.id })
     },
-    onFlush () {
-      let params = {}
-      this.$set(params, 'cron', this.flushCronExp)
-      this.$set(params, 'query', this.flushQuery)
-      this.$set(params, 'queryString', this.flushQueryStr)
-      flushTag(params, this.flushMode)
-    },
-    onLight () {
-
-    },
     searchTag (currentRow) {
       var that = this
       that.isTableLoading = true
@@ -911,11 +761,12 @@ export default {
 </script>
 <style>
 .container{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    align-items: stretch;
-    align-content: center;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
 }
 .lett{
   flex-shrink: 1;

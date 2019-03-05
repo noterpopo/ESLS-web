@@ -130,7 +130,7 @@ export default [
     name: 'tag',
     meta: {
       icon: 'ios-albums',
-      title: '价签管理'
+      title: '价签'
     },
     component: Main,
     children: [
@@ -142,6 +142,15 @@ export default [
           title: '价签管理'
         },
         component: () => import('@/view/tag/tag-admin.vue')
+      },
+      {
+        path: 'tag_watch',
+        name: 'tag_watch',
+        meta: {
+          icon: 'ios-albums',
+          title: '价签监控'
+        },
+        component: () => import('@/view/tag/tag-watch.vue')
       }
     ]
   },

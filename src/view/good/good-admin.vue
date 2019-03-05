@@ -1,7 +1,7 @@
 <template>
     <div class="container" ref="container">
         <div class="left">
-          <Card :bordered="false" v-bind:style="{ width: windowWidth*0.45 + 'px' }">
+          <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
             <div slot="title">
               <Row type="flex" justify="start" align="middle">
                   <Col span="18"><p>商品信息</p></Col>
@@ -141,7 +141,7 @@
           </Modal>
         </div>
         <div class="right">
-          <Card :bordered="false" v-bind:style="{ width: windowWidth*0.45 + 'px' }">
+          <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' ,marginTop:'10px'}">
             <div slot="title">
               <Row type="flex" justify="center" align="middle">
                   <Col span="22"><p>价签信息</p></Col>
@@ -171,7 +171,7 @@ export default {
       addModal: false,
       dataNum: 0,
       tagDataNum: 0,
-      countPerPage: 14,
+      countPerPage: 5,
       goodData: [],
       tagData: [],
       tableColumns: [
@@ -315,9 +315,9 @@ export default {
       ],
       tagTableColumns: [
         {
-          title: 'id',
-          key: 'id',
-          width: '100',
+          title: '条码',
+          key: 'barCode',
+          width: '200',
           filter: {
             type: 'Input'
           }
@@ -509,7 +509,7 @@ export default {
       this.getGoodTableData({ queryId: key[0], queryString: value })
     },
     onTableClick (currentRow) {
-      this.currentSelectedRow = this.goodData.find(function (item) { return item.id === currentRow.id })
+      this.currentSelectedRow = this.goodData.find(function (item) { return item.barCode === currentRow.barCode })
       this.editModal = true
     },
     searchTag (currentRow) {
@@ -560,11 +560,12 @@ export default {
 
 <style>
 .container{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    align-items: stretch;
-    align-content: center;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
 }
 .lett{
   flex-shrink: 1;
