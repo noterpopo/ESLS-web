@@ -29,9 +29,9 @@ export default {
           align: 'center'
         },
         {
-          title: 'id',
-          key: 'id',
-          width: '70',
+          title: '条形码',
+          key: 'barCode',
+          width: '160',
           filter: {
             type: 'Input'
           }
@@ -61,13 +61,6 @@ export default {
           title: '单位',
           key: 'unit',
           width: '70',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '操作员',
-          key: 'operator',
           filter: {
             type: 'Input'
           }
@@ -108,13 +101,6 @@ export default {
           title: '类别',
           key: 'category',
 
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '绑定价签',
-          key: 'tagIdList',
           filter: {
             type: 'Input'
           }

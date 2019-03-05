@@ -1,6 +1,6 @@
 <template>
-    <div ref="container">
-        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px', marginTop:'10px'}">
+    <div class="container" ref="container">
+        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px'}">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                 <Col span="24"><p>设置面板</p></Col>
@@ -245,9 +245,8 @@ export default {
 <style>
 .container{
   display: flex;
-  flex-direction: column;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   align-content: center;
 }

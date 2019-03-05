@@ -254,6 +254,7 @@ export default {
                   'click': (event) => {
                     event.stopPropagation()
                     let temp = this.goodData.find(function (item) { return item.barCode === params.row.barCode })
+                    console.log(temp)
                     this.remove(temp.id)
                   }
                 }
@@ -458,7 +459,15 @@ export default {
     },
     remove (id) {
       var that = this
-      deleteGood(id).then(res => { that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPage }) })
+      let dId = id
+      console.log(id)
+      this.$Modal.confirm({
+        title: '警告',
+        content: '确定删除该商品吗？',
+        onOk: function () {
+          deleteGood(dId).then(res => { that.getGoodTableData({ page: that.currentPage - 1, count: that.countPerPage }) })
+        }
+      })
     },
     asyncEditOK () {
       var that = this
