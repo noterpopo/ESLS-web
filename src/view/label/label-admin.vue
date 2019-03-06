@@ -1,7 +1,7 @@
 <template>
   <div class="container" ref="container">
       <div class="left">
-        <Card :bordered="false" class="e-lable-table-card card" v-bind:style="{ width: windowWidth*2/3 + 'px' }">
+        <Card :bordered="false" class="e-lable-table-card card" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
             <p slot="title">价签样式列表</p>
             <super_table class="e-label-table" @onSearch="onTableSearch" @onClick="onTableClick" :data="styleData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
         </Card>
@@ -16,7 +16,12 @@
           </div>
         </Card>
         <Card :bordered="false" class="card input-card">
-          <p slot="title">信息修改</p>
+          <div slot="title">
+              <Row type="flex" justify="start" align="middle">
+                  <Col span="21"><p>信息修改</p></Col>
+                  <Col span="3"><Button type="primary">保存</Button></Col>
+              </Row>
+          </div>
           <div>
             <Input type="text" v-model="item.itemName" />
             <Input type="text" v-model="item.itemUnit" />
@@ -34,6 +39,7 @@
       </div>
       <Modal
         v-model="isModal"
+        @on-ok="onUpdate"
         width="auto"
         title="样式编辑器"
         class-name="modal-style-designer">
@@ -251,6 +257,9 @@ export default {
     editStyle (styleid, w, h) {
       this.isModal = true
       this.$refs.designer.getStyleData(styleid, w, h)
+    },
+    onUpdate () {
+      this.$refs.designer.update()
     }
   }
 }
@@ -272,7 +281,7 @@ Input{
 
 }
 .left{
-  flex-grow: 2;
+  flex-shrink: 3;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -281,7 +290,7 @@ Input{
   align-content: center;
 }
 .right{
-  flex-grow: 1;
+  flex-shrink: 1;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;

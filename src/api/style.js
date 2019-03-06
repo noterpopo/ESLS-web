@@ -26,7 +26,13 @@ export const getAllStyle = ({ page, count, queryId, queryString }) => {
     }
   })
 }
-
+export const updateDispms = (data) => {
+  return axios.request({
+    url: 'dispm',
+    method: 'post',
+    data: data
+  })
+}
 export const deleteStyle = (id) => {
   return axios.request({
     url: '/style/' + id,

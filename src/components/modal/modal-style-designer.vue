@@ -5,10 +5,11 @@
             <div class="infoarea">
               <Card dis-hover>
                 <p slot="title">样式信息</p>
-                <p :style="{fontSize: '20px'}">样式id：{{styleid}}</p>
-                <p :style="{fontSize: '20px'}">样式宽度：{{styleWidth}}</p>
-                <p :style="{fontSize: '20px'}">样式高度：{{styleHeight}}</p>
+                <p :style="{fontSize: '16px'}">样式id：{{styleid}}</p>
+                <p :style="{fontSize: '16px'}">样式宽度：{{styleWidth}}</p>
+                <p :style="{fontSize: '16px'}">样式高度：{{styleHeight}}</p>
                 <Button :style="{marginTop:'10px'}" type="primary" @click="reset">恢复默认值</Button>
+                <Button :style="{margin:'10px'}" type="primary" @click="reset">另存为新样式</Button>
             </Card>
             </div>
         </div>
@@ -93,7 +94,7 @@
 <script>
 // https://github.com/mauricius/vue-draggable-resizable
 // TODO:字体颜色
-import { getStyle } from '@/api/style'
+import { getStyle, updateDispms } from '@/api/style'
 import { coppyArray } from '@/libs/util'
 import VueDraggableResizable from 'vue-draggable-resizable'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
@@ -169,8 +170,8 @@ export default {
       var that = this
       getStyle(id).then(res => {
         const data = res.data.data
-        that.editAreaWidth = w * 2
-        that.editAreaHeight = h * 2
+        that.editAreaWidth = w
+        that.editAreaHeight = h
         // 重新渲染editorarea
         this.reRenderFlag = false
         this.$nextTick(() => {
@@ -178,11 +179,6 @@ export default {
         })
         var len = data.length // 循环变量
         for (var i = 0; i < len; ++i) {
-          data[i].x = data[i].x * 2
-          data[i].y = data[i].y * 2
-          data[i].width = data[i].width * 1.6
-          data[i].height = data[i].height * 1.4
-          data[i].fontSize = data[i].fontSize * 1.414
           if (data[i].sourceColumn === 'barCode') {
             that.item.itemBarCode = data[i].text
           } else if (data[i].sourceColumn === 'qrCode') {
@@ -211,6 +207,12 @@ export default {
     },
     reset () {
       this.currentDispmsData = coppyArray(this.dispmsData)
+    },
+    update () {
+      let len = this.currentDispmsData.length
+      for (let i = 0; i < len; ++i) {
+        updateDispms(this.currentDispmsData[i])
+      }
     }
 
   }
@@ -242,7 +244,7 @@ Input{
     align-content: center;
 }
 .infoarea{
-    width: 400px;
+    width: 200px;
     height: auto;
 }
 .right{
