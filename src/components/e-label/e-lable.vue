@@ -421,6 +421,11 @@ export default {
       }
     },
     initData (data, width, height) {
+      if (data === null) {
+        canvas.width = 0
+        canvas.height = 0
+        return
+      }
       isDataReady = true
       dispmsData = data.sort((a, b) => {
         if (a.columnType === '背景') {

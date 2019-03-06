@@ -634,7 +634,6 @@ export default {
     },
     getLabelData (gid, sid) {
       var that = this
-      that.isLabelLoading = true
       getStyle(sid).then(res => {
         const dispData = res.data.data
         getGood(gid).then(res => {
@@ -649,7 +648,6 @@ export default {
           that.item.itemBarCode = goodInfo.barCode
           that.item.itemPrice = goodInfo.price + ''
           that.itemOnSalePrice = goodInfo.promotePrice + ''
-          that.isLabelLoading = false
           let id = that.bindTagId
           let currentSelectTag = that.tagData.find(function (item) { return item.id === id })
 

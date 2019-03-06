@@ -13,6 +13,13 @@ export const getAllTag = ({ page, count, queryId, queryString }) => {
   })
 }
 
+export const getTag = (id) => {
+  return axios.request({
+    url: 'tag/' + id,
+    method: 'get'
+  })
+}
+
 export const flushTag = (data, mode) => {
   return axios.request({
     url: 'tag/flush',

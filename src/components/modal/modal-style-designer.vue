@@ -16,7 +16,7 @@
         <div class="right">
             <div class="editorarea" v-if="reRenderFlag" :style="{width:editAreaWidth+'px',height:editAreaHeight+'px'}">
               <Poptip v-for="(item,index) in currentDispmsData" :key="index" trigger="click" title="编辑框" class="poptipWarp" :style="{ position: 'absolute',left: item.x+'px',top: item.y+'px'}">
-                  <vue-draggable-resizable :style="{ position: 'absolute',left: 0+'px',top: 0+'px'}" :x="item.x" :y="item.y" :w="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
+                  <vue-draggable-resizable :style="{ position: 'absolute',left: 0+'px',top: 0+'px'}" :x="item.x" :y="item.y" :w="item.width" :max-width="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
                       <span v-if="item.columnType === '字符串'" :style="{ fontSize :item.fontSize+'px', lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
                       <span v-else-if="item.columnType === '数字'" :style="{ fontSize :item.fontSize+'px', lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
                       <Divider v-else-if="item.columnType === '线段'"></Divider>
@@ -230,7 +230,7 @@ Input{
     height: auto;
     display: flex;
     justify-content: space-evenly;
-    align-items: stretch;
+    align-items: center;
     align-content: center;
 }
 .left{

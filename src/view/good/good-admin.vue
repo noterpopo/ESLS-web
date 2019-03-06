@@ -140,8 +140,8 @@
             </div>
           </Modal>
         </div>
-        <div class="right">
-          <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' ,marginTop:'10px'}">
+        <div class="right" v-bind:style="{ width: windowWidth*0.9 + 'px' ,marginTop:'10px'}">
+          <Card :bordered="false" v-bind:style="{ width: windowWidth*0.6 + 'px'}">
             <div slot="title">
               <Row type="flex" justify="center" align="middle">
                   <Col span="22"><p>价签信息</p></Col>
@@ -150,15 +150,32 @@
             </div>
             <super_table :pageSize="countPerPage" @onClick="onTagTableClick" :current.sync="currentTagPage" :data="tagData" :columns="tagTableColumns" :isLoading="isTagTableLoading" :dataNum="tagDataNum"></super_table>
           </Card>
+          <Card :bordered="false" v-bind:style="{ width:'432px'}">
+            <div slot="title">
+              <Row type="flex" justify="center" align="middle">
+                  <Col span="10"><p>预览</p></Col>
+                  <Col span="14">
+                    <Select @on-change="onShowIdChange" v-model="showId" style="width:200px">
+                      <Option v-for="item in canShowData" :value="item.id" :key="item.id">{{item.barCode}}</Option>
+                    </Select>
+                  </Col>
+              </Row>
+              </div>
+            <e_label v-bind="item" ref="label_canvas" >
+            </e_label>
+          </Card>
         </div>
     </div>
 </template>
 <script>
 import super_table from '@/components/table/supertable.vue'
 import { getAllGood, updateGood, deleteGood, getBindedTags, getGood } from '@/api/good'
-import { getAllTag } from '@/api/tag'
+import { getAllTag, getTag } from '@/api/tag'
+import e_label from '@/components/e-label/e-lable.vue'
+import { getStyle } from '@/api/style'
 export default {
   components: {
+    e_label,
     super_table
   },
   data () {
@@ -267,7 +284,7 @@ export default {
         {
           title: '价签id',
           key: 'barCode',
-          width: '200',
+          width: '160',
           filter: {
             type: 'Input'
           }
@@ -309,6 +326,7 @@ export default {
         },
         {
           title: '禁用',
+          width: '120',
           key: 'isWorking',
           render: (h, params) => {
             const row = params.row
@@ -329,6 +347,7 @@ export default {
         {
           title: '等待变价',
           key: 'waitUpdate',
+          width: '140',
           render: (h, params) => {
             const row = params.row
             const color = row.waitUpdate === 1 ? 'primary' : 'error'
@@ -375,7 +394,24 @@ export default {
         waitUpdate: 0
       },
       currentPage: 1,
-      currentTagPage: 1
+      currentTagPage: 1,
+      item: {
+        itemName: '测试商品名称1',
+        itemUnit: '罐',
+        itemNorm: '205g',
+        itemCategory: '衣物',
+        itemOrigin: '北京',
+        itemNo: '00012',
+        itemQRCode: '692226641428',
+        itemBarCode: '692226641428',
+        itemStock: '110',
+        itemisOnSale: true,
+        itemPrice: '10.19',
+        itemOnSalePrice: '444.44',
+        labelStyle: '1'
+      },
+      canShowData: [],
+      showId: 0
     }
   },
   mounted () {
@@ -403,6 +439,9 @@ export default {
   },
   methods: {
     goodReload () {
+      this.canShowData = []
+      this.showId = 0
+      this.$refs.label_canvas.initData(null, 0, 0)
       this.getGoodTableData({ page: 0, count: this.countPerPage })
     },
     tagReload () {
@@ -440,11 +479,20 @@ export default {
     searchTag (currentRow) {
       var that = this
       that.isTagTableLoading = true
+      that.currentSelectedRow = currentRow
       getBindedTags({ queryId: 'barCode', queryString: currentRow.barCode }).then(res => {
         that.tagDataNum = res.data.code
         const data = res.data.data
         that.tagData = data
+        that.canShowData = data.filter(function (item) { return item.styleId !== 0 })
         that.isTagTableLoading = false
+        if (that.canShowData.length === 0) {
+          that.showId = 0
+          this.$refs.label_canvas.initData(null, 0, 0)
+        } else {
+          that.showId = that.canShowData[0].id
+          that.getLabelData(that.showId)
+        }
       })
     },
     onTagTableClick (currentRow) {
@@ -456,6 +504,7 @@ export default {
         that.goodData = data
         that.isTableLoading = false
       })
+      this.searchTag(currentRow)
     },
     remove (id) {
       var that = this
@@ -470,6 +519,7 @@ export default {
       })
     },
     asyncEditOK () {
+      this.getLabelData(this.showId)
       var that = this
       updateGood(that.currentSelectedRow).then(res => { that.editModal = false; that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPage }) })
     },
@@ -479,6 +529,32 @@ export default {
     asyncAddOK () {
       var that = this
       updateGood(that.addGooddata).then(res => { that.addModal = false; that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPage }) })
+    },
+    getLabelData (tid) {
+      var that = this
+      let goodInfo = that.goodData.filter(function (item) { return item.barCode === that.currentSelectedRow.barCode })
+      console.log(goodInfo)
+      that.item.itemName = goodInfo[0].name
+      that.item.itemUnit = goodInfo[0].unit
+      that.item.itemNorm = goodInfo[0].spec
+      that.item.itemCategory = goodInfo[0].category
+      that.item.itemOrigin = goodInfo[0].origin
+      that.item.itemNo = goodInfo[0].shelfNumber
+      that.item.itemQRCode = goodInfo[0].qrCode
+      that.item.itemBarCode = goodInfo[0].barCode
+      that.item.itemPrice = goodInfo[0].price + ''
+      that.itemOnSalePrice = goodInfo[0].promotePrice + ''
+      getTag(tid).then(res => {
+        const tempTag = res.data.data
+        console.log(tempTag)
+        getStyle(tempTag[0].styleId).then(res => {
+          const dispData = res.data.data
+          that.$refs.label_canvas.initData(dispData, tempTag[0].resolutionWidth, tempTag[0].resolutionHeight)
+        })
+      })
+    },
+    onShowIdChange () {
+      this.getLabelData(this.showId)
     }
 
   }
@@ -505,5 +581,10 @@ export default {
 }
 .right{
   flex-shrink: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
 }
 </style>
