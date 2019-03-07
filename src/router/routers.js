@@ -174,6 +174,26 @@ export default [
       }
     ]
   },
+  {
+    path: '/route',
+    name: 'route',
+    meta: {
+      icon: 'ios-albums',
+      title: '路由器'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'route_admin',
+        name: 'route_admin',
+        meta: {
+          icon: 'ios-albums',
+          title: '路由器管理'
+        },
+        component: () => import('@/view/route/route-admin.vue')
+      }
+    ]
+  },
   // {
   //   path: '/components',
   //   name: 'components',

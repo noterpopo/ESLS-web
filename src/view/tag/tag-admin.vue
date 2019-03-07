@@ -115,7 +115,7 @@
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import e_label from '@/components/e-label/e-lable.vue'
-import { getAllTag, bindStyle, bindGood, unBindGood } from '@/api/tag'
+import { getAllTag, bindStyle, bindGood, unBindGood, getUsableStyle } from '@/api/tag'
 import { getAllGood, getGood, getBindedTags } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
 export default {
@@ -192,6 +192,9 @@ export default {
               on: {
                 'on-change': (val) => {
                   this.onBindStyle(params.row.id, val)
+                },
+                'on-open-change': () => {
+                  this.onFinfStyle('barCode', params.row.barCode)
                 }
               }
             },
@@ -212,7 +215,7 @@ export default {
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '启用' : '禁用'
+            const text = row.isWorking === 1 ? '工作中' : '禁用'
 
             return h('Tag', {
               props: {
@@ -704,6 +707,7 @@ export default {
       var that = this
       that.isRightGoodTableLoading = true
       if (currentRow.goodId === '' || currentRow.goodId === 0) {
+        that.goodRightData = []
         that.isRightGoodTableLoading = false
         return
       }
@@ -762,6 +766,11 @@ export default {
           })
         })
       }
+    },
+    onFinfStyle (query, queryString) {
+      getUsableStyle(query, queryString).then(res => {
+        this.styleData = res.data.data
+      })
     }
   }
 

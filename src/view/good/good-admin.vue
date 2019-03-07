@@ -498,13 +498,17 @@ export default {
     onTagTableClick (currentRow) {
       var that = this
       that.isTableLoading = true
+      if (currentRow.goodId === '' || currentRow.goodId === 0) {
+        that.goodData = []
+        that.isTableLoading = false
+        return
+      }
       getGood(currentRow.goodId).then(res => {
         that.dataNum = res.data.code
         const data = res.data.data
         that.goodData = data
         that.isTableLoading = false
       })
-      this.searchTag(currentRow)
     },
     remove (id) {
       var that = this

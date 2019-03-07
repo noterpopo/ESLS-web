@@ -3,6 +3,14 @@
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px'}">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
+                <Col span="24"><p>价签信息</p></Col>
+            </Row>
+          </div>
+          <super_table @onClick="onTagTableClick" :pageSize="countPerPage" :current.sync="currentTagPage" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="tagDataCount"></super_table>
+        </Card>
+        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px',marginTop:'10px'}">
+          <div slot="title">
+            <Row type="flex" justify="center" align="middle">
                 <Col span="24"><p>设置面板</p></Col>
             </Row>
           </div>
@@ -132,14 +140,111 @@
     </div>
 </template>
 <script>
+import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
-import { flushTag, lightTag, removeTag, scanTag, statusTag } from '@/api/tag'
+import { getAllTag, flushTag, lightTag, removeTag, scanTag, statusTag } from '@/api/tag'
 export default {
   components: {
+    super_table,
     'corn-selector': cronSelector
   },
   data () {
     return {
+      isTableLoading: false,
+      countPerPage: 6,
+      currentTagPage: 1,
+      tagDataCount: 0,
+      tagData: [],
+      tableColumns: [
+        {
+          title: '价签id',
+          key: 'barCode',
+          width: '200',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '价签类型',
+          key: 'screenType',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '执行时间',
+          key: 'execTime',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '完成时间',
+          key: 'completeTime',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: 'AP RSSI',
+          key: 'apRssi',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: 'Tag RSSI',
+          key: 'tagRssi',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '电量',
+          key: 'power',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '是否工作',
+          key: 'isWorking',
+          render: (h, params) => {
+            const row = params.row
+            const color = row.isWorking === 1 ? 'primary' : 'error'
+            const text = row.isWorking === 1 ? '工作中' : '禁用'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          },
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '等待变价',
+          key: 'waitUpdate',
+          render: (h, params) => {
+            const row = params.row
+            const color = row.waitUpdate === 1 ? 'primary' : 'error'
+            const text = row.waitUpdate === 1 ? '已经更新' : '等待更新'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          },
+          filter: {
+            type: 'Input'
+          }
+        }
+      ],
       windowWidth: 0,
       flushCronExp: '',
       flushQueryStr: '',
@@ -164,6 +269,9 @@ export default {
       isScanCronModalShow: false
     }
   },
+  created () {
+    this.getTagTableData({ page: 0, count: this.countPerPage })
+  },
   mounted () {
     var that = this
     this.$nextTick(() => {
@@ -173,7 +281,39 @@ export default {
       that.windowWidth = that.$refs.container.offsetWidth
     }
   },
+  watch: {
+    currentTagPage () {
+      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
+    }
+  },
   methods: {
+    getTagTableData ({ page, count, queryId, queryString }) {
+      var that = this
+      that.isTableLoading = true
+      getAllTag({ page: page, count: count, queryId: queryId, queryString: queryString }).then(res => {
+        const data = res.data.data
+        that.tagDataCount = res.data.code
+        that.tagData = data
+        that.isTableLoading = false
+      })
+    },
+    onTableSearch (search) {
+      var key = Object.keys(search)
+      if (key.length === 0) {
+        this.getTagTableData({ page: 0, count: this.countPerPage })
+        this.currentTagPage = 1
+        return
+      }
+      var value = search[key[0]]
+      this.getTagTableData({ queryId: key[0], queryString: value })
+    },
+    onTagTableClick (currentRow) {
+      this.flushQueryStr = currentRow.barCode
+      this.statusQueryStr = currentRow.barCode
+      this.scanQueryStr = currentRow.barCode
+      this.lightQueryStr = currentRow.barCode
+      this.removeQueryStr = currentRow.barCode
+    },
     onFlushCron (data) {
       this.flushCronExp = data
     },
