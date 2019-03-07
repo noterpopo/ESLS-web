@@ -18,7 +18,10 @@
               <Poptip v-for="(item,index) in currentDispmsData" :key="index" trigger="click" title="编辑框" class="poptipWarp" :style="{ position: 'absolute',left: item.x+'px',top: item.y+'px'}">
                   <vue-draggable-resizable :style="{ position: 'absolute',left: 0+'px',top: 0+'px'}" :x="item.x" :y="item.y" :w="item.width" :max-width="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
                       <span v-if="item.columnType === '字符串'" :style="{ fontSize :item.fontSize+'px', fontWeight:'item.fontType', lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
-                      <span v-else-if="item.columnType === '数字'" :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ fontSize :item.fontSize+'px', fontWeight:'item.fontType', lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
+                      <span v-else-if="item.columnType === '数字'" >
+                        <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ fontSize :item.fontSize+'px', fontWeight:'item.fontType', lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.text.split('.')[0] +'.'}}</span>
+                        <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ verticalAlign:'super',fontSize :item.backup.split('/')[1]+'px', fontWeight:'item.fontType', lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{ item.text.split('.')[1]}}</span>
+                      </span>
                       <hr v-else-if="item.columnType === '线段'"></hr>
                       <img v-else-if="item.columnType === '二维码'" id="qrCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
                       <img v-else-if="item.columnType === '条形码'" id="barCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>

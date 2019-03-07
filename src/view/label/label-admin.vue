@@ -3,7 +3,7 @@
       <div class="left">
         <Card :bordered="false" class="e-lable-table-card card" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
             <p slot="title">价签样式列表</p>
-            <super_table :pageSize="countPerPage" :current.sync="currentPage" :dataNum="dataNum" class="e-label-table" @onSearch="onTableSearch" @onClick="onTableClick" :data="styleData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
+            <super_table :pageSize="countPerPage" :current.sync="currentPage" :dataNum="dataNum" class="e-label-table" @onSearch="onTableSearch" @onClick="onTableClick" :data="styleData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="dataNum"></super_table>
         </Card>
       </div>
       <div class="right">
