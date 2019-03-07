@@ -207,7 +207,7 @@ export default {
           }
         },
         {
-          title: '禁用',
+          title: '是否工作',
           key: 'isWorking',
           render: (h, params) => {
             const row = params.row
@@ -521,7 +521,7 @@ export default {
     this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage })
     this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
     this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8 })
-    this.getStyleTableData({ page: this.currentStylePage - 1, count: 8 })
+    this.getStyleTableData({ page: this.currentStylePage - 1, count: 13 })
   },
   watch: {
     currentTagPage () {
@@ -531,7 +531,7 @@ export default {
       this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8 })
     },
     currentStylePage () {
-      this.getStyleTableData({ page: this.currentStylePage - 1, count: 8 })
+      this.getStyleTableData({ page: this.currentStylePage - 1, count: 13 })
     },
     currentRightGoodPage () {
       this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage })
@@ -622,12 +622,12 @@ export default {
     onModalStyleTableSearch (search) {
       var key = Object.keys(search)
       if (key.length === 0) {
-        this.getStyleTableData({ page: 0, count: 8 })
+        this.getStyleTableData({ page: 0, count: 13 })
         this.currentStylePage = 1
         return
       }
       var value = search[key]
-      this.getStyleTableData({ page: this.currentStylePage - 1, count: 8, queryId: key[0], queryString: value })
+      this.getStyleTableData({ page: this.currentStylePage - 1, count: 13, queryId: key[0], queryString: value })
     },
     onMoadlStyleTableClick (rowData) {
       this.bindStyleSelectId = rowData.id
@@ -703,6 +703,10 @@ export default {
     onTagTableClick (currentRow) {
       var that = this
       that.isRightGoodTableLoading = true
+      if (currentRow.goodId === '' || currentRow.goodId === 0) {
+        that.isRightGoodTableLoading = false
+        return
+      }
       getGood(currentRow.goodId).then(res => {
         that.rightGoodDataCount = res.data.code
         const data = res.data.data
@@ -725,7 +729,7 @@ export default {
       var that = this
       this.currentGoodPage = 1
       let temp = this.tagData.find(function (item) { return item.id === that.bindTagId })
-      unBindGood('id', temp.goodId, 'id', temp.id).then(res => {
+      if (temp.goodId === 0 || temp.goodId === '') {
         bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId).then(res => {
           that.$Modal.success({
             title: '消息',
@@ -740,7 +744,24 @@ export default {
             that.bindGoodSelectId = 0
           })
         })
-      })
+      } else {
+        unBindGood('id', temp.goodId, 'id', temp.id).then(res => {
+          bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId).then(res => {
+            that.$Modal.success({
+              title: '消息',
+              content: '成功绑定商品'
+            })
+            that.isRightGoodTableLoading = true
+            getGood(that.bindGoodSelectId).then(res => {
+              that.rightGoodDataCount = res.data.code
+              const data = res.data.data
+              that.goodRightData = data
+              that.isRightGoodTableLoading = false
+              that.bindGoodSelectId = 0
+            })
+          })
+        })
+      }
     }
   }
 

@@ -26,10 +26,15 @@ export const getAllStyle = ({ page, count, queryId, queryString }) => {
     }
   })
 }
-export const updateDispms = (data) => {
+export const updateStyle = (sid, data, mode, update) => {
   return axios.request({
-    url: 'dispm',
+    url: 'style/new',
     method: 'post',
+    params: {
+      styleId: sid,
+      mode: mode,
+      update: update
+    },
     data: data
   })
 }

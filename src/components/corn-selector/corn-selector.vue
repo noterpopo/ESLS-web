@@ -323,7 +323,7 @@ export default {
   },
   computed: {
     cronExp: function () {
-      return this.cronSec + ' ' + this.cronMin + ' ' + this.cronHour + ' ' + this.cronDay + ' ' + this.cronMonth + ' ' + this.cronWeek + ' ' + this.cornYear
+      return this.cronSec + ' ' + this.cronMin + ' ' + this.cronHour + ' ' + this.cronDay + ' ' + this.cronMonth + ' ' + this.cronWeek
     }
   },
   methods: {
@@ -501,7 +501,7 @@ export default {
       }
     },
     onOk () {
-      this.$emit('onOk', this.cronSec + ' ' + this.cronMin + ' ' + this.cronHour + ' ' + this.cronDay + ' ' + this.cronMonth + ' ' + this.cronWeek + ' ' + this.cornYear)
+      this.$emit('onOk', this.cronSec + ' ' + this.cronMin + ' ' + this.cronHour + ' ' + this.cronDay + ' ' + this.cronMonth + ' ' + this.cronWeek)
     }
 
   }

@@ -36,6 +36,9 @@ class HttpRequest {
     // 请求拦截
     instance.interceptors.request.use(config => {
       // 添加全局的loading...
+      if (config.url !== 'user/login' && config.url !== 'login') {
+        config.headers['ESLS'] = store.getters.token
+      }
       if (!Object.keys(this.queue).length) {
         // Spin.show() // 不建议开启，因为界面不友好
       }
@@ -47,8 +50,8 @@ class HttpRequest {
     // 响应拦截
     instance.interceptors.response.use(res => {
       this.destroy(url)
-      const { data, status } = res
-      return { data, status }
+      const { data, status, headers } = res
+      return { data, status, headers }
     }, error => {
       this.destroy(url)
       let errorInfo = error.response

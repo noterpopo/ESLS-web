@@ -13,8 +13,8 @@
                   <Select v-model="flushMode" style="width:220px">
                       <Option :value="0" >对标签刷新</Option>
                       <Option :value="1" >为对指定路由器的所有标签刷新</Option>
-                      <Option :value="3" >对标签定期刷新</Option>
-                      <Option :value="4" >对路由器定期刷新</Option>
+                      <Option :value="2" >对标签定期刷新</Option>
+                      <Option :value="3" >对路由器定期刷新</Option>
                   </Select>
                 </Col>
                 <Col span="6">
@@ -83,8 +83,8 @@
                   <Select v-model="scanMode" style="width:220px">
                       <Option :value="0" >对标签巡检</Option>
                       <Option :value="1" >为对指定路由器的所有标签巡检</Option>
-                      <Option :value="3" >对标签定期巡检</Option>
-                      <Option :value="4" >对路由器定期巡检</Option>
+                      <Option :value="2" >对标签定期巡检</Option>
+                      <Option :value="3" >对路由器定期巡检</Option>
                   </Select>
                 </Col>
                 <Col span="6">

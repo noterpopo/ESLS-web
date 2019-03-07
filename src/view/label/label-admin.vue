@@ -3,7 +3,7 @@
       <div class="left">
         <Card :bordered="false" class="e-lable-table-card card" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
             <p slot="title">价签样式列表</p>
-            <super_table class="e-label-table" @onSearch="onTableSearch" @onClick="onTableClick" :data="styleData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
+            <super_table :pageSize="countPerPage" :current.sync="currentPage" :dataNum="dataNum" class="e-label-table" @onSearch="onTableSearch" @onClick="onTableClick" :data="styleData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="pageNum"></super_table>
         </Card>
       </div>
       <div class="right">
@@ -106,7 +106,8 @@ export default {
       isLabelLoading: false,
       isTableLoading: false,
       isModal: false,
-      pageNum: 0,
+      dataNum: 0,
+      currentPage: 1,
       countPerPage: 10,
       styleData: [],
       tableColumns: [
@@ -177,11 +178,17 @@ export default {
             ])
           }
         }
-      ]
+      ],
+      currentStyleID: 0
     }
   },
   created () {
-    this.getStyleTableData({ page: this.pageNum, count: this.countPerPage })
+    this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage })
+  },
+  watch: {
+    currentPage () {
+      this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage })
+    }
   },
   mounted () {
     var that = this
@@ -236,6 +243,7 @@ export default {
       that.isTableLoading = true
       getAllStyle(page, count).then(res => {
         const data = res.data.data
+        that.dataNum = res.data.code
         that.styleData = data
         that.isTableLoading = false
       })
@@ -255,11 +263,12 @@ export default {
         })
     },
     editStyle (styleid, w, h) {
+      this.currentStyleID = styleid
       this.isModal = true
       this.$refs.designer.getStyleData(styleid, w, h)
     },
     onUpdate () {
-      this.$refs.designer.update()
+      this.$refs.designer.update(this.currentStyleID)
     }
   }
 }
@@ -281,7 +290,6 @@ Input{
 
 }
 .left{
-  flex-shrink: 3;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -290,7 +298,6 @@ Input{
   align-content: center;
 }
 .right{
-  flex-shrink: 1;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;

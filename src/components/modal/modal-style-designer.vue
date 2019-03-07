@@ -94,7 +94,7 @@
 <script>
 // https://github.com/mauricius/vue-draggable-resizable
 // TODO:字体颜色
-import { getStyle, updateDispms } from '@/api/style'
+import { getStyle, updateStyle } from '@/api/style'
 import { coppyArray } from '@/libs/util'
 import VueDraggableResizable from 'vue-draggable-resizable'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
@@ -208,11 +208,8 @@ export default {
     reset () {
       this.currentDispmsData = coppyArray(this.dispmsData)
     },
-    update () {
-      let len = this.currentDispmsData.length
-      for (let i = 0; i < len; ++i) {
-        updateDispms(this.currentDispmsData[i])
-      }
+    update (id) {
+      updateStyle(id, this.currentDispmsData, 1, 1)
     }
 
   }
