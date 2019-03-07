@@ -259,7 +259,7 @@ export default {
     remove (id) {
       deleteStyle(id)
         .then(() => {
-          this.getStyleTableData({ page: this.pageNum, count: this.countPerPage })
+          this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage })
         })
     },
     editStyle (styleid, w, h) {

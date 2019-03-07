@@ -372,33 +372,47 @@ export default {
         if (dispmsData[i].sourceColumn === 'name') {
           this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
         } else if (dispmsData[i].sourceColumn === 'price') {
-          let intPart = (this.itemPrice + '').split('.')[0]
-          let decPart = (this.itemPrice + '').split('.')[1]
-          let isLine = dispmsData[i].backup.split('/')[0]
-          let decFontSize = dispmsData[i].backup.split('/')[1]
-          let fontPerLen = parseInt(dispmsData[i].backup.split('/')[2]) / (dispmsData[i].text.split('.')[0].length + 1)
-          if (isLine === '1') {
-            ctx.textBaseline = 'middle'
-            this.drawDispms('线段', dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
-            this.drawDispms('线段', (dispmsData[i].x + fontPerLen * (intPart.length + 1)) * widthRadius, dispmsData[i].y * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
-            ctx.textBaseline = 'top'
+          if (this.itemPrice.split('.').length === 1) {
+            let isLine = dispmsData[i].backup.split('/')[0]
+            if (isLine === '1') {
+              this.drawDispms('线段', dispmsData[i].x * widthRadius, (dispmsData[i].y + 0.2 * dispmsData[i].height) * heightRadius, dispmsData[i].width * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, '', dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+            }
+            this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemPrice, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          } else {
+            let intPart = (this.itemPrice + '').split('.')[0]
+            let decPart = (this.itemPrice + '').split('.')[1]
+            let isLine = dispmsData[i].backup.split('/')[0]
+            let decFontSize = dispmsData[i].backup.split('/')[1]
+            let fontPerLen = parseInt(dispmsData[i].backup.split('/')[2]) / (dispmsData[i].text.split('.')[0].length + 1)
+            if (isLine === '1') {
+              this.drawDispms('线段', dispmsData[i].x * widthRadius, (dispmsData[i].y + 0.2 * dispmsData[i].height) * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+              this.drawDispms('线段', (dispmsData[i].x + fontPerLen * (intPart.length + 1)) * widthRadius, (dispmsData[i].y + 0.18 * dispmsData[i].height) * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+            }
+            this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, intPart + '.', dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+            this.drawDispms(dispmsData[i].columnType, (dispmsData[i].x + fontPerLen * (intPart.length + 1)) * widthRadius, dispmsData[i].y * heightRadius, (dispmsData[i].width - fontPerLen * (intPart.length + 1)) * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, decPart, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(decFontSize) * widthRadius)
           }
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, intPart + '.', dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
-          this.drawDispms(dispmsData[i].columnType, (dispmsData[i].x + fontPerLen * (intPart.length + 1)) * widthRadius, dispmsData[i].y * heightRadius, (dispmsData[i].width - fontPerLen * (intPart.length + 1)) * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, decPart, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(decFontSize) * widthRadius)
         } else if (dispmsData[i].sourceColumn === 'promotePrice') {
-          let intPart = (this.itemOnSalePrice + '').split('.')[0]
-          let decPart = (this.itemOnSalePrice + '').split('.')[1]
-          let isLine = dispmsData[i].backup.split('/')[0]
-          let decFontSize = dispmsData[i].backup.split('/')[1]
-          let fontPerLen = parseInt(dispmsData[i].backup.split('/')[2]) / (dispmsData[i].text.split('.')[0].length + 1)
-          if (isLine === '1') {
-            ctx.textBaseline = 'middle'
-            this.drawDispms('线段', dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
-            this.drawDispms('线段', (dispmsData[i].x + fontPerLen * (intPart.length + 1)) * widthRadius, dispmsData[i].y * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
-            ctx.textBaseline = 'top'
+          if (this.itemOnSalePrice.split('.') === 1) {
+            let isLine = dispmsData[i].backup.split('/')[0]
+            if (isLine === '1') {
+              this.drawDispms('线段', dispmsData[i].x * widthRadius, (dispmsData[i].y + 0.5 * dispmsData[i].height) * heightRadius, dispmsData[i].width * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, '', dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+            }
+            this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemOnSalePrice, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+          } else {
+            let intPart = (this.itemOnSalePrice + '').split('.')[0]
+            let decPart = (this.itemOnSalePrice + '').split('.')[1]
+            let isLine = dispmsData[i].backup.split('/')[0]
+            let decFontSize = dispmsData[i].backup.split('/')[1]
+            let fontPerLen = parseInt(dispmsData[i].backup.split('/')[2]) / (dispmsData[i].text.split('.')[0].length + 1)
+            if (isLine === '1') {
+              ctx.textBaseline = 'middle'
+              this.drawDispms('线段', dispmsData[i].x * widthRadius, (dispmsData[i].y + 0.2 * dispmsData[i].height) * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+              this.drawDispms('线段', (dispmsData[i].x + fontPerLen * (intPart.length + 1)) * widthRadius, (dispmsData[i].y + 0.18 * dispmsData[i].height) * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+              ctx.textBaseline = 'top'
+            }
+            this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, intPart + '.', dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+            this.drawDispms(dispmsData[i].columnType, (dispmsData[i].x + fontPerLen * (intPart.length + 1)) * widthRadius, dispmsData[i].y * heightRadius, (dispmsData[i].width - fontPerLen * (intPart.length + 1)) * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, decPart, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(decFontSize) * widthRadius)
           }
-          this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, intPart + '.', dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
-          this.drawDispms(dispmsData[i].columnType, (dispmsData[i].x + fontPerLen * (intPart.length + 1)) * widthRadius, dispmsData[i].y * heightRadius, (dispmsData[i].width - fontPerLen * (intPart.length + 1)) * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, decPart, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(decFontSize) * widthRadius)
         } else if (dispmsData[i].sourceColumn === 'normal') {
           this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemNorm, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
         } else if (dispmsData[i].sourceColumn === 'category') {
