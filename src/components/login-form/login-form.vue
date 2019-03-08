@@ -17,6 +17,9 @@
     <FormItem>
       <Button @click="handleSubmit" type="primary" long>登录</Button>
     </FormItem>
+    <FormItem>
+      <Button @click="handleRegister" type="primary" long>注册</Button>
+    </FormItem>
   </Form>
 </template>
 <script>
@@ -43,7 +46,7 @@ export default {
   data () {
     return {
       form: {
-        userName: 'super_admin',
+        userName: '',
         password: ''
       }
     }
@@ -66,6 +69,9 @@ export default {
           })
         }
       })
+    },
+    handleRegister () {
+      this.$emit('on-register')
     }
   }
 }

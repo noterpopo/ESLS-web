@@ -1,6 +1,5 @@
 import {
   login,
-  logout,
   getUserInfo
 } from '@/api/user'
 import { setToken, getToken } from '@/libs/util'
@@ -10,13 +9,7 @@ export default {
     userName: '',
     userId: '',
     token: getToken(),
-    access: '',
-    sex: 0,
-    telephone: '',
-    address: '',
-    department: '',
-    status: 0,
-    shopId: 0
+    access: ''
 
   },
   mutations: {
@@ -66,6 +59,7 @@ export default {
     messageReadedCount: state => state.messageReadedList.length,
     messageTrashCount: state => state.messageTrashList.length,
     token: state => state.token
+
   },
   actions: {
     // 登录
@@ -88,17 +82,9 @@ export default {
     // 退出登录
     handleLogOut ({ state, commit }) {
       return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
-          commit('setToken', '')
-          commit('setAccess', [])
-          resolve()
-        }).catch(err => {
-          reject(err)
-        })
-        // 如果你的退出登录无需请求接口，则可以直接使用下面三行代码而无需使用logout调用接口
-        // commit('setToken', '')
-        // commit('setAccess', [])
-        // resolve()
+        commit('setToken', '')
+        commit('setAccess', [])
+        resolve()
       })
     },
     // 获取用户相关信息
@@ -106,13 +92,12 @@ export default {
       return new Promise((resolve, reject) => {
         try {
           getUserInfo(state.userId).then(res => {
-            const data = res.data
-            // commit('setAvator', data.avator)
-            // commit('setUserName', data.name)
+            const data = res.data.data
+            commit('setUserName', data.name)
             // commit('setUserId', data.user_id)
+            // TODO 设置权限
             // commit('setAccess', data.access)
-            // commit('setHasGetInfo', true)
-            resolve(data)
+            resolve(res.data)
           }).catch(err => {
             reject(err)
           })

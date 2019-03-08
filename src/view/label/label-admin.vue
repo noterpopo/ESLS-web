@@ -2,7 +2,12 @@
   <div class="container" ref="container">
       <div class="left" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
         <Card :bordered="false" class="e-lable-table-card card" >
-            <p slot="title">价签样式列表</p>
+            <div slot="title">
+                <Row type="flex" justify="center" align="middle">
+                    <Col span="22"><p>样式信息</p></Col>
+                    <Col span="2"><Button type="primary" @click="addStyle">新建样式</Button></Col>
+                </Row>
+              </div>
             <super_table :pageSize="countPerPage" :current.sync="currentPage" :dataNum="dataNum" class="e-label-table" @onSearch="onTableSearch" @onClick="onTableClick" :data="styleData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="dataNum"></super_table>
         </Card>
         <Modal

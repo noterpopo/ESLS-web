@@ -65,6 +65,13 @@ export const scanTag = (data, mode) => {
   })
 }
 
+export const scanAll = () => {
+  return axios.request({
+    url: 'tags/scan',
+    method: 'get'
+  })
+}
+
 export const statusTag = (data, mode) => {
   return axios.request({
     url: 'tag/status',
@@ -95,7 +102,7 @@ export const bindGood = (q1, qs1, q2, qs2) => {
       ArgsString1: qs1,
       sourceArgs2: q2,
       ArgsString2: qs2,
-      mode: '1'
+      mode: '2'
     }
   })
 }

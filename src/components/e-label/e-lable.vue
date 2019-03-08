@@ -383,7 +383,7 @@ export default {
             let decPart = (this.itemPrice + '').split('.')[1]
             let isLine = dispmsData[i].backup.split('/')[0]
             let decFontSize = dispmsData[i].backup.split('/')[1]
-            let fontPerLen = parseInt(dispmsData[i].backup.split('/')[2]) / (dispmsData[i].text.split('.')[0].length + 1)
+            let fontPerLen = parseInt(dispmsData[i].backup.split('/')[2]) / (dispmsData[i].text.split('.')[0].length)
             if (isLine === '1') {
               this.drawDispms('线段', dispmsData[i].x * widthRadius, (dispmsData[i].y + 0.5 * dispmsData[i].height) * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
               this.drawDispms('线段', (dispmsData[i].x + fontPerLen * (intPart.length + 1)) * widthRadius, (dispmsData[i].y + 0.4 * dispmsData[i].height) * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
@@ -403,7 +403,7 @@ export default {
             let decPart = (this.itemOnSalePrice + '').split('.')[1]
             let isLine = dispmsData[i].backup.split('/')[0]
             let decFontSize = dispmsData[i].backup.split('/')[1]
-            let fontPerLen = parseInt(dispmsData[i].backup.split('/')[2]) / (dispmsData[i].text.split('.')[0].length + 1)
+            let fontPerLen = parseInt(dispmsData[i].backup.split('/')[2]) / (dispmsData[i].text.split('.')[0].length)
             if (isLine === '1') {
               ctx.textBaseline = 'middle'
               this.drawDispms('线段', dispmsData[i].x * widthRadius, (dispmsData[i].y + 0.2 * dispmsData[i].height) * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)

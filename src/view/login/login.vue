@@ -7,8 +7,7 @@
     <div class="login-con">
       <Card icon="log-in" title="欢迎登录" :bordered="false">
         <div class="form-con">
-          <login-form @on-success-valid="handleSubmit"></login-form>
-          <p class="login-tip">输入任意用户名和密码即可</p>
+          <login-form @on-success-valid="handleSubmit" @on-register="handleRegister"></login-form>
         </div>
       </Card>
     </div>
@@ -34,6 +33,11 @@ export default {
             name: this.$config.homeName
           })
         })
+      })
+    },
+    handleRegister () {
+      this.$router.push({
+        name: 'register'
       })
     }
   }

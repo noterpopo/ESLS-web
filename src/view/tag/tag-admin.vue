@@ -115,7 +115,7 @@
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import e_label from '@/components/e-label/e-lable.vue'
-import { getAllTag, bindStyle, bindGood, unBindGood, getUsableStyle } from '@/api/tag'
+import { getAllTag, bindStyle, bindGood, getUsableStyle } from '@/api/tag'
 import { getAllGood, getGood, getBindedTags } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
 export default {
@@ -732,40 +732,20 @@ export default {
     onBindGood () {
       var that = this
       this.currentGoodPage = 1
-      let temp = this.tagData.find(function (item) { return item.id === that.bindTagId })
-      if (temp.goodId === 0 || temp.goodId === '') {
-        bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId).then(res => {
-          that.$Modal.success({
-            title: '消息',
-            content: '成功绑定商品'
-          })
-          that.isRightGoodTableLoading = true
-          getGood(that.bindGoodSelectId).then(res => {
-            that.rightGoodDataCount = res.data.code
-            const data = res.data.data
-            that.goodRightData = data
-            that.isRightGoodTableLoading = false
-            that.bindGoodSelectId = 0
-          })
+      bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId).then(res => {
+        that.$Modal.success({
+          title: '消息',
+          content: '成功绑定商品'
         })
-      } else {
-        unBindGood('id', temp.goodId, 'id', temp.id).then(res => {
-          bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId).then(res => {
-            that.$Modal.success({
-              title: '消息',
-              content: '成功绑定商品'
-            })
-            that.isRightGoodTableLoading = true
-            getGood(that.bindGoodSelectId).then(res => {
-              that.rightGoodDataCount = res.data.code
-              const data = res.data.data
-              that.goodRightData = data
-              that.isRightGoodTableLoading = false
-              that.bindGoodSelectId = 0
-            })
-          })
+        that.isRightGoodTableLoading = true
+        getGood(that.bindGoodSelectId).then(res => {
+          that.rightGoodDataCount = res.data.code
+          const data = res.data.data
+          that.goodRightData = data
+          that.isRightGoodTableLoading = false
+          that.bindGoodSelectId = 0
         })
-      }
+      })
     },
     onFinfStyle (query, queryString) {
       getUsableStyle(query, queryString).then(res => {

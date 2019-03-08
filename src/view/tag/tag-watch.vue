@@ -16,13 +16,13 @@
           </div>
           <div>
             <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
-                <Col span="2"><p>定期刷新：</p></Col>
+                <Col span="2"><p>刷新：</p></Col>
                 <Col span="4">
                   <Select v-model="flushMode" style="width:220px">
                       <Option :value="0" >对标签刷新</Option>
                       <Option :value="1" >为对指定路由器的所有标签刷新</Option>
                       <Option :value="2" >对标签定期刷新</Option>
-                      <Option :value="3" >对路由器定期刷新</Option>
+                      <Option :value="3" >对路由器下所有标签定期刷新</Option>
                   </Select>
                 </Col>
                 <Col span="6">
@@ -46,7 +46,7 @@
                 <Col span="4">
                   <Select v-model="lightMode" style="width:220px">
                       <Option :value="0" >对标签</Option>
-                      <Option :value="1" >对路由器</Option>
+                      <Option :value="1" >对路由器下所有标签</Option>
                   </Select>
                 </Col>
                 <Col span="6">
@@ -71,7 +71,7 @@
                 <Col span="4">
                   <Select v-model="removeMode" style="width:220px">
                       <Option :value="0" >对标签</Option>
-                      <Option :value="1" >对路由器</Option>
+                      <Option :value="1" >对路由器下所有标签</Option>
                   </Select>
                 </Col>
                 <Col span="6">
@@ -86,13 +86,13 @@
           </div>
           <div>
             <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
-                <Col span="2"><p>定期巡检：</p></Col>
+                <Col span="2"><p>巡检：</p></Col>
                 <Col span="4">
                   <Select v-model="scanMode" style="width:220px">
                       <Option :value="0" >对标签巡检</Option>
                       <Option :value="1" >为对指定路由器的所有标签巡检</Option>
                       <Option :value="2" >对标签定期巡检</Option>
-                      <Option :value="3" >对路由器定期巡检</Option>
+                      <Option :value="3" >对路由器下所有标签定期巡检</Option>
                   </Select>
                 </Col>
                 <Col span="6">
@@ -106,6 +106,7 @@
                   <Button slot="append" @click="isScanCronModalShow=true">选择时间</Button>
                 </Input></Col>
                 <Col span="1"><Button type="primary" @click="onScan">巡检</Button></Col>
+                <Col span="1"><Button type="primary" @click="onScanAll">对所有标签巡检</Button></Col>
 
             </Row>
           </div>
@@ -142,7 +143,7 @@
 <script>
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
-import { getAllTag, flushTag, lightTag, removeTag, scanTag, statusTag } from '@/api/tag'
+import { getAllTag, flushTag, lightTag, removeTag, scanTag, statusTag, scanAll } from '@/api/tag'
 export default {
   components: {
     super_table,
@@ -367,6 +368,9 @@ export default {
       items.push(params)
       this.$set(data, 'items', items)
       scanTag(data, this.scanMode)
+    },
+    onScanAll () {
+      scanAll()
     },
     onStatus () {
       let data = {}
