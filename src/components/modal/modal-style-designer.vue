@@ -16,11 +16,11 @@
         <div class="right">
             <div class="editorarea" v-if="reRenderFlag" :style="{width:editAreaWidth+'px',height:editAreaHeight+'px'}">
               <Poptip v-for="(item,index) in currentDispmsData" :key="index" trigger="click" title="编辑框" class="poptipWarp" :style="{ position: 'absolute',left: item.x+'px',top: item.y+'px'}">
-                  <vue-draggable-resizable :style="{ position: 'absolute',left: 0+'px',top: 0+'px'}" :x="item.x" :y="item.y" :w="item.width" :max-width="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
+                  <vue-draggable-resizable v-if="item.status===1" :style="{ backgroundColor:item.backgroundColor===0?'black':item.backgroundColor===1?'white':'red',position: 'absolute',left: 0+'px',top: 0+'px'}" :x="item.x" :y="item.y" :w="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
                       <span v-if="item.columnType === '字符串'" :style="{ color:item.fontColor===0?'black':item.fontColor===1?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType, lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
                       <span v-else-if="item.columnType === '数字'" >
                         <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor===0?'black':item.fontColor===1?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.text.split('.')[0] +'.'}}</span>
-                        <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor===0?'black':item.fontColor===1?'white':'red', verticalAlign:'super',fontSize :item.backup.split('/')[1]+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{ item.text.split('.')[1]}}</span>
+                        <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor===0?'black':item.fontColor===1?'white':'red', verticalAlign:'super',fontSize :(item.sourceColumn==='promotePrice'?decFontSizePromotePrice:decFontSizePrice)+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{ item.text.split('.')[1]}}</span>
                       </span>
                       <hr v-else-if="item.columnType === '线段'"></hr>
                       <img v-else-if="item.columnType === '二维码'" id="qrCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
@@ -67,11 +67,36 @@
                         <span :style="{fontSize:'16px', marginRight: '4px'}">字号:</span>
                         <InputNumber size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontSize"/>
                       </div>
+                      <div v-if="item.sourceColumn==='price'">
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">小数字号:</span>
+                        <InputNumber size="small" :style="{width:'76px',marginRight: '4px'}" v-model="decFontSizePrice"/>
+                      </div>
+                      <div v-if="item.sourceColumn==='promotePrice'">
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">小数字号:</span>
+                        <InputNumber size="small" :style="{width:'76px',marginRight: '4px'}" v-model="decFontSizePromotePrice"/>
+                      </div>
+                      <div>
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">字体颜色:</span>
+                        <Select size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontColor">
+                          <Option value="0">黑色</Option>
+                          <Option value="1">白色</Option>
+                          <Option value="2">红色</Option>
+                        </Select>
+                      </div>
+                      <div>
+                        <span :style="{fontSize:'16px', marginRight: '4px'}">背景颜色:</span>
+                        <Select size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.backgroundColor">
+                          <Option value="0">黑色</Option>
+                          <Option value="1">白色</Option>
+                          <Option value="2">红色</Option>
+                        </Select>
+                      </div>
                       <div>
                         <span :style="{fontSize:'16px', marginRight: '4px'}">字体:</span>
                         <Select size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontFamily">
                           <Option value="微软雅黑">微软雅黑</Option>
                           <Option value="宋体">宋体</Option>
+                          <Option value="楷体">楷体</Option>
                         </Select>
                       </div>
                       <div>
@@ -134,7 +159,9 @@ export default {
         itemPrice: '999.99',
         itemOnSalePrice: '999.99',
         labelStyle: '5'
-      }
+      },
+      decFontSizePrice: 0,
+      decFontSizePromotePrice: 0
     }
   },
   updated () {
@@ -190,8 +217,10 @@ export default {
             that.item.itemBarCode = data[i].text
           } else if (data[i].sourceColumn === 'qrCode') {
             that.item.itemQRCode = data[i].text
-          } else {
-
+          } else if (data[i].sourceColumn === 'price') {
+            this.decFontSizePrice = parseInt(data[i].backup.split('/')[1])
+          } else if (data[i].sourceColumn === 'promotePrice') {
+            this.decFontSizePromotePrice = parseInt(data[i].backup.split('/')[1])
           }
         }
         that.isLoading = false
@@ -215,7 +244,18 @@ export default {
       this.currentDispmsData = coppyArray(this.dispmsData)
     },
     update (id) {
-      updateStyle(id, this.currentDispmsData, 1, 1)
+      for (let i = 0; i < this.currentDispmsData.length; ++i) {
+        if (this.currentDispmsData[i].sourceColumn === 'promotePrice') {
+          let backUp = this.currentDispmsData[i].backup.split('/')
+          backUp[1] = this.decFontSizePromotePrice
+          this.currentDispmsData[i].backup = backUp[0] + '/' + backUp[1] + '/' + backUp[2]
+        } else if (this.currentDispmsData[i].sourceColumn === 'price') {
+          let backUp = this.currentDispmsData[i].backup.split('/')
+          backUp[1] = this.decFontSizePrice
+          this.currentDispmsData[i].backup = backUp[0] + '/' + backUp[1] + '/' + backUp[2]
+        }
+      }
+      updateStyle(id, this.currentDispmsData, 1, 0)
     }
 
   }
@@ -274,7 +314,7 @@ Input{
 }
 .float-edit-text{
   width: 280px;
-  height: 82px;
+  height: 140px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;

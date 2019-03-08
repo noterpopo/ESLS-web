@@ -151,7 +151,7 @@
               </div>
               <super_table :pageSize="countPerPage" @onClick="onTagTableClick" :current.sync="currentTagPage" :data="tagData" :columns="tagTableColumns" :isLoading="isTagTableLoading" :dataNum="tagDataNum"></super_table>
             </Card>
-            <Card :bordered="false" v-bind:style="{ width:'432px',height:'300px'}">
+            <Card :bordered="false" >
               <div slot="title">
                 <Row type="flex" justify="center" align="middle">
                     <Col span="10"><p>预览</p></Col>
@@ -162,7 +162,7 @@
                     </Col>
                 </Row>
               </div>
-              <e_label v-bind="item" ref="label_canvas" v-bind:style="{ width:'400px'}" >
+              <e_label v-bind="item" ref="label_canvas" v-bind:style="{ width:'400px',height:'300px'}" >
               </e_label>
             </Card>
           </div>

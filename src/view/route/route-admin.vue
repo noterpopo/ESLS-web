@@ -272,10 +272,14 @@ export default {
       this.isScanCronModalShow = val
     },
     onScan () {
-      scanRoute({ cron: this.scanCronExp, query: this.scanQuery, queryString: this.scanQueryString, mode: this.scanMode })
+      scanRoute({ cron: this.scanCronExp, query: this.scanQuery, queryString: this.scanQueryString, mode: this.scanMode }).then(res => {
+        this.getRouteTableData({ page: 0, count: this.countPerPage })
+      })
     },
     onAllScan () {
-      scanAll()
+      scanAll().then(res => {
+        this.getRouteTableData({ page: 0, count: this.countPerPage })
+      })
     },
     onSetting () {
       settingRoute(this.settingQuery, this.settingQueryString)

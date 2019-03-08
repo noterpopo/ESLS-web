@@ -367,10 +367,14 @@ export default {
       this.$set(params, 'queryString', this.scanQueryStr)
       items.push(params)
       this.$set(data, 'items', items)
-      scanTag(data, this.scanMode)
+      scanTag(data, this.scanMode).then(res => {
+        this.getTagTableData({ page: 0, count: this.countPerPage })
+      })
     },
     onScanAll () {
-      scanAll()
+      scanAll().then(res => {
+        this.getTagTableData({ page: 0, count: this.countPerPage })
+      })
     },
     onStatus () {
       let data = {}

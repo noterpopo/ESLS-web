@@ -9,24 +9,6 @@
                 </Row>
                 </div>
             <super_table @onClick="onTagTableClick" :pageSize="countPerPage" :current.sync="currentTagPage" @onDoubleClick="onTableClick" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="tagDataCount"></super_table>
-            <Modal @on-cancel="currentStep=0" v-model="isBindModalShow" title="绑定" width="1400" @on-ok="currentStep=0">
-                <Steps :current="currentStep"  style="marginBottom:16px;">
-                    <Step  title="绑定商品" content="这一步绑定显示在价签上的商品">
-                    </Step>
-                    <Step title="绑定样式" content="这一步绑定显示在价签上的样式"></Step>
-                    <Step title="预览价签" content="预览选择继续修改或完成"></Step>
-                </Steps>
-                <super_table  key="1" v-if="currentStep===0" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageSize="8" :current.sync="currentGoodPage" :dataNum="modalGoodDataCount"></super_table>
-                <super_table key="2" v-if="currentStep===1" @onSearch="onModalStyleTableSearch" @onClick="onMoadlStyleTableClick" :data="styleData" :columns="tableModalStyleColumns" :isLoading="isModalStyleTableLoading" :pageSize="8" :current.sync="currentStylePage" :dataNum="modalStyleDataCount"></super_table>
-                <div v-if="currentStep===2" style="display: flex;justify-content:center;align-items:Center;">
-                    <e_label v-bind="item" ref="label_canvas" >
-                    </e_label>
-                </div>
-                <Button v-if="currentStep===2" @click="onPreStep">上一步</Button>
-                <Button style="position:absolute; top:540px;" v-if="currentStep===0" @click="onNextStep">下一步</Button>
-                <Button style="position:absolute; top:540px;left:100px;" v-if="currentStep===1" @click="onNextStep">下一步</Button>
-                <Button style="position:absolute; top:540px;" v-if="currentStep===1" @click="onPreStep">上一步</Button>
-            </Modal>
             <Modal @on-cancle='onBindGoodCancel' v-model="isBindGoodModalShow" title="绑定商品" width="1400" @on-ok="onBindGood">
               <super_table  key="3" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageSize="8" :current.sync="currentGoodPage" :dataNum="modalGoodDataCount"></super_table>
             </Modal>
@@ -96,7 +78,7 @@
             </Modal>
             </Card>
         </div>
-        <div class="right">
+        <div class="right" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
             <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
                 <div slot="title">
                 <Row type="flex" justify="start" align="middle">
@@ -115,7 +97,7 @@
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import e_label from '@/components/e-label/e-lable.vue'
-import { getAllTag, bindStyle, bindGood, getUsableStyle } from '@/api/tag'
+import { getAllTag, bindStyle, bindGood } from '@/api/tag'
 import { getAllGood, getGood, getBindedTags } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
 export default {
@@ -191,6 +173,9 @@ export default {
               },
               on: {
                 'on-change': (val) => {
+                  if (val === params.row.styleId) {
+                    return
+                  }
                   this.onBindStyle(params.row.id, val)
                 },
                 'on-open-change': () => {
@@ -524,7 +509,10 @@ export default {
     this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage })
     this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
     this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8 })
-    this.getStyleTableData({ page: this.currentStylePage - 1, count: 13 })
+    // TODO
+    getAllStyle({ page: 0, count: 1 }).then(res => {
+      this.getStyleTableData({ page: this.currentStylePage - 1, count: res.data.code })
+    })
   },
   watch: {
     currentTagPage () {
@@ -748,9 +736,9 @@ export default {
       })
     },
     onFinfStyle (query, queryString) {
-      getUsableStyle(query, queryString).then(res => {
-        this.styleData = res.data.data
-      })
+      // getUsableStyle(query, queryString).then(res => {
+      //   this.styleData = res.data.data
+      // })
     }
   }
 
@@ -767,9 +755,11 @@ export default {
 }
 .lett{
   flex-shrink: 1;
+  display: flex;
 }
 .right{
   margin-top: 20px;
   flex-shrink: 1;
+  display: flex;
 }
 </style>

@@ -369,13 +369,17 @@ export default {
       canvas.width = canvas.width // 清空画布
       var len = dispmsData.length
       for (var i = 0; i < len; ++i) {
+        if (dispmsData[i].status === 0) {
+          continue
+        }
+        this.drawDispms('背景', dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
         if (dispmsData[i].sourceColumn === 'name') {
           this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
         } else if (dispmsData[i].sourceColumn === 'price') {
           if (this.itemPrice.split('.').length === 1) {
             let isLine = dispmsData[i].backup.split('/')[0]
             if (isLine === '1') {
-              this.drawDispms('线段', dispmsData[i].x * widthRadius, (dispmsData[i].y + 0.2 * dispmsData[i].height) * heightRadius, dispmsData[i].width * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, '', dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+              this.drawDispms('线段', dispmsData[i].x * widthRadius, (dispmsData[i].y + 0.5 * dispmsData[i].height) * heightRadius, parseInt(dispmsData[i].backup.split('/')[1]) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, '', dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
             }
             this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemPrice, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
           } else {
@@ -395,7 +399,7 @@ export default {
           if (this.itemOnSalePrice.split('.') === 1) {
             let isLine = dispmsData[i].backup.split('/')[0]
             if (isLine === '1') {
-              this.drawDispms('线段', dispmsData[i].x * widthRadius, (dispmsData[i].y + 0.5 * dispmsData[i].height) * heightRadius, dispmsData[i].width * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, '', dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+              this.drawDispms('线段', dispmsData[i].x * widthRadius, (dispmsData[i].y + 0.5 * dispmsData[i].height) * heightRadius, parseInt(dispmsData[i].backup.split('/')[1]) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, '', dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
             }
             this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, this.itemOnSalePrice, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
           } else {
@@ -435,6 +439,7 @@ export default {
       }
     },
     initData (data, width, height) {
+      canvas = this.$refs.canvas
       if (data === null) {
         canvas.width = 0
         canvas.height = 0

@@ -1,7 +1,7 @@
 <template>
-  <div class="container" ref="container">
+  <div class="container" ref="container" >
       <div class="left" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
-        <Card :bordered="false" class="e-lable-table-card card" >
+        <Card :bordered="false" class="e-lable-table-card card">
             <div slot="title">
                 <Row type="flex" justify="center" align="middle">
                     <Col span="22"><p>样式信息</p></Col>
@@ -19,7 +19,7 @@
             <modal_style_designer ref="designer"></modal_style_designer>
         </Modal>
       </div>
-      <div class="right">
+      <div class="right" v-bind:style="{ marginLeft:'10px'}" >
         <div v-bind:style="{ width: windowWidth*0.3 + 'px',display:'flex',flexDirection: 'column', justifyContent: 'space-between'}">
           <Card :bordered="false" class="e-lable-card card">
             <p slot="title">价签样式预览</p>
@@ -29,7 +29,7 @@
               </e_label>
             </div>
           </Card>
-          <Card :bordered="false" class="card input-card">
+          <!-- <Card :bordered="false" class="card input-card">
             <div slot="title">
                 <Row type="flex" justify="start" align="middle">
                     <Col span="21"><p>信息修改</p></Col>
@@ -49,27 +49,9 @@
               <Input type="text" v-model="item.itemPrice" />
               <Input type="text" v-model="item.itemOnSalePrice" />
             </div>
-          </Card>
+          </Card> -->
         </div>
       </div>
-      <!--
-    <Input type="text" v-model="item.itemName" />
-    <Input type="text" v-model="item.itemUnit" />
-    <Input type="text" v-model="item.itemNorm" />
-    <Input type="text" v-model="item.itemCategory" />
-    <Input type="text" v-model="item.itemOrigin" />
-    <Input type="text" v-model="item.itemNo" />
-    <Input type="text" v-model="item.itemQRCode" />
-    <Input type="text" v-model="item.itemBarCode" />
-    <Input type="text" v-model="item.itemStock" />
-    <Input type="text" v-model="item.itemPrice" />
-    <Input type="text" v-model="item.itemOnSalePrice" />
-    <i-switch v-model="item.itemisOnSale"  />
-    <Select v-model="item.labelStyle">
-      <Option v-for="num in styleList" :value="num" :key="num">{{num}}</Option>
-    </Select>
-    <Button type="primary" @click="getLabelData(10)">Primary</Button>
-    -->
   </div>
 </template>
 
@@ -275,6 +257,9 @@ export default {
     },
     onUpdate () {
       this.$refs.designer.update(this.currentStyleID)
+    },
+    addStyle () {
+
     }
   }
 }
@@ -292,6 +277,7 @@ Input{
     flex-wrap: nowrap;
     justify-content: flex-start;
     align-items: flex-start;
+    align-content: flex-start;
 
 }
 .left{

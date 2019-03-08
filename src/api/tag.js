@@ -129,13 +129,13 @@ export const deleteTag = (id) => {
 
 export const getUsableStyle = (query, queryString) => {
   return axios.request({
-    url: 'tag/style',
+    url: 'tag/styles',
     method: 'post',
-    data: [{
-      items: {
+    data: {
+      items: [{
         query: query,
         queryString: queryString
-      }
-    }]
+      }]
+    }
   })
 }
