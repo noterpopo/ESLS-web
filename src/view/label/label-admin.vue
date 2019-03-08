@@ -1,50 +1,52 @@
 <template>
   <div class="container" ref="container">
-      <div class="left">
-        <Card :bordered="false" class="e-lable-table-card card" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
+      <div class="left" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
+        <Card :bordered="false" class="e-lable-table-card card" >
             <p slot="title">价签样式列表</p>
             <super_table :pageSize="countPerPage" :current.sync="currentPage" :dataNum="dataNum" class="e-label-table" @onSearch="onTableSearch" @onClick="onTableClick" :data="styleData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="dataNum"></super_table>
         </Card>
+        <Modal
+            v-model="isModal"
+            @on-ok="onUpdate"
+            width="auto"
+            title="样式编辑器"
+            class-name="modal-style-designer">
+            <modal_style_designer ref="designer"></modal_style_designer>
+        </Modal>
       </div>
       <div class="right">
-        <Card :bordered="false" class="e-lable-card card">
-          <p slot="title">价签样式预览</p>
-          <div>
-            <e_label class="e-label" v-bind="item" ref="label_canvas" >
-                <Spin size="large" fix v-if="isLabelLoading"></Spin>
-            </e_label>
-          </div>
-        </Card>
-        <Card :bordered="false" class="card input-card">
-          <div slot="title">
-              <Row type="flex" justify="start" align="middle">
-                  <Col span="21"><p>信息修改</p></Col>
-                  <Col span="3"><Button type="primary">保存</Button></Col>
-              </Row>
-          </div>
-          <div>
-            <Input type="text" v-model="item.itemName" />
-            <Input type="text" v-model="item.itemUnit" />
-            <Input type="text" v-model="item.itemNorm" />
-            <Input type="text" v-model="item.itemCategory" />
-            <Input type="text" v-model="item.itemOrigin" />
-            <Input type="text" v-model="item.itemNo" />
-            <Input type="text" v-model="item.itemQRCode" />
-            <Input type="text" v-model="item.itemBarCode" />
-            <Input type="text" v-model="item.itemStock" />
-            <Input type="text" v-model="item.itemPrice" />
-            <Input type="text" v-model="item.itemOnSalePrice" />
-          </div>
-        </Card>
+        <div v-bind:style="{ width: windowWidth*0.3 + 'px',display:'flex',flexDirection: 'column', justifyContent: 'space-between'}">
+          <Card :bordered="false" class="e-lable-card card">
+            <p slot="title">价签样式预览</p>
+            <div>
+              <e_label class="e-label" v-bind="item" ref="label_canvas" >
+                  <Spin size="large" fix v-if="isLabelLoading"></Spin>
+              </e_label>
+            </div>
+          </Card>
+          <Card :bordered="false" class="card input-card">
+            <div slot="title">
+                <Row type="flex" justify="start" align="middle">
+                    <Col span="21"><p>信息修改</p></Col>
+                    <Col span="3"><Button type="primary">保存</Button></Col>
+                </Row>
+            </div>
+            <div>
+              <Input type="text" v-model="item.itemName" />
+              <Input type="text" v-model="item.itemUnit" />
+              <Input type="text" v-model="item.itemNorm" />
+              <Input type="text" v-model="item.itemCategory" />
+              <Input type="text" v-model="item.itemOrigin" />
+              <Input type="text" v-model="item.itemNo" />
+              <Input type="text" v-model="item.itemQRCode" />
+              <Input type="text" v-model="item.itemBarCode" />
+              <Input type="text" v-model="item.itemStock" />
+              <Input type="text" v-model="item.itemPrice" />
+              <Input type="text" v-model="item.itemOnSalePrice" />
+            </div>
+          </Card>
+        </div>
       </div>
-      <Modal
-        v-model="isModal"
-        @on-ok="onUpdate"
-        width="auto"
-        title="样式编辑器"
-        class-name="modal-style-designer">
-        <modal_style_designer ref="designer"></modal_style_designer>
-    </Modal>
       <!--
     <Input type="text" v-model="item.itemName" />
     <Input type="text" v-model="item.itemUnit" />
@@ -206,7 +208,6 @@ export default {
       getStyle(id).then(res => {
         const dispData = res.data.data
         var len = dispData.length // 循环变量
-        console.log(dispData)
         for (var i = 0; i < len; ++i) {
           if (dispData[i].sourceColumn === 'name') {
             that.item.itemName = dispData[i].text
@@ -283,10 +284,9 @@ Input{
 }
 .container{
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    align-items: stretch;
-    align-content: center;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
 
 }
 .left{

@@ -338,7 +338,7 @@ export default {
         // 划线
         ctx.beginPath()
         ctx.moveTo(x, y)
-        ctx.lineTo(x + width, y + height)
+        ctx.lineTo(x + width, y)
         ctx.stroke()
       } else if (columnType === '背景') {
         // 背景
@@ -385,8 +385,8 @@ export default {
             let decFontSize = dispmsData[i].backup.split('/')[1]
             let fontPerLen = parseInt(dispmsData[i].backup.split('/')[2]) / (dispmsData[i].text.split('.')[0].length + 1)
             if (isLine === '1') {
-              this.drawDispms('线段', dispmsData[i].x * widthRadius, (dispmsData[i].y + 0.2 * dispmsData[i].height) * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
-              this.drawDispms('线段', (dispmsData[i].x + fontPerLen * (intPart.length + 1)) * widthRadius, (dispmsData[i].y + 0.18 * dispmsData[i].height) * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+              this.drawDispms('线段', dispmsData[i].x * widthRadius, (dispmsData[i].y + 0.5 * dispmsData[i].height) * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
+              this.drawDispms('线段', (dispmsData[i].x + fontPerLen * (intPart.length + 1)) * widthRadius, (dispmsData[i].y + 0.4 * dispmsData[i].height) * heightRadius, fontPerLen * (intPart.length) * widthRadius, 0 * heightRadius, dispmsData[i].backgroundColor, this.itemName, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
             }
             this.drawDispms(dispmsData[i].columnType, dispmsData[i].x * widthRadius, dispmsData[i].y * heightRadius, dispmsData[i].width * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, intPart + '.', dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, dispmsData[i].fontSize * widthRadius)
             this.drawDispms(dispmsData[i].columnType, (dispmsData[i].x + fontPerLen * (intPart.length + 1)) * widthRadius, dispmsData[i].y * heightRadius, (dispmsData[i].width - fontPerLen * (intPart.length + 1)) * widthRadius, dispmsData[i].height * heightRadius, dispmsData[i].backgroundColor, decPart, dispmsData[i].startText, dispmsData[i].endText, dispmsData[i].fontType, dispmsData[i].fontFamily, dispmsData[i].fontColor, parseInt(decFontSize) * widthRadius)
