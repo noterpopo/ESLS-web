@@ -122,7 +122,7 @@
 <script>
 // https://github.com/mauricius/vue-draggable-resizable
 // TODO:字体颜色
-import { getStyle, updateStyle } from '@/api/style'
+import { getStyle, updateStyle, newStyle } from '@/api/style'
 import { coppyArray } from '@/libs/util'
 import VueDraggableResizable from 'vue-draggable-resizable'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
@@ -138,6 +138,7 @@ export default {
       styleid: 0,
       styleWidth: 0,
       styleHeight: 0,
+      styleType: '',
       isLoading: false,
       reRenderFlag: true,
       editAreaWidth: 800,
@@ -163,7 +164,8 @@ export default {
       decFontSizePrice: 0,
       decFontSizePromotePrice: 0,
       newStyleSize: '',
-      newStyleType: ''
+      newStyleType: '',
+      newStyleName: ''
     }
   },
   updated () {
@@ -198,10 +200,11 @@ export default {
     }
   },
   methods: {
-    getStyleData (id, w, h) {
+    getStyleData (id, type, w, h) {
       this.styleid = id
       this.styleWidth = w
       this.styleHeight = h
+      this.styleType = type
       this.isLoading = true
       var that = this
       getStyle(id).then(res => {
@@ -280,59 +283,117 @@ export default {
         render: (h, params) => {
           var that = this
           return h('span', [
-            h('p', '样式信息:'),
-            h('Select', [
-              h('Option', {
-                props: {
-                  value: '4.0寸'
-                }
-              }),
-              h('Option', {
-                props: {
-                  value: '2.13寸'
-                }
-              }),
-              h('Option', {
-                props: {
-                  value: '2.9寸'
-                }
-              })
-            ], {
+            h('p', '样式名字:'),
+            h('Input', {
               props: {
-                value: that.newStyleSize
+                placeholder: '输入名字',
+                value: this.newStyleName
+              },
+              on: {
+                'on-change': (event) => {
+                  that.newStyleName = event.target.value
+                }
+              }
+            })
+          ])
+        },
+        onOk: () => {
+          var that = this
+          let styledes = this.styleType + '-' + this.newStyleName
+          newStyle(styledes).then(res => {
+            const newId = res.data.data.id
+            updateStyle(newId, that.currentDispmsData, 0, 0).then(res => {
+              that.$emit('reloadTable')
+              that.$Message('另存为样式成功')
+            })
+          })
+        }
+      })
+    },
+    saveNew () {
+      this.$emit('onSava')
+      for (let i = 0; i < this.currentDispmsData.length; ++i) {
+        delete this.currentDispmsData[i].id
+      }
+      this.$Modal.confirm({
+        title: '新样式信息',
+        render: (h, params) => {
+          var that = this
+          return h('span', [
+            h('p', '样式信息:'),
+            h('Select', {
+              props: {
+                value: this.newStyleSize
               },
               on: {
                 'on-change': (val) => {
                   that.newStyleSize = val
                 }
               }
-            }),
-            h('Select', [
+            }, [
               h('Option', {
                 props: {
-                  value: '黑白'
+                  value: '4.0寸',
+                  label: '4.0寸'
                 }
               }),
               h('Option', {
                 props: {
-                  value: '三色'
+                  value: '2.13寸',
+                  label: '2.13寸'
+                }
+              }),
+              h('Option', {
+                props: {
+                  value: '2.9寸',
+                  label: '2.13寸'
                 }
               })
-            ], {
+            ]),
+            h('Input', {
+              attrs: {
+                style: 'margin-top:10px'
+              },
               props: {
-                value: that.newStyleType
+                placeholder: '输入名字',
+                value: this.newStyleName
+              },
+              on: {
+                'on-change': (event) => {
+                  that.newStyleName = event.target.value
+                }
+              }
+            }),
+            h('Select', {
+              props: {
+                value: this.newStyleType
+              },
+              attrs: {
+                style: 'margin-top:10px'
               },
               on: {
                 'on-change': function (val) {
-                  that.$Message.info('hhh')
                   that.newStyleType = val
                 }
               }
-            })
-          ], '')
+            }, [
+              h('Option', {
+                props: {
+                  value: '黑白',
+                  label: '黑白'
+                }
+              }),
+              h('Option', {
+                props: {
+                  value: '三色',
+                  label: '三色'
+                }
+              })
+            ])
+          ])
         },
         onOk: () => {
-          console.log(this.newStyleSize + ' ' + this.newStyleType)
+          this.$Message.info(this.newStyleSize + ' ' + this.newStyleType)
         }
 
       })

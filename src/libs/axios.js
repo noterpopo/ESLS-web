@@ -54,7 +54,7 @@ class HttpRequest {
       const { data, status, headers } = res
       return { data, status, headers }
     }, error => {
-      that.$Message.info('hhh')
+      that.$Message('hhh')
       this.destroy(url)
       let errorInfo = error.response
       if (!errorInfo) {

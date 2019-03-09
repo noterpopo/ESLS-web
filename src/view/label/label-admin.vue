@@ -17,7 +17,7 @@
             width="auto"
             title="样式编辑器"
             class-name="modal-style-designer">
-            <modal_style_designer ref="designer" @onSava="isModal=false"></modal_style_designer>
+            <modal_style_designer ref="designer" @reloadTable="reload" @onSava="isModal=false"></modal_style_designer>
         </Modal>
       </div>
       <div class="right" v-bind:style="{ marginLeft:'10px'}" >
@@ -146,7 +146,7 @@ export default {
                 on: {
                   'click': (event) => {
                     event.stopPropagation()
-                    this.editStyle(params.row.id, params.row.width, params.row.height)
+                    this.editStyle(params.row.id, params.row.styleType, params.row.width, params.row.height)
                   }
                 }
               }, '修改'),
@@ -237,6 +237,9 @@ export default {
         that.isTableLoading = false
       })
     },
+    reload () {
+      this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage })
+    },
     onTableSearch (search) {
       var key = Object.keys(search)
       var value = search[key]
@@ -251,10 +254,10 @@ export default {
           this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage })
         })
     },
-    editStyle (styleid, w, h) {
+    editStyle (styleid, styletype, w, h) {
       this.currentStyleID = styleid
       this.isModal = true
-      this.$refs.designer.getStyleData(styleid, w, h)
+      this.$refs.designer.getStyleData(styleid, styletype, w, h)
     },
     onUpdate () {
       this.$refs.designer.update(this.currentStyleID)

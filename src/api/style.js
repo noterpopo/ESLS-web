@@ -44,3 +44,13 @@ export const deleteStyle = (id) => {
     method: 'delete'
   })
 }
+
+export const newStyle = (styleType) => {
+  return axios.request({
+    url: '/style',
+    method: 'get',
+    params: {
+      styleType: styleType
+    }
+  })
+}
