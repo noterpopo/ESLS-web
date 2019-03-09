@@ -33,6 +33,7 @@ class HttpRequest {
     }
   }
   interceptors (instance, url) {
+    var that = this
     // 请求拦截
     instance.interceptors.request.use(config => {
       // 添加全局的loading...
@@ -53,6 +54,7 @@ class HttpRequest {
       const { data, status, headers } = res
       return { data, status, headers }
     }, error => {
+      that.$Message.info('hhh')
       this.destroy(url)
       let errorInfo = error.response
       if (!errorInfo) {

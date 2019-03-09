@@ -214,7 +214,7 @@ export default {
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '工作中' : '禁用'
+            const text = row.isWorking === 1 ? '工作中' : '通讯异常'
 
             return h('Tag', {
               props: {
@@ -230,6 +230,7 @@ export default {
         {
           title: '等待变价',
           key: 'waitUpdate',
+          width: '140',
           render: (h, params) => {
             const row = params.row
             const color = row.waitUpdate === 1 ? 'primary' : 'error'

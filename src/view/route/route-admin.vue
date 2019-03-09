@@ -3,8 +3,9 @@
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
-                <Col span="24"><p>路由器列表</p></Col>
-            </Row>
+                    <Col span="22"><p>价签信息</p></Col>
+                    <Col span="2"><Button type="primary" @click="routeReload">刷新</Button></Col>
+              </Row>
           </div>
           <super_table @onClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="routeData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="routeDataCount"></super_table>
         </Card>
@@ -273,7 +274,7 @@ export default {
     },
     onScan () {
       scanRoute({ cron: this.scanCronExp, query: this.scanQuery, queryString: this.scanQueryString, mode: this.scanMode }).then(res => {
-        this.getRouteTableData({ page: 0, count: this.countPerPage })
+        this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
       })
     },
     onAllScan () {
@@ -286,6 +287,9 @@ export default {
     },
     onTest () {
       testRouter(this.testQuery, this.testQueryString, this.testBarCode, this.testChannelId, this.testHardVersion, this.testMode)
+    },
+    routeReload () {
+      this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
     }
   }
 }

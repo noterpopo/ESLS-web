@@ -213,7 +213,7 @@ export default {
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '工作中' : '禁用'
+            const text = row.isWorking === 1 ? '工作中' : '通讯异常'
 
             return h('Tag', {
               props: {
@@ -368,12 +368,12 @@ export default {
       items.push(params)
       this.$set(data, 'items', items)
       scanTag(data, this.scanMode).then(res => {
-        this.getTagTableData({ page: 0, count: this.countPerPage })
+        this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
       })
     },
     onScanAll () {
       scanAll().then(res => {
-        this.getTagTableData({ page: 0, count: this.countPerPage })
+        this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
       })
     },
     onStatus () {

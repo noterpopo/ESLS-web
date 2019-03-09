@@ -161,7 +161,9 @@ export default {
         labelStyle: '5'
       },
       decFontSizePrice: 0,
-      decFontSizePromotePrice: 0
+      decFontSizePromotePrice: 0,
+      newStyleSize: '',
+      newStyleType: ''
     }
   },
   updated () {
@@ -246,6 +248,16 @@ export default {
       this.currentDispmsData = coppyArray(this.dispmsData)
     },
     update (id) {
+      this.$Modal.confirm({
+        title: '提醒',
+        content: '是否需要更新到价签',
+        onOk: () => {
+          updateStyle(id, this.currentDispmsData, 1, 1)
+        },
+        onCancel: () => {
+          updateStyle(id, this.currentDispmsData, 1, 0)
+        }
+      })
       for (let i = 0; i < this.currentDispmsData.length; ++i) {
         if (this.currentDispmsData[i].sourceColumn === 'promotePrice') {
           let backUp = this.currentDispmsData[i].backup.split('/')
@@ -257,8 +269,6 @@ export default {
           this.currentDispmsData[i].backup = backUp[0] + '/' + backUp[1] + '/' + backUp[2]
         }
       }
-      // TODO
-      updateStyle(id, this.currentDispmsData, 1, 1)
     },
     saveAsNew () {
       this.$emit('onSava')
@@ -267,7 +277,63 @@ export default {
       }
       this.$Modal.confirm({
         title: '新样式信息',
-        content: '<div><span>样式名字</span></div>'
+        render: (h, params) => {
+          var that = this
+          return h('span', [
+            h('p', '样式信息:'),
+            h('Select', [
+              h('Option', {
+                props: {
+                  value: '4.0寸'
+                }
+              }),
+              h('Option', {
+                props: {
+                  value: '2.13寸'
+                }
+              }),
+              h('Option', {
+                props: {
+                  value: '2.9寸'
+                }
+              })
+            ], {
+              props: {
+                value: that.newStyleSize
+              },
+              on: {
+                'on-change': (val) => {
+                  that.newStyleSize = val
+                }
+              }
+            }),
+            h('Select', [
+              h('Option', {
+                props: {
+                  value: '黑白'
+                }
+              }),
+              h('Option', {
+                props: {
+                  value: '三色'
+                }
+              })
+            ], {
+              props: {
+                value: that.newStyleType
+              },
+              on: {
+                'on-change': function (val) {
+                  that.$Message.info('hhh')
+                  that.newStyleType = val
+                }
+              }
+            })
+          ], '')
+        },
+        onOk: () => {
+          console.log(this.newStyleSize + ' ' + this.newStyleType)
+        }
 
       })
     }
