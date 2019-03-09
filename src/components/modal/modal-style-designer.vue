@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" :style="{flexDirection: 'row'}">
       <canvas id="canvas" ref="canvas"></canvas>
         <div class="left">
             <div class="infoarea">
@@ -9,18 +9,18 @@
                 <p :style="{fontSize: '16px'}">样式宽度：{{styleWidth}}</p>
                 <p :style="{fontSize: '16px'}">样式高度：{{styleHeight}}</p>
                 <Button :style="{marginTop:'10px'}" type="primary" @click="reset">恢复默认值</Button>
-                <Button :style="{margin:'10px'}" type="primary" @click="reset">另存为新样式</Button>
+                <Button :style="{marginTop:'10px'}" type="primary" @click="saveAsNew">另存为新样式</Button>
             </Card>
             </div>
         </div>
         <div class="right">
             <div class="editorarea" v-if="reRenderFlag" :style="{width:editAreaWidth+'px',height:editAreaHeight+'px'}">
               <Poptip v-for="(item,index) in currentDispmsData" :key="index" trigger="click" title="编辑框" class="poptipWarp" :style="{ position: 'absolute',left: item.x+'px',top: item.y+'px'}">
-                  <vue-draggable-resizable v-if="item.status===1" :style="{ backgroundColor:item.backgroundColor===0?'black':item.backgroundColor===1?'white':'red',position: 'absolute',left: 0+'px',top: 0+'px'}" :x="item.x" :y="item.y" :w="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
-                      <span v-if="item.columnType === '字符串'" :style="{ color:item.fontColor===0?'black':item.fontColor===1?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType, lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
+                  <vue-draggable-resizable v-if="item.status===1" :style="{ backgroundColor:item.backgroundColor==='0'?'black':item.backgroundColor==='1'?'white':'red',position: 'absolute',left: 0+'px',top: 0+'px'}" :x="item.x" :y="item.y" :w="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
+                      <span v-if="item.columnType === '字符串'" :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType, lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
                       <span v-else-if="item.columnType === '数字'" >
-                        <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor===0?'black':item.fontColor===1?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.text.split('.')[0] +'.'}}</span>
-                        <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor===0?'black':item.fontColor===1?'white':'red', verticalAlign:'super',fontSize :(item.sourceColumn==='promotePrice'?decFontSizePromotePrice:decFontSizePrice)+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{ item.text.split('.')[1]}}</span>
+                        <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.text.split('.')[0] +'.'}}</span>
+                        <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', verticalAlign:'super',fontSize :(item.sourceColumn==='promotePrice'?decFontSizePromotePrice:decFontSizePrice)+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{ item.text.split('.')[1]}}</span>
                       </span>
                       <hr v-else-if="item.columnType === '线段'"></hr>
                       <img v-else-if="item.columnType === '二维码'" id="qrCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
@@ -213,6 +213,8 @@ export default {
         })
         var len = data.length // 循环变量
         for (var i = 0; i < len; ++i) {
+          data[i].fontColor = data[i].fontColor + ''
+          data[i].backgroundColor = data[i].backgroundColor + ''
           if (data[i].sourceColumn === 'barCode') {
             that.item.itemBarCode = data[i].text
           } else if (data[i].sourceColumn === 'qrCode') {
@@ -255,7 +257,19 @@ export default {
           this.currentDispmsData[i].backup = backUp[0] + '/' + backUp[1] + '/' + backUp[2]
         }
       }
-      updateStyle(id, this.currentDispmsData, 1, 0)
+      // TODO
+      updateStyle(id, this.currentDispmsData, 1, 1)
+    },
+    saveAsNew () {
+      this.$emit('onSava')
+      for (let i = 0; i < this.currentDispmsData.length; ++i) {
+        delete this.currentDispmsData[i].id
+      }
+      this.$Modal.confirm({
+        title: '新样式信息',
+        content: '<div><span>样式名字</span></div>'
+
+      })
     }
 
   }

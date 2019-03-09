@@ -1,6 +1,6 @@
 <template>
     <div class="container" ref="container">
-        <div class="left">
+        <div class="top">
             <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
                 <div slot="title">
                 <Row type="flex" justify="center" align="middle">
@@ -78,7 +78,7 @@
             </Modal>
             </Card>
         </div>
-        <div class="right" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
+        <div class="bottom" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
             <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
                 <div slot="title">
                 <Row type="flex" justify="start" align="middle">
@@ -97,9 +97,10 @@
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import e_label from '@/components/e-label/e-lable.vue'
-import { getAllTag, bindStyle, bindGood } from '@/api/tag'
+import { getAllTag, bindStyle, bindGood, getUsableStyle } from '@/api/tag'
 import { getAllGood, getGood, getBindedTags } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
+import { coppyArray } from '@/libs/util'
 export default {
   components: {
     e_label,
@@ -167,6 +168,8 @@ export default {
           title: '绑定样式',
           key: 'styleId',
           render: (h, params) => {
+            // TODO
+            // var that = this
             return h('Select', {
               props: {
                 value: params.row.styleId
@@ -174,9 +177,10 @@ export default {
               on: {
                 'on-change': (val) => {
                   if (val === params.row.styleId) {
-                    return
+
+                  } else {
+                    this.onBindStyle(params.row.id, val)
                   }
-                  this.onBindStyle(params.row.id, val)
                 },
                 'on-open-change': () => {
                   this.onFinfStyle('barCode', params.row.barCode)
@@ -190,6 +194,16 @@ export default {
                   label: item.styleType
                 }
               })
+              // if(that.isStyleContain(item,that.filterStyleData)){
+              //   return h('Option', {
+              //     props: {
+              //       value: item.id,
+              //       label: item.styleType
+              //     }
+              //   })
+              // }else{
+              //   return
+              // }
             })
             )
           }
@@ -489,7 +503,8 @@ export default {
       currentTagPage: 1,
       currentGoodPage: 1,
       currentStylePage: 1,
-      currentRightGoodPage: 1
+      currentRightGoodPage: 1,
+      filterStyleData: []
     }
   },
   mounted () {
@@ -592,7 +607,7 @@ export default {
       getAllStyle({ page: page, count: count, queryId: queryId, queryString: queryString }).then(res => {
         const data = res.data.data
         that.modalStyleDataCount = res.data.code
-
+        that.filterStyleData = coppyArray(data)
         that.styleData = data
         that.isModalStyleTableLoading = false
       })
@@ -736,9 +751,17 @@ export default {
       })
     },
     onFinfStyle (query, queryString) {
-      // getUsableStyle(query, queryString).then(res => {
-      //   this.styleData = res.data.data
-      // })
+      getUsableStyle(query, queryString).then(res => {
+        this.filterStyleData = res.data.data
+      })
+    },
+    isStyleContain (data, arr) {
+      for (let i = 0; i < arr.length; ++i) {
+        if (data.id === arr[i].id) {
+          return true
+        }
+      }
+      return false
     }
   }
 
@@ -753,11 +776,11 @@ export default {
   align-items: center;
   align-content: center;
 }
-.lett{
+.top{
   flex-shrink: 1;
   display: flex;
 }
-.right{
+.bottom{
   margin-top: 20px;
   flex-shrink: 1;
   display: flex;

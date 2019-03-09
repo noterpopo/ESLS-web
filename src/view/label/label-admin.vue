@@ -1,5 +1,5 @@
 <template>
-  <div class="container" ref="container" >
+  <div class="container" ref="container" :style="{flexDirection: 'row',alignItems: 'flex-start'}">
       <div class="left" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
         <Card :bordered="false" class="e-lable-table-card card">
             <div slot="title">
@@ -11,16 +11,17 @@
             <super_table :pageSize="countPerPage" :current.sync="currentPage" :dataNum="dataNum" class="e-label-table" @onSearch="onTableSearch" @onClick="onTableClick" :data="styleData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="dataNum"></super_table>
         </Card>
         <Modal
+            :style="{flexDirection: 'row'}"
             v-model="isModal"
             @on-ok="onUpdate"
             width="auto"
             title="样式编辑器"
             class-name="modal-style-designer">
-            <modal_style_designer ref="designer"></modal_style_designer>
+            <modal_style_designer ref="designer" @onSava="isModal=false"></modal_style_designer>
         </Modal>
       </div>
       <div class="right" v-bind:style="{ marginLeft:'10px'}" >
-        <div v-bind:style="{ width: windowWidth*0.3 + 'px',display:'flex',flexDirection: 'column', justifyContent: 'space-between'}">
+        <div v-bind:style="{ width: windowWidth*0.3 + 'px',display:'flex',flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start'}">
           <Card :bordered="false" class="e-lable-card card">
             <p slot="title">价签样式预览</p>
             <div>
@@ -264,7 +265,6 @@ export default {
   }
 }
 </script>
-
 <style lang="less">
 Input{
   margin: 2px
@@ -275,9 +275,8 @@ Input{
 .container{
     display: flex;
     flex-wrap: nowrap;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: flex-start;
-    align-content: flex-start;
 
 }
 .left{
@@ -285,16 +284,14 @@ Input{
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: flex-start;
-  align-items: center;
-  align-content: center;
+  align-items: flex-start;
 }
 .right{
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: flex-start;
-  align-items: center;
-  align-content: center;
+  align-items: flex-start;
 }
 .e-label{
   width: 100%;
@@ -316,6 +313,7 @@ Input{
 }
 .modal-style-designer{
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
 
@@ -323,4 +321,8 @@ Input{
       top: 0;
   }
 }
+</style>
+
+<style lang="less">
+
 </style>

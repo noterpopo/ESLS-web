@@ -1,6 +1,6 @@
 <template>
     <div class="container" ref="container">
-        <div class="left">
+        <div class="top">
           <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
             <div slot="title">
               <Row type="flex" justify="start" align="middle">
@@ -33,14 +33,14 @@
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>操作员：</p></Col>
                     <Col span="10"><Input type="text" v-model="currentSelectedRow.operator" /></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">价格：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentSelectedRow.price" /></Col>
+                    <Col span="1"><p style="position:relative;left:10px;">货号：</p></Col>
+                    <Col span="11"><Input type="text" v-model="currentSelectedRow.shelfNumber" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>促销价：</p></Col>
                     <Col span="10"><Input type="text" v-model="currentSelectedRow.promotePrice" /></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">货号：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentSelectedRow.shelfNumber" /></Col>
+                    <Col span="1"><p style="position:relative;left:10px;">价格：</p></Col>
+                    <Col span="11"><Input type="text" v-model="currentSelectedRow.price" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>条形码：</p></Col>
@@ -97,14 +97,14 @@
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>操作员：</p></Col>
                     <Col span="10"><Input type="text" v-model="addGooddata.operator" /></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">价格：</p></Col>
-                    <Col span="11"><Input type="text" v-model="addGooddata.price" /></Col>
+                    <Col span="1"><p style="position:relative;left:10px;">货号：</p></Col>
+                    <Col span="11"><Input type="text" v-model="addGooddata.shelfNumber" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>促销价：</p></Col>
                     <Col span="10"><Input type="text" v-model="addGooddata.promotePrice" /></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">货号：</p></Col>
-                    <Col span="11"><Input type="text" v-model="addGooddata.shelfNumber" /></Col>
+                    <Col span="1"><p style="position:relative;left:10px;">价格：</p></Col>
+                    <Col span="11"><Input type="text" v-model="addGooddata.price" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>条形码：</p></Col>
@@ -140,7 +140,7 @@
             </Modal>
           </Card>
         </div>
-        <div class="right" v-bind:style="{ marginTop:'10px'}">
+        <div class="bottom" v-bind:style="{ marginTop:'10px'}">
           <div v-bind:style="{ width: windowWidth*0.9 + 'px',display:'flex',justifyContent: 'space-between'}">
             <Card :bordered="false" v-bind:style="{ width: windowWidth*0.6 + 'px'}">
               <div slot="title">
@@ -582,10 +582,10 @@ export default {
   align-items: center;
   align-content: center;
 }
-.lett{
+.top{
   flex-shrink: 1;
 }
-.right{
+.bottom{
   flex-shrink: 1;
   display: flex;
   flex-wrap: wrap;
