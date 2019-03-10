@@ -553,7 +553,15 @@ export default {
         })
       } else {
         // TODO新建样式
-
+        var that = this
+        let styledes = this.styleType
+        newStyle(styledes).then(res => {
+          const newId = res.data.data.id
+          updateStyle(newId, that.currentDispmsData, 0, 0).then(res => {
+            that.$emit('reloadTable')
+            this.$Message.info('新建样式成功')
+          })
+        })
       }
     },
     saveAsNew () {
@@ -587,7 +595,7 @@ export default {
             const newId = res.data.data.id
             updateStyle(newId, that.currentDispmsData, 0, 0).then(res => {
               that.$emit('reloadTable')
-              that.$Message('另存为样式成功')
+              this.$Message('另存为样式成功')
             })
           })
         }
