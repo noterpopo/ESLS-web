@@ -18,7 +18,7 @@ export default {
    */
   baseUrl: {
     dev: 'http://39.108.106.167:8086', // 'https://www.easy-mock.com/mock/5c6a58f27a34d233546dea97/',
-    pro: 'https://produce.com'
+    pro: 'http://39.108.106.167:8086'
   },
   /**
    * @description 默认打开的首页的路由name值，默认为home
