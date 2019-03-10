@@ -9,12 +9,12 @@
                 <p :style="{fontSize: '16px'}">样式宽度：{{styleWidth}}</p>
                 <p :style="{fontSize: '16px'}">样式高度：{{styleHeight}}</p>
                 <Button :style="{marginTop:'10px'}" type="primary" @click="reset">恢复默认值</Button>
-                <Button :style="{marginTop:'10px'}" type="primary" @click="saveAsNew">另存为新样式</Button>
+                <Button :v-if="mode!=='new'" :style="{marginTop:'10px'}" type="primary" @click="saveAsNew">另存为新样式</Button>
             </Card>
             </div>
         </div>
         <div class="right">
-            <div class="editorarea" v-if="reRenderFlag" :style="{width:editAreaWidth+'px',height:editAreaHeight+'px'}">
+            <div class="editorarea" v-if="reRenderFlag" :style="{width:styleWidth+'px',height:styleHeight+'px'}">
               <Poptip v-for="(item,index) in currentDispmsData" :key="index" trigger="click" title="编辑框" class="poptipWarp" :style="{ position: 'absolute',left: item.x+'px',top: item.y+'px'}">
                   <vue-draggable-resizable v-if="item.status===1" :style="{ backgroundColor:item.backgroundColor==='0'?'black':item.backgroundColor==='1'?'white':'red',position: 'absolute',left: 0+'px',top: 0+'px'}" :x="item.x" :y="item.y" :w="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
                       <span v-if="item.columnType === '字符串'" :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType, lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
@@ -141,8 +141,6 @@ export default {
       styleType: '',
       isLoading: false,
       reRenderFlag: true,
-      editAreaWidth: 800,
-      editAreaHeight: 600,
       styleData: {},
       dispmsData: [],
       currentDispmsData: [],
@@ -165,7 +163,274 @@ export default {
       decFontSizePromotePrice: 0,
       newStyleSize: '',
       newStyleType: '',
-      newStyleName: ''
+      newStyleName: '',
+      mode: '',
+      newdata: [
+        {
+          id: 11,
+          name: '商品名称',
+          x: 0,
+          y: 0,
+          width: 219,
+          height: 38,
+          sourceColumn: 'name',
+          columnType: '字符串',
+          backgroundColor: '1',
+          text: '默认名字',
+          startText: '',
+          endText: '',
+          fontType: 'normal',
+          fontFamily: '楷体',
+          fontColor: '1',
+          fontSize: 33,
+          status: 1,
+          imageUrl: '',
+          backup: '0',
+          regionId: '1'
+        },
+        {
+          id: 12,
+          name: '线段',
+          x: 2,
+          y: 45,
+          width: 400,
+          height: 2,
+          sourceColumn: '0',
+          columnType: '线段',
+          backgroundColor: '1',
+          text: '',
+          startText: '',
+          endText: '',
+          fontType: '',
+          fontFamily: '',
+          fontColor: '0',
+          fontSize: 0,
+          status: 1,
+          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          backup: null,
+          regionId: '2'
+        },
+        {
+          id: 13,
+          name: '字符串',
+          x: 6,
+          y: 62,
+          width: 79,
+          height: 28,
+          sourceColumn: '0',
+          columnType: '字符串',
+          backgroundColor: '2',
+          text: '原价：￥',
+          startText: '',
+          endText: '',
+          fontType: 'normal',
+          fontFamily: '微软雅黑',
+          fontColor: '0',
+          fontSize: 20,
+          status: 1,
+          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          backup: null,
+          regionId: '3'
+        },
+        {
+          id: 14,
+          name: '数字左侧(price)',
+          x: 115,
+          y: 60,
+          width: 285,
+          height: 33,
+          sourceColumn: 'price',
+          columnType: '数字',
+          backgroundColor: '2',
+          text: '999.99',
+          startText: '',
+          endText: '',
+          fontType: 'normal',
+          fontFamily: '微软雅黑',
+          fontColor: '2',
+          fontSize: 24,
+          status: 1,
+          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          backup: '1/20/45',
+          regionId: '4'
+        },
+        {
+          id: 16,
+          name: '字符串',
+          x: 6,
+          y: 130,
+          width: 79,
+          height: 28,
+          sourceColumn: '0',
+          columnType: '字符串',
+          backgroundColor: '2',
+          text: '现价：￥',
+          startText: '',
+          endText: '',
+          fontType: 'normal',
+          fontFamily: '微软雅黑',
+          fontColor: '0',
+          fontSize: 20,
+          status: 1,
+          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          backup: null,
+          regionId: '5'
+        },
+        {
+          id: 17,
+          name: '数字左侧(promotePrice)',
+          x: 118,
+          y: 98,
+          width: 282,
+          height: 88,
+          sourceColumn: 'promotePrice',
+          columnType: '数字',
+          backgroundColor: '2',
+          text: '111.23',
+          startText: '',
+          endText: '',
+          fontType: 'bold',
+          fontFamily: '微软雅黑',
+          fontColor: '2',
+          fontSize: 66,
+          status: 1,
+          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          backup: '0/60/123',
+          regionId: '6'
+        },
+        {
+          id: 19,
+          name: '字符串',
+          x: 6,
+          y: 190,
+          width: 99,
+          height: 20,
+          sourceColumn: 'spec',
+          columnType: '字符串',
+          backgroundColor: '2',
+          text: '盒',
+          startText: '规格：',
+          endText: '',
+          fontType: 'normal',
+          fontFamily: '宋体',
+          fontColor: '2',
+          fontSize: 17,
+          status: 1,
+          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          backup: null,
+          regionId: '7'
+        },
+        {
+          id: 20,
+          name: '字符串',
+          x: 133,
+          y: 190,
+          width: 71,
+          height: 20,
+          sourceColumn: 'unit',
+          columnType: '字符串',
+          backgroundColor: '2',
+          text: '个',
+          startText: '单位：',
+          endText: '',
+          fontType: 'normal',
+          fontFamily: '宋体',
+          fontColor: '2',
+          fontSize: 17,
+          status: 1,
+          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          backup: null,
+          regionId: '8'
+        },
+        {
+          id: 22,
+          name: '字符串',
+          x: 133,
+          y: 221,
+          width: 138,
+          height: 20,
+          sourceColumn: 'category',
+          columnType: '字符串',
+          backgroundColor: '2',
+          text: '生活用品',
+          startText: '类别：',
+          endText: '',
+          fontType: 'normal',
+          fontFamily: '宋体',
+          fontColor: '2',
+          fontSize: 17,
+          status: 1,
+          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          backup: null,
+          regionId: '9'
+        },
+        {
+          id: 23,
+          name: '二维码',
+          x: 280,
+          y: 170,
+          width: 104,
+          height: 100,
+          sourceColumn: 'qrCode',
+          columnType: '二维码',
+          backgroundColor: '2',
+          text: '强力粘钩',
+          startText: '',
+          endText: '',
+          fontType: '',
+          fontFamily: '',
+          fontColor: '2',
+          fontSize: 0,
+          status: 1,
+          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          backup: null,
+          regionId: '10'
+        },
+        {
+          id: 24,
+          name: '条形码',
+          x: 41,
+          y: 260,
+          width: 201,
+          height: 30,
+          sourceColumn: 'barCode',
+          columnType: '条形码',
+          backgroundColor: '2',
+          text: '6921489003907',
+          startText: '',
+          endText: '',
+          fontType: '',
+          fontFamily: '',
+          fontColor: '0',
+          fontSize: 0,
+          status: 1,
+          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          backup: null,
+          regionId: '11'
+        },
+        {
+          id: 102,
+          name: '字符串',
+          x: 7,
+          y: 221,
+          width: 111,
+          height: 20,
+          sourceColumn: 'shelfNumber',
+          columnType: '字符串',
+          backgroundColor: '2',
+          text: '10g',
+          startText: '货号：',
+          endText: '',
+          fontType: 'normal',
+          fontFamily: '宋体',
+          fontColor: '2',
+          fontSize: 17,
+          status: 1,
+          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          backup: null,
+          regionId: '12'
+        }
+      ]
     }
   },
   updated () {
@@ -200,40 +465,49 @@ export default {
     }
   },
   methods: {
-    getStyleData (id, type, w, h) {
+    getStyleData (id, type, w, h, mode) {
+      this.mode = mode
+      this.dispmsData = []
+      this.currentDispmsData = []
       this.styleid = id
       this.styleWidth = w
       this.styleHeight = h
       this.styleType = type
-      this.isLoading = true
-      var that = this
-      getStyle(id).then(res => {
-        const data = res.data.data
-        that.editAreaWidth = w
-        that.editAreaHeight = h
-        // 重新渲染editorarea
+      if (mode === 'new') {
         this.reRenderFlag = false
         this.$nextTick(() => {
           this.reRenderFlag = true
         })
-        var len = data.length // 循环变量
-        for (var i = 0; i < len; ++i) {
-          data[i].fontColor = data[i].fontColor + ''
-          data[i].backgroundColor = data[i].backgroundColor + ''
-          if (data[i].sourceColumn === 'barCode') {
-            that.item.itemBarCode = data[i].text
-          } else if (data[i].sourceColumn === 'qrCode') {
-            that.item.itemQRCode = data[i].text
-          } else if (data[i].sourceColumn === 'price') {
-            this.decFontSizePrice = parseInt(data[i].backup.split('/')[1])
-          } else if (data[i].sourceColumn === 'promotePrice') {
-            this.decFontSizePromotePrice = parseInt(data[i].backup.split('/')[1])
+        this.currentDispmsData = coppyArray(this.newdata)
+      } else {
+        this.isLoading = true
+        var that = this
+        getStyle(id).then(res => {
+          const data = res.data.data
+          // 重新渲染editorarea
+          this.reRenderFlag = false
+          this.$nextTick(() => {
+            this.reRenderFlag = true
+          })
+          var len = data.length // 循环变量
+          for (var i = 0; i < len; ++i) {
+            data[i].fontColor = data[i].fontColor + ''
+            data[i].backgroundColor = data[i].backgroundColor + ''
+            if (data[i].sourceColumn === 'barCode') {
+              that.item.itemBarCode = data[i].text
+            } else if (data[i].sourceColumn === 'qrCode') {
+              that.item.itemQRCode = data[i].text
+            } else if (data[i].sourceColumn === 'price') {
+              this.decFontSizePrice = parseInt(data[i].backup.split('/')[1])
+            } else if (data[i].sourceColumn === 'promotePrice') {
+              this.decFontSizePromotePrice = parseInt(data[i].backup.split('/')[1])
+            }
           }
-        }
-        that.isLoading = false
-        that.currentDispmsData = data
-        that.dispmsData = coppyArray(data)
-      })
+          that.isLoading = false
+          that.currentDispmsData = data
+          that.dispmsData = coppyArray(data)
+        })
+      }
     },
     onActivated (index) {
     },
@@ -248,19 +522,13 @@ export default {
       this.$set(this.currentDispmsData[index], 'height', height)
     },
     reset () {
-      this.currentDispmsData = coppyArray(this.dispmsData)
+      if (this.mode === 'new') {
+        this.currentDispmsData = coppyArray(newdata)
+      } else {
+        this.currentDispmsData = coppyArray(this.dispmsData)
+      }
     },
     update (id) {
-      this.$Modal.confirm({
-        title: '提醒',
-        content: '是否需要更新到价签',
-        onOk: () => {
-          updateStyle(id, this.currentDispmsData, 1, 1)
-        },
-        onCancel: () => {
-          updateStyle(id, this.currentDispmsData, 1, 0)
-        }
-      })
       for (let i = 0; i < this.currentDispmsData.length; ++i) {
         if (this.currentDispmsData[i].sourceColumn === 'promotePrice') {
           let backUp = this.currentDispmsData[i].backup.split('/')
@@ -271,6 +539,21 @@ export default {
           backUp[1] = this.decFontSizePrice
           this.currentDispmsData[i].backup = backUp[0] + '/' + backUp[1] + '/' + backUp[2]
         }
+      }
+      if (this.mode !== 'new') {
+        this.$Modal.confirm({
+          title: '提醒',
+          content: '是否需要更新到价签',
+          onOk: () => {
+            updateStyle(id, this.currentDispmsData, 1, 1)
+          },
+          onCancel: () => {
+            updateStyle(id, this.currentDispmsData, 1, 0)
+          }
+        })
+      } else {
+        // TODO新建样式
+
       }
     },
     saveAsNew () {

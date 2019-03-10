@@ -103,7 +103,7 @@ export default {
       tableColumns: [
         {
           title: '样式id',
-          key: 'id',
+          key: 'styleNumber',
           filter: {
             type: 'Input'
           }
@@ -146,7 +146,8 @@ export default {
                 on: {
                   'click': (event) => {
                     event.stopPropagation()
-                    this.editStyle(params.row.id, params.row.styleType, params.row.width, params.row.height)
+                    let temp = this.styleData.find(function (item) { return item.styleNumber === params.row.styleNumber })
+                    this.editStyle(temp.id, temp.styleType, temp.width, temp.height)
                   }
                 }
               }, '修改'),
@@ -161,7 +162,8 @@ export default {
                 on: {
                   'click': (event) => {
                     event.stopPropagation()
-                    this.remove(params.row.id)
+                    let temp = this.styleData.find(function (item) { return item.styleNumber === params.row.styleNumber })
+                    this.remove(temp.id)
                   }
                 }
               }, '删除')
@@ -249,10 +251,17 @@ export default {
       this.getLabelData(currentRow.id, currentRow.width, currentRow.height)
     },
     remove (id) {
-      deleteStyle(id)
-        .then(() => {
-          this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage })
-        })
+      var that = this
+      this.$Modal.confirm({
+        title: '警告',
+        content: '确定删除该样式吗？',
+        onOk: function () {
+          deleteStyle(id)
+            .then(() => {
+              that.getStyleTableData({ page: that.currentPage - 1, count: that.countPerPage })
+            })
+        }
+      })
     },
     editStyle (styleid, styletype, w, h) {
       this.currentStyleID = styleid
@@ -263,7 +272,112 @@ export default {
       this.$refs.designer.update(this.currentStyleID)
     },
     addStyle () {
+      this.$Modal.confirm({
+        title: '新样式信息',
+        render: (h, params) => {
+          var that = this
+          return h('span', [
+            h('p', '样式信息:'),
+            h('Select', {
+              props: {
+                value: this.newStyleSize
+              },
+              on: {
+                'on-change': (val) => {
+                  that.newStyleSize = val
+                }
+              }
+            }, [
+              h('Option', {
+                props: {
+                  value: '4.0寸',
+                  label: '4.0寸'
+                }
+              }),
+              h('Option', {
+                props: {
+                  value: '2.13寸',
+                  label: '2.13寸'
+                }
+              }),
+              h('Option', {
+                props: {
+                  value: '2.5寸',
+                  label: '2.5寸'
+                }
+              }),
+              h('Option', {
+                props: {
+                  value: '2.9寸',
+                  label: '2.13寸'
+                }
+              })
+            ]),
+            h('Input', {
+              attrs: {
+                style: 'margin-top:10px'
+              },
+              props: {
+                placeholder: '输入名字',
+                value: this.newStyleName
+              },
+              on: {
+                'on-change': (event) => {
+                  that.newStyleName = event.target.value
+                }
+              }
+            }),
+            h('Select', {
+              props: {
+                value: this.newStyleType
+              },
+              attrs: {
+                style: 'margin-top:10px'
+              },
+              on: {
+                'on-change': function (val) {
+                  that.newStyleType = val
+                }
+              }
+            }, [
+              h('Option', {
+                props: {
+                  value: '黑白',
+                  label: '黑白'
+                }
+              }),
+              h('Option', {
+                props: {
+                  value: '三色',
+                  label: '三色'
+                }
+              })
+            ])
+          ])
+        },
+        onOk: () => {
+          let w = 0
+          let h = 0
+          let styleid = 0
+          let styleType = this.newStyleSize + '-' + this.newStyleName + '-' + this.newStyleType
+          if (this.newStyleSize === '4.0寸') {
+            w = 400
+            h = 300
+          } else if (this.newStyleSize === '2.13寸') {
+            w = 212
+            h = 104
+          } else if (this.newStyleSize === '2.9寸') {
+            w = 296
+            h = 128
+          } else if (this.newStyleSize === '2.5寸') {
+            w = 250
+            h = 122
+          }
+          this.isModal = true
+          this.$refs.designer.getStyleData(styleid, styleType, w, h, 'new')
+        }
 
+      })
     }
   }
 }

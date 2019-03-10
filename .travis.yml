@@ -1,5 +1,17 @@
 language: node_js
 node_js: stable
-script: npm run lint
-notifications:
-  email: false
+branches:
+  only:
+  - master
+addons:
+  ssh_known_hosts: 39.108.106.167
+intsall:
+- npm install
+script:
+- npm run build
+after_sucess:
+- rsync -az --delete ./dist/* root@39.108.106.167:/var/www/html
+before_install:
+- openssl aes-256-cbc -K $encrypted_dd1ef36cb39d_key -iv $encrypted_dd1ef36cb39d_iv
+  -in id_rsa.enc -out ~\/.ssh/id_rsa -d
+- chmod 600 ~/.ssh/id_rsa

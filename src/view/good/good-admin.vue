@@ -273,7 +273,6 @@ export default {
                   'click': (event) => {
                     event.stopPropagation()
                     let temp = this.goodData.find(function (item) { return item.barCode === params.row.barCode })
-                    console.log(temp)
                     this.remove(temp.id)
                   }
                 }
