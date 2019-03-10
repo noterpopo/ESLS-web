@@ -553,6 +553,9 @@ export default {
         })
       } else {
         // TODO新建样式
+        for (let i = 0; i < this.currentDispmsData.length; ++i) {
+          delete this.currentDispmsData[i].id
+        }
         var that = this
         let styledes = this.styleType
         newStyle(styledes).then(res => {
