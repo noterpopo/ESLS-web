@@ -8,10 +8,19 @@
           </div>
           <super_table @onClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="userData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="userDataCount"></super_table>
         </Card>
+        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' ,marginTop:'10px'}">
+          <div slot="title">
+            <Row type="flex" justify="center" align="middle">
+                <Col span="24"><p>持有权限列表</p></Col>
+            </Row>
+          </div>
+          <super_table :pageSize="countPerPage" :current.sync="currentPerPage" @onSearch="onTablePerSearch" :data="perData" :columns="tablePerColumns" :isLoading="isPerTableLoading" :dataNum="perDataCount"></super_table>
+        </Card>
     </div>
 </template>
 <script>
-import { getAllUser, switchUserUsable, deleteUser } from '@/api/user'
+import { getAllUser, switchUserUsable, deleteUser, getRoleInfo } from '@/api/user'
+// import { getRoleList } from '@/api/role'
 import super_table from '@/components/table/supertable.vue'
 export default {
   components: {
@@ -111,6 +120,19 @@ export default {
         {
           title: '角色',
           key: 'roleList',
+          render: (h, params) => {
+            var roleNameList = []
+            getRoleInfo(params.row.id).then(res => {
+              for (let i = 0; i < res.data.data.length; ++i) {
+                roleNameList.push(res.data.data[i].name)
+              }
+            })
+            return h('p', {
+              domProps: {
+                innerHTML: roleNameList.join(',')
+              }
+            })
+          },
           filter: {
             type: 'Input'
           }

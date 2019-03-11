@@ -32,6 +32,13 @@ export const deleteUser = (id) => {
   })
 }
 
+export const getRoleInfo = (id) => {
+  return axios.request({
+    url: '/user/role/' + id,
+    method: 'get'
+  })
+}
+
 export const getAllUser = ({ page, count, query, queryString }) => {
   return axios.request({
     url: '/users',

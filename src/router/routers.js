@@ -192,6 +192,15 @@ export default [
           title: '用户管理'
         },
         component: () => import('@/view/user/user-admin.vue')
+      },
+      {
+        path: 'permission_admin',
+        name: 'permission_admin',
+        meta: {
+          icon: 'ios-albums',
+          title: '权限管理'
+        },
+        component: () => import('@/view/user/permission-admin.vue')
       }
     ]
   },
