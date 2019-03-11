@@ -12,70 +12,70 @@
             <Modal @on-cancle='onBindGoodCancel' v-model="isBindGoodModalShow" title="绑定商品" width="1400" @on-ok="onBindGood">
               <super_table  key="3" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageSize="8" :current.sync="currentGoodPage" :dataNum="modalGoodDataCount"></super_table>
             </Modal>
-            <Modal v-model="infoModal" title="标签信息">
-            <div>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>id：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.id"/></Col>
-                </Row>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>电量：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.power"/></Col>
-                </Row>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>标签信号：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.tagRssi"/></Col>
-                </Row>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>路由信号：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.apRssi"/></Col>
-                </Row>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>硬件版本：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.hardwareVersion"/></Col>
-                </Row>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>软件版本：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.softwareVersion"/></Col>
-                </Row>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>运行时间：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.execTime"/></Col>
-                </Row>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>更新时间：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.completeTime"/></Col>
-                </Row>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>条码：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.barCode"/></Col>
-                </Row>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>地址：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.tagAddress"/></Col>
-                </Row>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>宽：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.resolutionWidth"/></Col>
-                </Row>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>高：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.resolutionHeight"/></Col>
-                </Row>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>绑定商品：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.goodId"/></Col>
-                </Row>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>绑定样式：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.styleId"/></Col>
-                </Row>
-                <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>路由：</p></Col>
-                    <Col span="21"><Input type="text" v-model="selectedData.routerId"/></Col>
-                </Row>
-            </div>
-            </Modal>
+            <!-- <Modal v-model="infoModal" title="价签信息">
+              <div>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>id：</p></Col>
+                      <Col span="21"><p >{{selectedData.id}}</p></Col>
+                  </Row>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>电量：</p></Col>
+                      <Col span="21"><p >{{selectedData.power}}</p></Col>
+                  </Row>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>标签信号：</p></Col>
+                      <Col span="21"><p >{{selectedData.tagRssi}}</p></Col>
+                  </Row>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>路由信号：</p></Col>
+                      <Col span="21"><p >{{selectedData.apRssi}}</p></Col>
+                  </Row>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>硬件版本：</p></Col>
+                      <Col span="21"><p >{{selectedData.hardwareVersion}}</p></Col>
+                  </Row>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>软件版本：</p></Col>
+                      <Col span="21"><Input type="text" v-model="selectedData.softwareVersion"/></Col>
+                  </Row>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>运行时间：</p></Col>
+                      <Col span="21"><Input type="text" v-model="selectedData.execTime"/></Col>
+                  </Row>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>更新时间：</p></Col>
+                      <Col span="21"><Input type="text" v-model="selectedData.completeTime"/></Col>
+                  </Row>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>条码：</p></Col>
+                      <Col span="21"><Input type="text" v-model="selectedData.barCode"/></Col>
+                  </Row>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>地址：</p></Col>
+                      <Col span="21"><Input type="text" v-model="selectedData.tagAddress"/></Col>
+                  </Row>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>宽：</p></Col>
+                      <Col span="21"><Input type="text" v-model="selectedData.resolutionWidth"/></Col>
+                  </Row>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>高：</p></Col>
+                      <Col span="21"><Input type="text" v-model="selectedData.resolutionHeight"/></Col>
+                  </Row>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>绑定商品：</p></Col>
+                      <Col span="21"><Input type="text" v-model="selectedData.goodId"/></Col>
+                  </Row>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>绑定样式：</p></Col>
+                      <Col span="21"><Input type="text" v-model="selectedData.styleId"/></Col>
+                  </Row>
+                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
+                      <Col span="3"><p>路由：</p></Col>
+                      <Col span="21"><Input type="text" v-model="selectedData.routerId"/></Col>
+                  </Row>
+              </div>
+            </Modal> -->
             </Card>
         </div>
         <div class="bottom" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
@@ -94,6 +94,7 @@
 
 </template>
 <script>
+import tagExpand from '@/components/table/tag-expand.vue'
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import e_label from '@/components/e-label/e-lable.vue'
@@ -104,6 +105,7 @@ import { coppyArray } from '@/libs/util'
 export default {
   components: {
     e_label,
+    tagExpand,
     super_table,
     'corn-selector': cronSelector
   },
@@ -122,6 +124,17 @@ export default {
       tagData: [],
       tableColumns: [
         {
+          type: 'expand',
+          width: 40,
+          render: (h, params) => {
+            return h(tagExpand, {
+              props: {
+                row: params.row
+              }
+            })
+          }
+        },
+        {
           title: '价签id',
           key: 'barCode',
           width: '200',
@@ -137,15 +150,17 @@ export default {
           }
         },
         {
-          title: '执行时间',
-          key: 'execTime',
+          title: '电量',
+          key: 'power',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '完成时间',
-          key: 'completeTime',
+          title: '宽/高',
+          render: (h, params) => {
+            return h('p', params.row.resolutionWidth + '/' + params.row.resolutionHeight)
+          },
           filter: {
             type: 'Input'
           }
@@ -167,6 +182,7 @@ export default {
         {
           title: '绑定样式',
           key: 'styleId',
+          width: '200',
           render: (h, params) => {
             // TODO
             // var that = this
@@ -211,6 +227,7 @@ export default {
         {
           title: '是否工作',
           key: 'isWorking',
+          width: '140',
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'

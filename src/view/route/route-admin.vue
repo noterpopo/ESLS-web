@@ -100,9 +100,11 @@
 <script>
 import { getAllRoute, changeRoute, scanRoute, scanAll, settingRoute, testRouter } from '@/api/route'
 import super_table from '@/components/table/supertable.vue'
+import routerExpand from '@/components/table/router-expand.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 export default {
   components: {
+    routerExpand,
     super_table,
     'corn-selector': cronSelector
   },
@@ -115,6 +117,17 @@ export default {
       routeDataCount: 0,
       routeData: [],
       tableColumns: [
+        {
+          type: 'expand',
+          width: 40,
+          render: (h, params) => {
+            return h(routerExpand, {
+              props: {
+                row: params.row
+              }
+            })
+          }
+        },
         {
           title: '路由器条码',
           key: 'barCode',
@@ -157,16 +170,9 @@ export default {
 
         },
         {
-          title: '创建时间',
-          key: 'execTime',
-          filter: {
-            type: 'Input'
-          }
-
-        },
-        {
-          title: '更新时间',
-          key: 'completeTime',
+          title: '商店',
+          key: 'shop',
+          width: '200',
           filter: {
             type: 'Input'
           }
@@ -178,7 +184,26 @@ export default {
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '工作中' : '禁用'
+            const text = row.isWorking === 1 ? '工作中' : '通讯异常'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          },
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '是否禁用',
+          key: 'state',
+          render: (h, params) => {
+            const row = params.row
+            const color = row.state === 1 ? 'primary' : 'error'
+            const text = row.state === 1 ? '启用' : '禁用'
 
             return h('Tag', {
               props: {
