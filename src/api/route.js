@@ -12,7 +12,13 @@ export const getAllRoute = ({ page, count, queryId, queryString }) => {
     }
   })
 }
-
+export const updateRouter = (data) => {
+  return axios.request({
+    url: 'router',
+    method: 'post',
+    data: data
+  })
+}
 export const changeRoute = (sq, sqs, tq, tqs) => {
   return axios.request({
     url: '/router/change',

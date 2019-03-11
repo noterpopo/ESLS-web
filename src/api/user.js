@@ -11,10 +11,24 @@ export const login = ({ userName, password }) => {
   })
 }
 
+export const switchUserUsable = (id) => {
+  return axios.request({
+    url: '/user/status/' + id,
+    method: 'put'
+  })
+}
+
 export const getUserInfo = (id) => {
   return axios.request({
     url: '/users/' + id,
     method: 'get'
+  })
+}
+
+export const deleteUser = (id) => {
+  return axios.request({
+    url: '/user/' + id,
+    method: 'delete'
   })
 }
 

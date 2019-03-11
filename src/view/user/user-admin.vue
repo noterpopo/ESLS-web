@@ -11,7 +11,7 @@
     </div>
 </template>
 <script>
-import { getAllUser } from '@/api/user'
+import { getAllUser, switchUserUsable, deleteUser } from '@/api/user'
 import super_table from '@/components/table/supertable.vue'
 export default {
   components: {
@@ -36,6 +36,11 @@ export default {
         {
           title: '性别',
           key: 'sex',
+          render: (h, params) => {
+            const text = params.row.sex === 0 ? '男' : '女'
+            return h('p', {
+            }, text)
+          },
           filter: {
             type: 'Input'
           }
@@ -64,6 +69,34 @@ export default {
         {
           title: '状态',
           key: 'status',
+          render: (h, params) => {
+            const row = params.row
+            const isUsable = row.status === 1
+            return h('i-switch', {
+              props: {
+                value: isUsable,
+                size: 'large'
+              },
+              on: {
+                'on-change': (val) => {
+                  if (val) {
+                    params.row.status = 1
+                  } else {
+                    params.row.status = 0
+                  }
+                  switchUserUsable(params.row.id).then(res => {
+                  })
+                }
+              }
+            }, [
+              h('span', {
+                slot: 'open'
+              }, '启用'),
+              h('span', {
+                slot: 'close'
+              }, '禁用')
+            ])
+          },
           filter: {
             type: 'Input'
           }
@@ -81,6 +114,31 @@ export default {
           filter: {
             type: 'Input'
           }
+        },
+        {
+          title: '操作',
+          key: 'action',
+          align: 'center',
+          width: '150',
+          render: (h, params) => {
+            return h('div', [
+              h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small'
+                },
+                style: {
+                  margin: '2px'
+                },
+                on: {
+                  'click': (event) => {
+                    event.stopPropagation()
+                    this.remove(params.row.id)
+                  }
+                }
+              }, '删除')
+            ])
+          }
         }
       ]
     }
@@ -95,6 +153,11 @@ export default {
     })
     window.onresize = function () {
       that.windowWidth = that.$refs.container.offsetWidth
+    }
+  },
+  watch: {
+    currentPage () {
+      this.getUserTableData({ page: this.currentPage - 1, count: this.countPerPage })
     }
   },
   methods: {
@@ -118,6 +181,19 @@ export default {
         that.userData = res.data.data
         that.userDataCount = res.data.code
         that.isTableLoading = false
+      })
+    },
+    remove (id) {
+      var that = this
+      this.$Modal.confirm({
+        title: '警告',
+        content: '确定删除该用户吗？',
+        onOk: function () {
+          deleteUser(id)
+            .then(() => {
+              that.getUserTableData({ page: that.currentPage - 1, count: that.countPerPage })
+            })
+        }
       })
     }
   }

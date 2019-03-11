@@ -98,7 +98,7 @@
     </div>
 </template>
 <script>
-import { getAllRoute, changeRoute, scanRoute, scanAll, settingRoute, testRouter } from '@/api/route'
+import { getAllRoute, changeRoute, scanRoute, scanAll, settingRoute, testRouter, updateRouter } from '@/api/route'
 import super_table from '@/components/table/supertable.vue'
 import routerExpand from '@/components/table/router-expand.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
@@ -198,19 +198,35 @@ export default {
           }
         },
         {
-          title: '是否禁用',
+          title: '是否启用',
           key: 'state',
           render: (h, params) => {
             const row = params.row
-            const color = row.state === 1 ? 'primary' : 'error'
-            const text = row.state === 1 ? '启用' : '禁用'
-
-            return h('Tag', {
+            const isUsable = row.state === 1
+            return h('i-switch', {
               props: {
-                type: 'dot',
-                color: color
+                value: isUsable,
+                size: 'large'
+              },
+              on: {
+                'on-change': (val) => {
+                  if (val) {
+                    params.row.state = 1
+                  } else {
+                    params.row.state = 0
+                  }
+                  updateRouter(params.row).then(res => {
+                  })
+                }
               }
-            }, text)
+            }, [
+              h('span', {
+                slot: 'open'
+              }, '启用'),
+              h('span', {
+                slot: 'close'
+              }, '禁用')
+            ])
           },
           filter: {
             type: 'Input'
@@ -224,6 +240,7 @@ export default {
           }
         }
       ],
+      currentSelectRow: {},
       ipMode: 0,
       from: 0,
       to: 0,
@@ -249,6 +266,11 @@ export default {
   created () {
     this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
   },
+  watch: {
+    currentPage () {
+      this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+    }
+  },
   mounted () {
     var that = this
     this.$nextTick(() => {
@@ -260,6 +282,7 @@ export default {
   },
   methods: {
     onTableClick (currentRow) {
+      this.currentSelectRow = currentRow
       this.routeQueryString = currentRow.barCode
       this.scanQueryString = currentRow.barCode
       this.settingQueryString = currentRow.barCode
