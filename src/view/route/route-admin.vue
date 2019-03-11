@@ -1,9 +1,9 @@
 <template>
-    <div class="container" ref="container">
+    <div  ref="container" style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;">
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
-                    <Col span="22"><p>价签信息</p></Col>
+                    <Col span="22"><p>路由器信息</p></Col>
                     <Col span="2"><Button type="primary" @click="routeReload">刷新</Button></Col>
               </Row>
           </div>

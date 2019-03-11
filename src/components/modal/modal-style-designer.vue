@@ -1,122 +1,127 @@
 <template>
-    <div class="container" :style="{flexDirection: 'row'}">
-      <canvas id="canvas" ref="canvas"></canvas>
-        <div class="left">
-            <div class="infoarea">
-              <Card dis-hover>
-                <p slot="title">样式信息</p>
-                <p :style="{fontSize: '16px'}">样式id：{{styleid}}</p>
-                <p :style="{fontSize: '16px'}">样式宽度：{{styleWidth}}</p>
-                <p :style="{fontSize: '16px'}">样式高度：{{styleHeight}}</p>
-                <Button :style="{marginTop:'10px'}" type="primary" @click="reset">恢复默认值</Button>
-                <Button :v-if="mode!=='new'" :style="{marginTop:'10px'}" type="primary" @click="saveAsNew">另存为新样式</Button>
-            </Card>
-            </div>
-        </div>
-        <div class="right">
-            <div class="editorarea" v-if="reRenderFlag" :style="{width:styleWidth+'px',height:styleHeight+'px'}">
-              <Poptip v-for="(item,index) in currentDispmsData" :key="index" trigger="click" title="编辑框" class="poptipWarp" :style="{ position: 'absolute',left: item.x+'px',top: item.y+'px'}">
-                  <vue-draggable-resizable v-if="item.status===1" :style="{ backgroundColor:item.backgroundColor==='0'?'black':item.backgroundColor==='1'?'white':'red',position: 'absolute',left: 0+'px',top: 0+'px'}" :x="item.x" :y="item.y" :w="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
-                      <span v-if="item.columnType === '字符串'" :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType, lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
-                      <span v-else-if="item.columnType === '数字'" >
-                        <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.text.split('.')[0] +'.'}}</span>
-                        <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', verticalAlign:'super',fontSize :(item.sourceColumn==='promotePrice'?decFontSizePromotePrice:decFontSizePrice)+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{ item.text.split('.')[1]}}</span>
-                      </span>
-                      <hr v-else-if="item.columnType === '线段'"></hr>
-                      <img v-else-if="item.columnType === '二维码'" id="qrCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
-                      <img v-else-if="item.columnType === '条形码'" id="barCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
-                      <img v-else-if="item.columnType === '图片'" id="img" :style="{ width:item.width+'px', height:item.height+'px'}"/>
-                  </vue-draggable-resizable>
-                  <div slot="content">
-                    <div v-if="item.columnType === '二维码'||item.columnType === '条形码'||item.columnType === '图片'||item.columnType === '线段'" class="float-edit-img">
-                      <div>
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">x:</span>
-                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.x"/>
-                      </div>
-                      <div>
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">y:</span>
-                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.y"/>
-                      </div>
-                      <div>
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">宽:</span>
-                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.width"/>
-                      </div>
-                      <div>
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">高:</span>
-                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.height"/>
-                      </div>
-                    </div>
-                    <div v-else class="float-edit-text">
-                      <div>
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">x:</span>
-                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.x"/>
-                      </div>
-                      <div>
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">y:</span>
-                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.y"/>
-                      </div>
-                      <div>
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">宽:</span>
-                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.width"/>
-                      </div>
-                      <div>
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">高:</span>
-                        <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.height"/>
-                      </div>
-                      <div>
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">字号:</span>
-                        <InputNumber size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontSize"/>
-                      </div>
-                      <div v-if="item.sourceColumn==='price'">
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">小数字号:</span>
-                        <InputNumber size="small" :style="{width:'76px',marginRight: '4px'}" v-model="decFontSizePrice"/>
-                      </div>
-                      <div v-if="item.sourceColumn==='promotePrice'">
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">小数字号:</span>
-                        <InputNumber size="small" :style="{width:'76px',marginRight: '4px'}" v-model="decFontSizePromotePrice"/>
-                      </div>
-                      <div>
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">字体颜色:</span>
-                        <Select size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontColor">
-                          <Option value="0">黑色</Option>
-                          <Option value="1">白色</Option>
-                          <Option value="2">红色</Option>
-                        </Select>
-                      </div>
-                      <div>
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">背景颜色:</span>
-                        <Select size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.backgroundColor">
-                          <Option value="0">黑色</Option>
-                          <Option value="1">白色</Option>
-                          <Option value="2">红色</Option>
-                        </Select>
-                      </div>
-                      <div>
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">字体:</span>
-                        <Select size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontFamily">
-                          <Option value="微软雅黑">微软雅黑</Option>
-                          <Option value="宋体">宋体</Option>
-                          <Option value="楷体">楷体</Option>
-                        </Select>
-                      </div>
-                      <div>
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">字体样式:</span>
-                        <Select size="small" type="text" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontType">
-                          <Option value="normal">Normal</Option>
-                          <Option value="bold">Bold</Option>
-                          <Option value="italic">Italic</Option>
-                        </Select>
-                      </div>
-                      <div>
-                        <span :style="{fontSize:'16px', marginRight: '4px'}">文本:</span>
-                        <Input size="small" type="text" :style="{width:'76px',marginRight: '4px'}" v-model="item.text"/>
-                      </div>
-                    </div>
+    <div class="container" :style="{flexDirection: 'column'}">
+      <div class="container" :style="{flexDirection: 'row'}">
+        <canvas id="canvas" ref="canvas"></canvas>
+          <div class="left">
+              <div class="infoarea">
+                <Card dis-hover>
+                  <p slot="title">样式信息</p>
+                  <p :style="{fontSize: '16px'}">样式id：{{styleid}}</p>
+                  <p :style="{fontSize: '16px'}">样式宽度：{{styleWidth}}</p>
+                  <p :style="{fontSize: '16px'}">样式高度：{{styleHeight}}</p>
+                  <div :style="{display:'flex',flexWrap: 'wrap',marginTop:'4px'}">
+                    <Checkbox style="margin:2px;" v-for="(item) in currentDispmsData" :key="item.id" :value="item.status==1" @on-change="onCheckItem($event,item)">{{item.name}}</Checkbox>
                   </div>
-              </Poptip>
-                <Spin size="large" fix v-if="isLoading"></Spin>
-            </div>
-        </div>
+                  <Button :style="{marginTop:'10px'}" type="primary" @click="reset">恢复默认值</Button>
+                  <Button v-if="mode!='new'" :style="{marginLeft:'10px',marginTop:'10px'}" type="primary" @click="saveAsNew">另存为新样式</Button>
+              </Card>
+              </div>
+          </div>
+          <div class="right">
+              <div class="editorarea" v-if="reRenderFlag" :style="{width:styleWidth+'px',height:styleHeight+'px'}">
+                <Poptip v-for="(item,index) in currentDispmsData" :key="index" trigger="click" title="编辑框" class="poptipWarp" :style="{ position: 'absolute',left: item.x+'px',top: item.y+'px'}">
+                    <vue-draggable-resizable v-show="item.status===1" :style="{ backgroundColor:item.backgroundColor==='0'?'black':item.backgroundColor==='1'?'white':'red',position: 'absolute',left: 0+'px',top: 0+'px'}" :x="item.x" :y="item.y" :w="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
+                        <span v-if="item.columnType === '字符串'" :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType, lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
+                        <span v-else-if="item.columnType === '数字'" >
+                          <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.text.split('.')[0] +'.'}}</span>
+                          <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', verticalAlign:'super',fontSize :(item.sourceColumn==='promotePrice'?decFontSizePromotePrice:decFontSizePrice)+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{ item.text.split('.')[1]}}</span>
+                        </span>
+                        <hr v-else-if="item.columnType === '线段'"></hr>
+                        <img v-else-if="item.columnType === '二维码'" id="qrCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
+                        <img v-else-if="item.columnType === '条形码'" id="barCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
+                        <img v-else-if="item.columnType === '图片'" id="img" :style="{ width:item.width+'px', height:item.height+'px'}"/>
+                    </vue-draggable-resizable>
+                    <div slot="content">
+                      <div v-if="item.columnType === '二维码'||item.columnType === '条形码'||item.columnType === '图片'||item.columnType === '线段'" class="float-edit-img">
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">x:</span>
+                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.x"/>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">y:</span>
+                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.y"/>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">宽:</span>
+                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.width"/>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">高:</span>
+                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.height"/>
+                        </div>
+                      </div>
+                      <div v-else class="float-edit-text">
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">x:</span>
+                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.x"/>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">y:</span>
+                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.y"/>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">宽:</span>
+                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.width"/>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">高:</span>
+                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.height"/>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">字号:</span>
+                          <InputNumber size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontSize"/>
+                        </div>
+                        <div v-if="item.sourceColumn==='price'">
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">小数字号:</span>
+                          <InputNumber size="small" :style="{width:'76px',marginRight: '4px'}" v-model="decFontSizePrice"/>
+                        </div>
+                        <div v-if="item.sourceColumn==='promotePrice'">
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">小数字号:</span>
+                          <InputNumber size="small" :style="{width:'76px',marginRight: '4px'}" v-model="decFontSizePromotePrice"/>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">字体:</span>
+                          <Select size="small" :style="{width:'230px',marginRight: '4px'}" v-model="item.fontFamily">
+                            <Option value="微软雅黑">微软雅黑</Option>
+                            <Option value="宋体">宋体</Option>
+                            <Option value="楷体">楷体</Option>
+                          </Select>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">字体色:</span>
+                          <Select size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontColor">
+                            <Option value="0">黑色</Option>
+                            <Option value="1">白色</Option>
+                            <Option value="2">红色</Option>
+                          </Select>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">背景色:</span>
+                          <Select size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.backgroundColor">
+                            <Option value="0">黑色</Option>
+                            <Option value="1">白色</Option>
+                            <Option value="2">红色</Option>
+                          </Select>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">字体样式:</span>
+                          <Select size="small" type="text" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontType">
+                            <Option value="normal">Normal</Option>
+                            <Option value="bold">Bold</Option>
+                            <Option value="italic">Italic</Option>
+                          </Select>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">文本:</span>
+                          <Input size="small" type="text" :style="{width:'76px',marginRight: '4px'}" v-model="item.text"/>
+                        </div>
+                      </div>
+                    </div>
+                </Poptip>
+                  <Spin size="large" fix v-if="isLoading"></Spin>
+              </div>
+          </div>
+      </div>
     </div>
 </template>
 <script>
@@ -430,7 +435,9 @@ export default {
           backup: null,
           regionId: '12'
         }
-      ]
+      ],
+      indeterminate: true,
+      checkAll: false
     }
   },
   updated () {
@@ -691,6 +698,14 @@ export default {
         }
 
       })
+    },
+    onCheckItem (status, item) {
+      console.log(status)
+      if (status) {
+        item.status = 1
+      } else {
+        item.status = 0
+      }
     }
 
   }
@@ -702,6 +717,10 @@ export default {
 }
 Input{
   margin: 10px；
+}
+.switch-area{
+  margin-top: 10px;
+  width: 100%
 }
 .container{
     width: 100%;
@@ -722,7 +741,7 @@ Input{
     align-content: center;
 }
 .infoarea{
-    width: 200px;
+    width: 300px;
     height: auto;
 }
 .right{

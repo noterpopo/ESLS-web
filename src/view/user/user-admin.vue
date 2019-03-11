@@ -1,5 +1,5 @@
 <template>
-    <div class="container" ref="container">
+    <div style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;" ref="container">
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">

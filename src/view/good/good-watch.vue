@@ -1,5 +1,5 @@
 <template>
-    <div class="container" ref="container">
+    <div style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;" ref="container">
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
@@ -8,8 +8,8 @@
             </Row>
           </div>
           <Table border :loading='isTableLoading' ref="selection" :columns="tableColumns" :data="goodData" @on-selection-change="handleSelectionChange"></Table>
-          <Button @click="handleSelectAll(true)">全选</Button>
-          <Button @click="handleSelectAll(false)">取消全选</Button>
+          <Button style="margin:5px" @click="handleSelectAll(true)" type="primary">全选</Button>
+          <Button style="margin:5px" @click="handleSelectAll(false)" type="primary">取消全选</Button>
 
         </Card>
     </div>

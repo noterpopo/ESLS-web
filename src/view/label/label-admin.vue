@@ -392,7 +392,7 @@ Input{
 .container{
     display: flex;
     flex-wrap: nowrap;
-    justify-content: center;
+    justify-content:center;
     align-items: flex-start;
 
 }
