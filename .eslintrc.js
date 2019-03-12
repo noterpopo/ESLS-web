@@ -4,6 +4,10 @@ module.exports = {
     'plugin:vue/essential',
     '@vue/standard'
   ],
+  env:{
+    jquery:true,
+    node:true
+  },
   rules: {
     // allow async-await
     'generator-star-spacing': 'off',

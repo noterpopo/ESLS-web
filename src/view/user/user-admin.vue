@@ -22,6 +22,7 @@
 import { getAllUser, switchUserUsable, deleteUser, getRoleInfo } from '@/api/user'
 // import { getRoleList } from '@/api/role'
 import super_table from '@/components/table/supertable.vue'
+import store from '@/store'
 export default {
   components: {
     super_table
@@ -76,6 +77,37 @@ export default {
           }
         },
         {
+          title: '角色',
+          key: 'roleList',
+          render: (h, params) => {
+            let roleName = []
+            $.ajax({
+              url: 'http://39.108.106.167:8086/user/role/' + params.row.id,
+              async: false,
+              headers: {
+                ESLS: store.getters.token
+              },
+              type: 'get',
+              success: (res) => {
+                res.data.map((item) => {
+                  roleName.push(item.name)
+                })
+              }
+            })
+            return h('p', roleName.join(','))
+          },
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '商店',
+          key: 'shop',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
           title: '状态',
           key: 'status',
           render: (h, params) => {
@@ -111,33 +143,6 @@ export default {
           }
         },
         {
-          title: '商店',
-          key: 'shop',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '角色',
-          key: 'roleList',
-          render: (h, params) => {
-            var roleNameList = []
-            getRoleInfo(params.row.id).then(res => {
-              for (let i = 0; i < res.data.data.length; ++i) {
-                roleNameList.push(res.data.data[i].name)
-              }
-            })
-            return h('p', {
-              domProps: {
-                innerHTML: roleNameList.join(',')
-              }
-            })
-          },
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
           title: '操作',
           key: 'action',
           align: 'center',
@@ -162,7 +167,27 @@ export default {
             ])
           }
         }
-      ]
+      ],
+      currentPerPage: 1,
+      perData: [],
+      tablePerColumns: [
+        {
+          title: '角色',
+          key: 'name',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '类型',
+          key: 'type',
+          filter: {
+            type: 'Input'
+          }
+        }
+      ],
+      isPerTableLoading: false,
+      perDataCount: 0
     }
   },
   created () {
@@ -183,8 +208,16 @@ export default {
     }
   },
   methods: {
-    onTableClick () {
-
+    onTableClick (currentRow) {
+      this.getPermissionTableData(currentRow.id)
+    },
+    getPermissionTableData (id) {
+      this.isPerTableLoading = true
+      getRoleInfo(id).then(res => {
+        this.perData = res.data.data
+        this.perDataCount = res.data.code
+        this.isPerTableLoading = false
+      })
     },
     onTableSearch (search) {
       var key = Object.keys(search)

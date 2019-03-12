@@ -4,6 +4,8 @@ const resolve = dir => {
   return path.join(__dirname, dir)
 }
 
+const webpack = require('webpack')
+
 // 项目部署基础
 // 默认情况下，我们假设你的应用将被部署在域的根目录下,
 // 例如：https://www.my-app.com/
@@ -21,7 +23,13 @@ module.exports = {
   configureWebpack: {
     externals: {
       'jsbarcode': 'JsBarcode'
-    }
+    },
+    plugins: [
+      new webpack.ProvidePlugin({
+        $: 'jquery',
+        jQuery: 'jquery'
+      })
+    ]
   },
   // Project deployment base
   // By default we assume your app will be deployed at the root of a domain,

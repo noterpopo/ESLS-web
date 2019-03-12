@@ -98,10 +98,11 @@ import tagExpand from '@/components/table/tag-expand.vue'
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import e_label from '@/components/e-label/e-lable.vue'
-import { getAllTag, bindStyle, bindGood, getUsableStyle } from '@/api/tag'
+import { getAllTag, bindStyle, bindGood } from '@/api/tag'
 import { getAllGood, getGood, getBindedTags } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
 import { coppyArray } from '@/libs/util'
+import store from '@/store'
 export default {
   components: {
     e_label,
@@ -186,6 +187,29 @@ export default {
           render: (h, params) => {
             // TODO
             // var that = this
+            let styleFiltters = []
+            let data = {
+              items: [
+                {
+                  'query': 'id',
+                  'queryString': params.row.id
+                }
+              ]
+            }
+            $.ajax({
+              url: 'http://39.108.106.167:8086/tag/styles',
+              contentType: 'application/json;charset=utf-8',
+              dataType: 'json',
+              data: JSON.stringify(data),
+              async: false,
+              headers: {
+                ESLS: store.getters.token
+              },
+              type: 'post',
+              success: (res) => {
+                styleFiltters = res.data
+              }
+            })
             return h('Select', {
               props: {
                 value: params.row.styleId
@@ -197,13 +221,10 @@ export default {
                   } else {
                     this.onBindStyle(params.row.id, val)
                   }
-                },
-                'on-open-change': () => {
-                  this.onFinfStyle('barCode', params.row.barCode)
                 }
               }
             },
-            this.styleData.map((item) => {
+            styleFiltters.map((item) => {
               return h('Option', {
                 props: {
                   value: item.id,
@@ -766,11 +787,6 @@ export default {
           that.isRightGoodTableLoading = false
           that.bindGoodSelectId = 0
         })
-      })
-    },
-    onFinfStyle (query, queryString) {
-      getUsableStyle(query, queryString).then(res => {
-        this.filterStyleData = res.data.data
       })
     },
     isStyleContain (data, arr) {
