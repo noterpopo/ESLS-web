@@ -7,7 +7,7 @@
                     <Col span="2"><Button type="primary" @click="routeReload">刷新</Button></Col>
               </Row>
           </div>
-          <super_table @onClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="routeData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="routeDataCount"></super_table>
+          <super_table @onSelectionChange="handleSelectionChange" @onClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="routeData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="routeDataCount"></super_table>
         </Card>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px',marginTop:'10px'}">
             <div slot="title">
@@ -118,6 +118,10 @@ export default {
       routeData: [],
       tableColumns: [
         {
+          type: 'selection',
+          width: 50
+        },
+        {
           type: 'expand',
           width: 40,
           render: (h, params) => {
@@ -181,6 +185,7 @@ export default {
         {
           title: '状态',
           key: 'isWorking',
+          width: 140,
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'
@@ -283,10 +288,6 @@ export default {
   methods: {
     onTableClick (currentRow) {
       this.currentSelectRow = currentRow
-      this.routeQueryString = currentRow.barCode
-      this.scanQueryString = currentRow.barCode
-      this.settingQueryString = currentRow.barCode
-      this.testQueryString = currentRow.barCode
     },
     getRouteTableData ({ page, count, queryId, queryString }) {
       var that = this
@@ -321,7 +322,19 @@ export default {
       this.isScanCronModalShow = val
     },
     onScan () {
-      scanRoute({ cron: this.scanCronExp, query: this.scanQuery, queryString: this.scanQueryString, mode: this.scanMode }).then(res => {
+      let data = {}
+      let params = {}
+      let items = []
+      let idArray = this.scanQueryString.split(',')
+      for (let i = 0; i < idArray.length; ++i) {
+        params = {}
+        this.$set(params, 'cron', this.scanCronExp)
+        this.$set(params, 'query', this.scanQuery)
+        this.$set(params, 'queryString', idArray[i])
+        items.push(params)
+      }
+      this.$set(data, 'items', items)
+      scanRoute(data, this.scanMode).then(res => {
         this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
       })
     },
@@ -331,13 +344,53 @@ export default {
       })
     },
     onSetting () {
-      settingRoute(this.settingQuery, this.settingQueryString)
+      let data = {}
+      let params = {}
+      let items = []
+      let idArray = this.settingQueryString.split(',')
+      for (let i = 0; i < idArray.length; ++i) {
+        params = {}
+        this.$set(params, 'query', this.settingQuery)
+        this.$set(params, 'queryString', idArray[i])
+        items.push(params)
+      }
+      this.$set(data, 'items', items)
+      settingRoute(data)
     },
     onTest () {
-      testRouter(this.testQuery, this.testQueryString, this.testBarCode, this.testChannelId, this.testHardVersion, this.testMode)
+      let data = {}
+      let params = {}
+      let items = []
+      let idArray = this.testQueryString.split(',')
+      for (let i = 0; i < idArray.length; ++i) {
+        params = {}
+        this.$set(params, 'query', this.testQuery)
+        this.$set(params, 'queryString', idArray[i])
+        items.push(params)
+      }
+      this.$set(data, 'items', items)
+      testRouter(data, this.testBarCode, this.testChannelId, this.testHardVersion, this.testMode)
     },
     routeReload () {
       this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+    },
+    handleSelectionChange (selection) {
+      let temp = ''
+      for (let i = 0; i < selection.length - 1; ++i) {
+        temp = temp + selection[i].barCode + ','
+      }
+      if (selection.length > 0) {
+        temp = temp + selection[selection.length - 1].barCode
+        this.routeQueryString = temp.split(',')[0]
+        this.scanQueryString = temp
+        this.settingQueryString = temp
+        this.testQueryString = temp
+      } else {
+        this.routeQueryString = ''
+        this.scanQueryString = ''
+        this.settingQueryString = ''
+        this.testQueryString = ''
+      }
     }
   }
 }

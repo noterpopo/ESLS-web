@@ -1,15 +1,9 @@
 import axios from 'axios'
 import store from '@/store'
+import vm from '@/main'
 // import { Spin } from 'iview'
-const addErrorLog = errorInfo => {
-  const { statusText, status, request: { responseURL } } = errorInfo
-  let info = {
-    type: 'ajax',
-    code: status,
-    mes: statusText,
-    url: responseURL
-  }
-  if (!responseURL.includes('save_error_logger')) store.dispatch('addErrorLog', info)
+const printError = errorMsg => {
+  vm.$Message.error('网络错误：' + errorMsg)
 }
 
 class HttpRequest {
@@ -53,7 +47,6 @@ class HttpRequest {
       const { data, status, headers } = res
       return { data, status, headers }
     }, error => {
-      this.$Message.info('hhh')
       this.destroy(url)
       let errorInfo = error.response
       if (!errorInfo) {
@@ -64,7 +57,7 @@ class HttpRequest {
           request: { responseURL: config.url }
         }
       }
-      addErrorLog(errorInfo)
+      printError(errorInfo.data.msg)
       return Promise.reject(error)
     })
   }

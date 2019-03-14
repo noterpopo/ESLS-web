@@ -15,3 +15,18 @@ export const getAllRole = () => {
     method: 'get'
   })
 }
+export const addPerm = (data) => {
+  return axios.request({
+    url: 'role/addPerm',
+    method: 'post',
+    data: data
+  })
+}
+
+export const delPerm = (data) => {
+  return axios.request({
+    url: 'role/delPerm',
+    method: 'delete',
+    data: data
+  })
+}

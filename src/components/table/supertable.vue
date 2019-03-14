@@ -1,7 +1,7 @@
 <template>
     <div>
         <Table size="small" border :data="filters" :columns="tableColumnsFilters" stripe></Table>
-        <Table size="small" highlight-row @on-row-click="handleClick" @on-row-dblclick="handleDoubleClick" :show-header=false border :data="data" :columns="columns" :loading="isLoading" stripe></Table>
+        <Table size="small" highlight-row @on-row-click="handleClick" @on-row-dblclick="handleDoubleClick" @on-selection-change="handleSelection" :show-header=false border :data="data" :columns="columns" :loading="isLoading" stripe></Table>
         <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
             <Page :total="dataNum" :page-size="pageSize" :current="current" @on-change="changePage"></Page>
@@ -123,6 +123,9 @@ export default {
     },
     handleDoubleClick (currentRow) {
       this.$emit('onDoubleClick', currentRow)
+    },
+    handleSelection (selection) {
+      this.$emit('onSelectionChange', selection)
     }
   }
 }

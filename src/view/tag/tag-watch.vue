@@ -6,7 +6,7 @@
                 <Col span="24"><p>价签信息</p></Col>
             </Row>
           </div>
-          <super_table @onClick="onTagTableClick" :pageSize="countPerPage" :current.sync="currentTagPage" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="tagDataCount"></super_table>
+          <super_table @onSelectionChange="handleSelectionChange" :pageSize="countPerPage" :current.sync="currentTagPage" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="tagDataCount"></super_table>
         </Card>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px',marginTop:'10px'}">
           <div slot="title">
@@ -141,6 +141,7 @@
     </div>
 </template>
 <script>
+// TODO 翻页选择缓存
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import { getAllTag, flushTag, lightTag, removeTag, scanTag, statusTag, scanAll } from '@/api/tag'
@@ -157,6 +158,10 @@ export default {
       tagDataCount: 0,
       tagData: [],
       tableColumns: [
+        {
+          type: 'selection',
+          width: '50'
+        },
         {
           title: '价签id',
           key: 'barCode',
@@ -308,13 +313,6 @@ export default {
       var value = search[key[0]]
       this.getTagTableData({ queryId: key[0], queryString: value })
     },
-    onTagTableClick (currentRow) {
-      this.flushQueryStr = currentRow.barCode
-      this.statusQueryStr = currentRow.barCode
-      this.scanQueryStr = currentRow.barCode
-      this.lightQueryStr = currentRow.barCode
-      this.removeQueryStr = currentRow.barCode
-    },
     onFlushCron (data) {
       this.flushCronExp = data
     },
@@ -331,10 +329,14 @@ export default {
       let data = {}
       let params = {}
       let items = []
-      this.$set(params, 'cron', this.flushCronExp)
-      this.$set(params, 'query', this.flushQuery)
-      this.$set(params, 'queryString', this.flushQueryStr)
-      items.push(params)
+      let idArray = this.flushQueryStr.split(',')
+      for (let i = 0; i < idArray.length; ++i) {
+        params = {}
+        this.$set(params, 'cron', this.flushCronExp)
+        this.$set(params, 'query', this.flushQuery)
+        this.$set(params, 'queryString', idArray[i])
+        items.push(params)
+      }
       this.$set(data, 'items', items)
       flushTag(data, this.flushMode)
     },
@@ -342,9 +344,13 @@ export default {
       let data = {}
       let params = {}
       let items = []
-      this.$set(params, 'query', this.lightQuery)
-      this.$set(params, 'queryString', this.lightQueryStr)
-      items.push(params)
+      let idArray = this.lightQueryStr.split(',')
+      for (let i = 0; i < idArray.length; ++i) {
+        params = {}
+        this.$set(params, 'query', this.lightQuery)
+        this.$set(params, 'queryString', idArray[i])
+        items.push(params)
+      }
       this.$set(data, 'items', items)
       lightTag(data, this.isLight, this.lightMode)
     },
@@ -352,9 +358,13 @@ export default {
       let data = {}
       let params = {}
       let items = []
-      this.$set(params, 'query', this.removeQuery)
-      this.$set(params, 'queryString', this.removeQueryStr)
-      items.push(params)
+      let idArray = this.removeQueryStr.split(',')
+      for (let i = 0; i < idArray.length; ++i) {
+        params = {}
+        this.$set(params, 'query', this.removeQuery)
+        this.$set(params, 'queryString', idArray[i])
+        items.push(params)
+      }
       this.$set(data, 'items', items)
       removeTag(data, this.removeMode)
     },
@@ -362,10 +372,14 @@ export default {
       let data = {}
       let params = {}
       let items = []
-      this.$set(params, 'cron', this.scanCronExp)
-      this.$set(params, 'query', this.scanQuery)
-      this.$set(params, 'queryString', this.scanQueryStr)
-      items.push(params)
+      let idArray = this.scanQueryStr.split(',')
+      for (let i = 0; i < idArray.length; ++i) {
+        params = {}
+        this.$set(params, 'cron', this.scanCronExp)
+        this.$set(params, 'query', this.scanQuery)
+        this.$set(params, 'queryString', idArray[i])
+        items.push(params)
+      }
       this.$set(data, 'items', items)
       scanTag(data, this.scanMode).then(res => {
         this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
@@ -380,11 +394,35 @@ export default {
       let data = {}
       let params = {}
       let items = []
-      this.$set(params, 'query', this.statusQuery)
-      this.$set(params, 'queryString', this.statusQueryStr)
-      items.push(params)
+      let idArray = this.statusQueryStr.split(',')
+      for (let i = 0; i < idArray.length; ++i) {
+        params = {}
+        this.$set(params, 'query', this.statusQuery)
+        this.$set(params, 'queryString', idArray[i])
+        items.push(params)
+      }
       this.$set(data, 'items', items)
       statusTag(data, this.statusMode)
+    },
+    handleSelectionChange (selection) {
+      let temp = ''
+      for (let i = 0; i < selection.length - 1; ++i) {
+        temp = temp + selection[i].barCode + ','
+      }
+      if (selection.length > 0) {
+        temp = temp + selection[selection.length - 1].barCode
+        this.flushQueryStr = temp
+        this.statusQueryStr = temp
+        this.scanQueryStr = temp
+        this.lightQueryStr = temp
+        this.removeQueryStr = temp
+      } else {
+        this.flushQueryStr = ''
+        this.statusQueryStr = ''
+        this.scanQueryStr = ''
+        this.lightQueryStr = ''
+        this.removeQueryStr = ''
+      }
     }
   }
 

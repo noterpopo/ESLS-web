@@ -32,20 +32,14 @@ export const changeRoute = (sq, sqs, tq, tqs) => {
   })
 }
 
-export const scanRoute = ({ cron, query, queryString, mode }) => {
+export const scanRoute = (data, mode) => {
   return axios.request({
     url: '/router/scan',
     method: 'put',
     params: {
       mode: mode
     },
-    data: {
-      items: [{
-        cron: cron,
-        query: query,
-        queryString: queryString
-      }]
-    }
+    data: data
   })
 }
 
@@ -56,20 +50,15 @@ export const scanAll = () => {
   })
 }
 
-export const settingRoute = (query, queryString) => {
+export const settingRoute = (data) => {
   return axios.request({
     url: '/router/setting',
     method: 'put',
-    data: {
-      items: [{
-        query: query,
-        queryString: queryString
-      }]
-    }
+    data: data
   })
 }
 
-export const testRouter = (query, queryString, barCode, channelId, hardVersion, mode) => {
+export const testRouter = (data, barCode, channelId, hardVersion, mode) => {
   return axios.request({
     url: 'router/test',
     method: 'put',
@@ -79,11 +68,6 @@ export const testRouter = (query, queryString, barCode, channelId, hardVersion, 
       hardVersion: hardVersion,
       mode: mode
     },
-    data: {
-      items: [{
-        query: query,
-        queryString: queryString
-      }]
-    }
+    data: data
   })
 }

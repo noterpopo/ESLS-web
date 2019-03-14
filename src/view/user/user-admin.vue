@@ -33,7 +33,7 @@
 </template>
 <script>
 import { getAllUser, switchUserUsable, deleteUser } from '@/api/user'
-import { getAllRole } from '@/api/role'
+import { getAllRole, addPerm, delPerm } from '@/api/role'
 import { getAllPermissions } from '@/api/permission'
 import super_table from '@/components/table/supertable.vue'
 import store from '@/store'
@@ -223,6 +223,12 @@ export default {
       })
     },
     onTransferChange (index, newTargetKeys) {
+      // TODO Permission
+      if (this.roleData[index].permissions.length > newTargetKeys.length) {
+        delPerm()
+      } else if (this.roleData[index].permissions.length < newTargetKeys.length) {
+        addPerm()
+      }
       this.roleData[index].permissions = this.allPerData.filter((item) => {
         return newTargetKeys.indexOf(item.key) !== -1
       })
