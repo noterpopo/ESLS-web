@@ -12,70 +12,6 @@
             <Modal @on-cancle='onBindGoodCancel' v-model="isBindGoodModalShow" title="绑定商品" width="1400" @on-ok="onBindGood">
               <super_table  key="3" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageSize="8" :current.sync="currentGoodPage" :dataNum="modalGoodDataCount"></super_table>
             </Modal>
-            <!-- <Modal v-model="infoModal" title="价签信息">
-              <div>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>id：</p></Col>
-                      <Col span="21"><p >{{selectedData.id}}</p></Col>
-                  </Row>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>电量：</p></Col>
-                      <Col span="21"><p >{{selectedData.power}}</p></Col>
-                  </Row>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>标签信号：</p></Col>
-                      <Col span="21"><p >{{selectedData.tagRssi}}</p></Col>
-                  </Row>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>路由信号：</p></Col>
-                      <Col span="21"><p >{{selectedData.apRssi}}</p></Col>
-                  </Row>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>硬件版本：</p></Col>
-                      <Col span="21"><p >{{selectedData.hardwareVersion}}</p></Col>
-                  </Row>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>软件版本：</p></Col>
-                      <Col span="21"><Input type="text" v-model="selectedData.softwareVersion"/></Col>
-                  </Row>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>运行时间：</p></Col>
-                      <Col span="21"><Input type="text" v-model="selectedData.execTime"/></Col>
-                  </Row>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>更新时间：</p></Col>
-                      <Col span="21"><Input type="text" v-model="selectedData.completeTime"/></Col>
-                  </Row>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>条码：</p></Col>
-                      <Col span="21"><Input type="text" v-model="selectedData.barCode"/></Col>
-                  </Row>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>地址：</p></Col>
-                      <Col span="21"><Input type="text" v-model="selectedData.tagAddress"/></Col>
-                  </Row>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>宽：</p></Col>
-                      <Col span="21"><Input type="text" v-model="selectedData.resolutionWidth"/></Col>
-                  </Row>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>高：</p></Col>
-                      <Col span="21"><Input type="text" v-model="selectedData.resolutionHeight"/></Col>
-                  </Row>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>绑定商品：</p></Col>
-                      <Col span="21"><Input type="text" v-model="selectedData.goodId"/></Col>
-                  </Row>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>绑定样式：</p></Col>
-                      <Col span="21"><Input type="text" v-model="selectedData.styleId"/></Col>
-                  </Row>
-                  <Row style="margin-bottom:4px;" type="flex" justify="center" align="middle" class="Row">
-                      <Col span="3"><p>路由：</p></Col>
-                      <Col span="21"><Input type="text" v-model="selectedData.routerId"/></Col>
-                  </Row>
-              </div>
-            </Modal> -->
             </Card>
         </div>
         <div class="bottom" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
@@ -216,11 +152,7 @@ export default {
               },
               on: {
                 'on-change': (val) => {
-                  if (val === params.row.styleId) {
-
-                  } else {
-                    this.onBindStyle(params.row.id, val)
-                  }
+                  this.onBindStyle(params.row.id, val)
                 }
               }
             },

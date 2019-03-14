@@ -156,6 +156,26 @@ export default [
     ]
   },
   {
+    path: '/shop',
+    name: 'shop',
+    meta: {
+      icon: 'ios-albums',
+      title: '商店'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'shop_admin',
+        name: 'shop_admin',
+        meta: {
+          icon: 'ios-albums',
+          title: '商店管理'
+        },
+        component: () => import('@/view/shop/shop-admin.vue')
+      }
+    ]
+  },
+  {
     path: '/route',
     name: 'route',
     meta: {
@@ -192,15 +212,26 @@ export default [
           title: '用户管理'
         },
         component: () => import('@/view/user/user-admin.vue')
-      },
+      }
+    ]
+  },
+  {
+    path: '/cycylejob',
+    name: 'cycylejob',
+    meta: {
+      icon: 'ios-albums',
+      title: '定期任务'
+    },
+    component: Main,
+    children: [
       {
-        path: 'permission_admin',
-        name: 'permission_admin',
+        path: 'cycylejob_admin',
+        name: 'cycylejob_admin',
         meta: {
           icon: 'ios-albums',
-          title: '权限管理'
+          title: '定期任务管理'
         },
-        component: () => import('@/view/user/permission-admin.vue')
+        component: () => import('@/view/cycyleJob/cycyleJob-admin.vue')
       }
     ]
   },

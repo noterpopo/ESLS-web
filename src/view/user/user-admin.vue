@@ -11,16 +11,30 @@
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' ,marginTop:'10px'}">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
-                <Col span="24"><p>持有权限列表</p></Col>
+                <Col span="22"><p>角色列表</p></Col>
+                <Col span="2"><Button type="primary" @click="addRole">添加角色</Button></Col>
             </Row>
           </div>
-          <super_table :pageSize="countPerPage" :current.sync="currentPerPage" @onSearch="onTablePerSearch" :data="perData" :columns="tablePerColumns" :isLoading="isPerTableLoading" :dataNum="perDataCount"></super_table>
+          <Collapse v-model="selectRole">
+            <Panel v-for="(item,index) in roleData" :key="item.id">
+            {{item.name}}
+                <Transfer
+                  slot="content"
+                  :titles="['未获得权限','角色权限']"
+                  :list-style="listStyle"
+                  :data="allPerData"
+                  :target-keys="getRolePerKey(index)"
+                  :render-format="renderPermission"
+                  @on-change="onTransferChange(index,$event)"></Transfer>
+            </Panel>
+          </Collapse>
         </Card>
     </div>
 </template>
 <script>
-import { getAllUser, switchUserUsable, deleteUser, getRoleInfo } from '@/api/user'
-// import { getRoleList } from '@/api/role'
+import { getAllUser, switchUserUsable, deleteUser } from '@/api/user'
+import { getAllRole } from '@/api/role'
+import { getAllPermissions } from '@/api/permission'
 import super_table from '@/components/table/supertable.vue'
 import store from '@/store'
 export default {
@@ -168,30 +182,19 @@ export default {
           }
         }
       ],
-      currentPerPage: 1,
-      perData: [],
-      tablePerColumns: [
-        {
-          title: '角色',
-          key: 'name',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '类型',
-          key: 'type',
-          filter: {
-            type: 'Input'
-          }
-        }
-      ],
-      isPerTableLoading: false,
-      perDataCount: 0
+      roleData: [],
+      selectRole: '',
+      allPerData: [],
+      listStyle: {
+        width: '250px',
+        height: '200px'
+      }
     }
   },
   created () {
     this.getUserTableData({ page: 0, count: this.countPerPage })
+    this.getRoleList()
+    this.getPermissionData()
   },
   mounted () {
     var that = this
@@ -208,15 +211,38 @@ export default {
     }
   },
   methods: {
-    onTableClick (currentRow) {
-      this.getPermissionTableData(currentRow.id)
+    addRole () {},
+    getPermissionData () {
+      getAllPermissions().then(res => {
+        const data = res.data.data
+        for (let i = 0; i < data.length; ++i) {
+          data[i].id = data[i].id + ''
+          Object.assign(data[i], { key: data[i].id })
+        }
+        this.allPerData = data
+      })
     },
-    getPermissionTableData (id) {
-      this.isPerTableLoading = true
-      getRoleInfo(id).then(res => {
-        this.perData = res.data.data
-        this.perDataCount = res.data.code
-        this.isPerTableLoading = false
+    onTransferChange (index, newTargetKeys) {
+      this.roleData[index].permissions = this.allPerData.filter((item) => {
+        return newTargetKeys.indexOf(item.key) !== -1
+      })
+    },
+    getRolePerKey (index) {
+      let res = []
+      this.roleData[index].permissions.map((item) => {
+        res.push(item.id + '')
+      })
+      return res
+    },
+    renderPermission (item) {
+      return item.name
+    },
+    onTableClick (currentRow) {
+
+    },
+    getRoleList () {
+      getAllRole().then(res => {
+        this.roleData = res.data.data
       })
     },
     onTableSearch (search) {

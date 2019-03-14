@@ -8,3 +8,10 @@ export const getRoleList = (id) => {
     }
   })
 }
+
+export const getAllRole = () => {
+  return axios.request({
+    url: 'roles',
+    method: 'get'
+  })
+}

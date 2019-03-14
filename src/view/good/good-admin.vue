@@ -10,6 +10,25 @@
               </Row>
             </div>
             <super_table :pageSize="countPerPage" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
+            <Button type="primary" @click="isUploadShow=true">上传文件</Button>
+            <Modal v-model="isUploadShow" title="上传商品信息文件">
+              <div>
+                <Select v-model="uploadMode">
+                  <Option :value="-1">商品基本数据</Option>
+                  <Option :value="-2">商品变价数据</Option>
+                </Select>
+                <Upload style="margin-top:10px;"
+                    multiple
+                    :headers="headers"
+                    type="drag"
+                    action="http://39.108.106.167:8086/good/upload">
+                    <div style="padding: 20px 0;">
+                        <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                        <p>点击上传或者拖拽文件上传</p>
+                    </div>
+                </Upload>
+              </div>
+            </Modal>
             <Modal :width="1040" v-model="editModal" title="修改商品信息" :loading="editOkLoading" @on-ok="asyncEditOK">
               <div>
                 <Row type="flex" justify="center" align="middle" class="Row">
@@ -175,6 +194,7 @@ import { getAllGood, updateGood, deleteGood, getBindedTags, getGood } from '@/ap
 import { getAllTag, getTag } from '@/api/tag'
 import e_label from '@/components/e-label/e-lable.vue'
 import { getStyle } from '@/api/style'
+import store from '@/store'
 export default {
   components: {
     e_label,
@@ -182,6 +202,11 @@ export default {
   },
   data () {
     return {
+      headers: {
+        ESLS: store.getters.token
+      },
+      uploadMode: -1,
+      isUploadShow: false,
       windowWidth: 0,
       isTableLoading: false,
       isTagTableLoading: false,
