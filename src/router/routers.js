@@ -236,6 +236,26 @@ export default [
     ]
   },
   {
+    path: '/backup',
+    name: 'backup',
+    meta: {
+      icon: 'ios-albums',
+      title: '数据备份与导入'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'backup_admin',
+        name: 'backup_admin',
+        meta: {
+          icon: 'ios-albums',
+          title: '数据备份与导入'
+        },
+        component: () => import('@/view/backup/backup.vue')
+      }
+    ]
+  },
+  {
     path: '/401',
     name: 'error_401',
     meta: {

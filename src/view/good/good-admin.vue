@@ -11,6 +11,7 @@
             </div>
             <super_table :pageSize="countPerPage" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
             <Button type="primary" @click="isUploadShow=true">上传文件</Button>
+            <Button type="primary" style="margin-left:10px;" @click="downloadGoodsData">下载文件</Button>
             <Button type="primary" style="margin-left:10px;" @click="isCronSetShow=true">设置定期更新</Button>
             <Modal v-model="isUploadShow" title="上传商品信息文件">
               <div>
@@ -496,6 +497,24 @@ export default {
     }
   },
   methods: {
+    downloadGoodsData () {
+      let xhr = new XMLHttpRequest()
+      xhr.open('GET', 'http://39.108.106.167:8086/common/database/exportCsvDataFile?tableName=goods')
+      xhr.onload = function (a, b) {
+        let blob = this.response
+        let reader = new FileReader()
+        reader.readAsDataURL(blob)
+        reader.onload = function (e) {
+          let a = document.createElement('a')
+          a.download = 'goodsData.csv'
+          a.href = e.target.result
+          a.click()
+        }
+      }
+      xhr.responseType = 'blob'
+      xhr.setRequestHeader('ESLS', store.getters.token)
+      xhr.send()
+    },
     onUploadSucess () {
       this.isUploadShow = false
       this.$Message.info('上传成功')

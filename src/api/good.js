@@ -13,6 +13,13 @@ export const getAllGood = ({ page, count, queryId, queryString }) => {
   })
 }
 
+export const downloadGoodsCsv = () => {
+  return axios.request({
+    url: '/common/database/exportCsvDataFile?tableName=goods',
+    method: 'get'
+  })
+}
+
 export const cronUpdate = (cron, filepath, mode) => {
   return axios.request({
     url: 'good/schedule',
