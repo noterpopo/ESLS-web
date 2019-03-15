@@ -89,7 +89,8 @@ export const bindStyle = (tid, sid) => {
     method: 'put',
     params: {
       tagId: tid,
-      styleId: sid
+      styleId: sid,
+      mode: 1
     }
   })
 }

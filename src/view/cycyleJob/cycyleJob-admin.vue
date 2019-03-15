@@ -12,12 +12,6 @@
         <Modal :width="1040" v-model="editModal" title="修改商店信息" @on-ok="editOK">
             <div>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="1"><p>模式：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentCycyleJobData.mode"/></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">类型：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentCycyleJobData.type" /></Col>
-                </Row>
-                <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="1"><p>参数：</p></Col>
                     <Col span="11"><Input type="text" v-model="currentCycyleJobData.args"/></Col>
                     <Col span="1"><p style="position:relative;left:10px;">cron：</p></Col>
@@ -57,14 +51,6 @@ export default {
         {
           title: '描述',
           key: 'description',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '类型',
-          key: 'type',
-          width: '80',
           filter: {
             type: 'Input'
           }
