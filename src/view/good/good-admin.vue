@@ -11,6 +11,7 @@
             </div>
             <super_table :pageSize="countPerPage" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
             <Button type="primary" @click="isUploadShow=true">上传文件</Button>
+            <Button type="primary" style="margin-left:10px;" @click="isCronSetShow=true">设置定期更新</Button>
             <Modal v-model="isUploadShow" title="上传商品信息文件">
               <div>
                 <Select v-model="uploadMode">
@@ -19,14 +20,32 @@
                 </Select>
                 <Upload style="margin-top:10px;"
                     multiple
+                    :on-success="onUploadSucess"
+                    :on-error="onUploadFail"
+                    :show-upload-list="false"
                     :headers="headers"
                     type="drag"
-                    action="http://39.108.106.167:8086/good/upload">
+                    :action="upLaodUrl">
                     <div style="padding: 20px 0;">
                         <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                         <p>点击上传或者拖拽文件上传</p>
                     </div>
                 </Upload>
+              </div>
+            </Modal>
+            <Modal v-model="isCronSetShow" title="设置定期更新" @on-ok="setCronUpdate">
+              <div>
+                <Select v-model="cronMode">
+                  <Option :value="-1">商品基本数据</Option>
+                  <Option :value="-2">商品变价数据</Option>
+                </Select>
+                <div style="margin-top:10px">
+                  <p>文件路径：</p>
+                  <Input type="text" v-model="cronFilePath" />
+                </div>
+                <Input v-model="cronExpr" placeholder="输入cron表达式" style="margin-top:10px;width: 360px" >
+                  <Button slot="append" @click="isCronModalShow=true">选择时间</Button>
+                </Input>
               </div>
             </Modal>
             <Modal :width="1040" v-model="editModal" title="修改商品信息" :loading="editOkLoading" @on-ok="asyncEditOK">
@@ -157,6 +176,7 @@
                 </Row>
               </div>
             </Modal>
+            <corn-selector :isModalShow="isCronModalShow" @onOk="onCron" @onIsShow="onCronIsShow"></corn-selector>
           </Card>
         </div>
         <div class="bottom" v-bind:style="{ marginTop:'10px'}">
@@ -190,7 +210,8 @@
 </template>
 <script>
 import super_table from '@/components/table/supertable.vue'
-import { getAllGood, updateGood, deleteGood, getBindedTags, getGood } from '@/api/good'
+import cronSelector from '@/components/corn-selector/corn-selector.vue'
+import { getAllGood, updateGood, deleteGood, getBindedTags, getGood, cronUpdate } from '@/api/good'
 import { getAllTag, getTag } from '@/api/tag'
 import e_label from '@/components/e-label/e-lable.vue'
 import { getStyle } from '@/api/style'
@@ -198,13 +219,19 @@ import store from '@/store'
 export default {
   components: {
     e_label,
-    super_table
+    super_table,
+    'corn-selector': cronSelector
   },
   data () {
     return {
       headers: {
         ESLS: store.getters.token
       },
+      cronExpr: '',
+      cronMode: -1,
+      isCronModalShow: false,
+      cronFilePath: '',
+      isCronSetShow: false,
       uploadMode: -1,
       isUploadShow: false,
       windowWidth: 0,
@@ -455,6 +482,11 @@ export default {
     this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPage })
     this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
   },
+  computed: {
+    upLaodUrl: function () {
+      return 'http://39.108.106.167:8086/good/upload?mode=' + this.uploadMode
+    }
+  },
   watch: {
     currentPage () {
       this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPage })
@@ -464,6 +496,25 @@ export default {
     }
   },
   methods: {
+    onUploadSucess () {
+      this.isUploadShow = false
+      this.$Message.info('上传成功')
+    },
+    onUploadFail () {
+      this.isUploadShow = false
+      this.$Message.error('上传失败')
+    },
+    setCronUpdate () {
+      cronUpdate(this.cronExpr, this.cronFilePath, this.cronMode).then(res => {
+        this.$Message.info('设置成功')
+      })
+    },
+    onCronIsShow (val) {
+      this.isCronModalShow = val
+    },
+    onCron (data) {
+      this.cronExpr = data
+    },
     goodReload () {
       this.canShowData = []
       this.showId = 0

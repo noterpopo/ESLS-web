@@ -15,17 +15,19 @@
                 <Col span="2"><Button type="primary" @click="addRole">添加角色</Button></Col>
             </Row>
           </div>
-          <Collapse v-model="selectRole">
-            <Panel v-for="(item,index) in roleData" :key="item.id">
+          <Collapse v-model="selectRole" accordion>
+            <Panel v-for="(item,index) in roleData" :name="item.id+''" :key="item.id">
             {{item.name}}
-                <Transfer
-                  slot="content"
-                  :titles="['未获得权限','角色权限']"
-                  :list-style="listStyle"
-                  :data="allPerData"
-                  :target-keys="getRolePerKey(index)"
-                  :render-format="renderPermission"
-                  @on-change="onTransferChange(index,$event)"></Transfer>
+                <div slot="content">
+                  <Transfer
+                    :titles="['未获得权限','角色权限']"
+                    :list-style="listStyle"
+                    :data="allPerData"
+                    :target-keys="getRolePerKey(index)"
+                    :render-format="renderPermission"
+                    @on-change="onTransferChange(index,arguments)"></Transfer>
+                    <Button type="primary" style="margin-top:10px;" @click="delRole">删除角色</Button>
+                </div>
             </Panel>
           </Collapse>
         </Card>
@@ -33,7 +35,7 @@
 </template>
 <script>
 import { getAllUser, switchUserUsable, deleteUser } from '@/api/user'
-import { getAllRole, addPerm, delPerm } from '@/api/role'
+import { getAllRole, addPerm, delPerm, addRole, delRole } from '@/api/role'
 import { getAllPermissions } from '@/api/permission'
 import super_table from '@/components/table/supertable.vue'
 import store from '@/store'
@@ -188,7 +190,9 @@ export default {
       listStyle: {
         width: '250px',
         height: '200px'
-      }
+      },
+      addRoleName: '',
+      addRoleType: ''
     }
   },
   created () {
@@ -211,7 +215,70 @@ export default {
     }
   },
   methods: {
-    addRole () {},
+    addRole () {
+      this.$Modal.confirm({
+        title: '新角色信息',
+        render: (h, params) => {
+          var that = this
+          return h('span', [
+            h('Input', {
+              prop: {
+                placeholder: '输入名字',
+                value: this.addRoleName
+              },
+              on: {
+                'on-change': (event) => {
+                  that.addRoleName = event.target.value
+                }
+              }
+            }),
+            h('Select', {
+              props: {
+                value: this.addRoleType
+              },
+              attrs: {
+                style: 'margin-top:10px'
+              },
+              on: {
+                'on-change': function (val) {
+                  that.addRoleType = val
+                }
+              }
+            }, [
+              h('Option', {
+                props: {
+                  value: '最高权限',
+                  label: '最高权限'
+                }
+              }),
+              h('Option', {
+                props: {
+                  value: '中级权限',
+                  label: '中级权限'
+                }
+              }),
+              h('Option', {
+                props: {
+                  value: '低级权限',
+                  label: '低级权限'
+                }
+              })
+            ])
+          ])
+        },
+        onOk: () => {
+          addRole(this.addRoleName, this.addRoleType).then(res => {
+            this.$Message.info('添加角色成功')
+            this.getRoleList()
+          })
+        }
+      })
+    },
+    delRole () {
+      delRole(this.selectRole).then(
+        this.getRoleList()
+      )
+    },
     getPermissionData () {
       getAllPermissions().then(res => {
         const data = res.data.data
@@ -222,16 +289,38 @@ export default {
         this.allPerData = data
       })
     },
-    onTransferChange (index, newTargetKeys) {
-      // TODO Permission
-      if (this.roleData[index].permissions.length > newTargetKeys.length) {
-        delPerm()
-      } else if (this.roleData[index].permissions.length < newTargetKeys.length) {
-        addPerm()
+    onTransferChange (index, argu) {
+      let newTargetKeys = argu[2]
+      let direction = argu[1]
+      if (direction === 'left') {
+        let params = { collectionIds: [], ids: [] }
+        let cIds = []
+        for (let i = 0; i < newTargetKeys.length; ++i) {
+          cIds.push(parseInt(newTargetKeys[i]))
+        }
+        params.collectionIds.push(cIds)
+        params.ids.push(parseInt(this.selectRole[0]))
+        delPerm(params)
+        this.roleData[index].permissions = this.roleData[index].permissions.filter((item) => {
+          console.log(newTargetKeys)
+          return newTargetKeys.indexOf(item.id + '') === -1
+        })
+      } else if (direction === 'right') {
+        let params = { collectionIds: [], ids: [] }
+        let cIds = []
+        for (let i = 0; i < newTargetKeys.length; ++i) {
+          if (this.roleData[index].permissions.indexOf(newTargetKeys[i]) === -1) {
+            cIds.push(parseInt(newTargetKeys[i]))
+          }
+        }
+        params.collectionIds.push(cIds)
+        params.ids.push(parseInt(this.selectRole[0]))
+        addPerm(params)
+        let addPer = this.allPerData.filter((item) => {
+          return newTargetKeys.indexOf(item.key) !== -1
+        })
+        this.roleData[index].permissions = this.roleData[index].permissions.concat(addPer)
       }
-      this.roleData[index].permissions = this.allPerData.filter((item) => {
-        return newTargetKeys.indexOf(item.key) !== -1
-      })
     },
     getRolePerKey (index) {
       let res = []

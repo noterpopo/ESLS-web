@@ -121,8 +121,6 @@ export default {
           key: 'styleId',
           width: '200',
           render: (h, params) => {
-            // TODO
-            // var that = this
             let styleFiltters = []
             let data = {
               items: [
@@ -495,7 +493,6 @@ export default {
     this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage })
     this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
     this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8 })
-    // TODO
     getAllStyle({ page: 0, count: 1 }).then(res => {
       this.getStyleTableData({ page: this.currentStylePage - 1, count: res.data.code })
     })

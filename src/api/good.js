@@ -13,6 +13,18 @@ export const getAllGood = ({ page, count, queryId, queryString }) => {
   })
 }
 
+export const cronUpdate = (cron, filepath, mode) => {
+  return axios.request({
+    url: 'good/schedule',
+    method: 'get',
+    params: {
+      cron: cron,
+      rootFilePath: filepath,
+      mode: mode
+    }
+  })
+}
+
 export const getBindedTags = ({ queryId, queryString }) => {
   return axios.request({
     url: 'good/binded',

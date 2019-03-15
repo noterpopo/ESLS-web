@@ -126,7 +126,6 @@
 </template>
 <script>
 // https://github.com/mauricius/vue-draggable-resizable
-// TODO:字体颜色
 import { getStyle, updateStyle, newStyle } from '@/api/style'
 import { coppyArray } from '@/libs/util'
 import VueDraggableResizable from 'vue-draggable-resizable'
@@ -559,7 +558,6 @@ export default {
           }
         })
       } else {
-        // TODO新建样式
         for (let i = 0; i < this.currentDispmsData.length; ++i) {
           delete this.currentDispmsData[i].id
         }

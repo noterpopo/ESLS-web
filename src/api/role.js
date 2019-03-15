@@ -9,6 +9,24 @@ export const getRoleList = (id) => {
   })
 }
 
+export const delRole = (id) => {
+  return axios.request({
+    url: 'role/' + id,
+    method: 'delete'
+  })
+}
+
+export const addRole = (name, type) => {
+  return axios.request({
+    url: '/role',
+    method: 'post',
+    params: {
+      name: name,
+      type: type
+    }
+  })
+}
+
 export const getAllRole = () => {
   return axios.request({
     url: 'roles',
