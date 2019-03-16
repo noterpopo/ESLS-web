@@ -1,9 +1,17 @@
 <template>
     <div ref="container" style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;">
+      <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
+        <div slot="title">
+            <Row type="flex" justify="center" align="middle">
+                <Col span="20"><p>总店信息</p></Col>
+            </Row>
+
+          </div>
+      </Card>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
-                    <Col span="20"><p>商店信息</p></Col>
+                    <Col span="20"><p>分店信息</p></Col>
                     <Col span="2"><Button type="primary" @click="addShop">添加商店</Button></Col>
                     <Col span="2"><Button type="primary" @click="shopReload">刷新</Button></Col>
               </Row>

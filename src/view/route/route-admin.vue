@@ -71,8 +71,8 @@
                       <Option value="barCode">条码</Option>
                   </Select>
             </Input>
-            <Input type="text" style="margin-left:8px;width: 300px" v-model="setConfig" >
-                  <Select v-model="setConfigValue" slot="prepend" style="width: 100px">
+            <Input type="text" style="margin-left:8px;width: 300px" v-model="setConfigValue" >
+                  <Select v-model="setConfig" slot="prepend" style="width: 100px">
                       <Option value="channelId">信道</Option>
                   </Select>
             </Input>
@@ -368,7 +368,7 @@ export default {
           return item.barCode === this.settingQueryString.split(',')[j]
         })
         console.log(updateRow)
-        updateRow[0][this.setConfigValue] = this.setConfig
+        updateRow[0][this.setConfig] = this.setConfigValue
         console.log(updateRow[0])
         updateRouter(updateRow[0]).then(res => {
           settingRoute(data).then(res => {
