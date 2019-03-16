@@ -723,7 +723,8 @@ export default {
       let tagTemp = this.tagData.filter((item) => {
         return item.id === this.bindTagId
       })
-      if (tagTemp.goodId === null && tagTemp.goodId === 0) {
+      console.log(tagTemp[0].goodId)
+      if (tagTemp[0].goodId === null || tagTemp[0].goodId === 0) {
         mode = '1'
       } else {
         mode = '2'
@@ -752,20 +753,13 @@ export default {
       return false
     },
     onUnBind (data) {
-      var that = this
       if (data.goodId === null || data.goodId === 0) {
         this.$Message.error('该标签未绑定商品')
         return
       }
       bindGood('id', data.goodId, 'id', data.id, '0').then(res => {
         this.$Message.info('解绑成功')
-        getGood(that.bindGoodSelectId).then(res => {
-          that.rightGoodDataCount = res.data.code
-          const data = res.data.data
-          that.goodRightData = data
-          that.isRightGoodTableLoading = false
-          that.bindGoodSelectId = 0
-        })
+        this.goodRightData = []
       })
     }
   }
