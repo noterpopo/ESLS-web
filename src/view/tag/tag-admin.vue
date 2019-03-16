@@ -718,8 +718,17 @@ export default {
     },
     onBindGood () {
       var that = this
+      let mode = '0'
       this.currentGoodPage = 1
-      bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId, '2').then(res => {
+      let tagTemp = this.filter((item) => {
+        return item.id === this.bindTagId
+      })
+      if (tagTemp.goodId === null && tagTemp.goodId === 0) {
+        mode = '1'
+      } else {
+        mode = '2'
+      }
+      bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId, mode).then(res => {
         that.$Modal.success({
           title: '消息',
           content: '成功绑定商品'
@@ -746,6 +755,7 @@ export default {
       var that = this
       if (data.goodId === null || data.goodId === 0) {
         this.$Message.error('该标签未绑定商品')
+        return
       }
       bindGood('id', data.goodId, 'id', data.id, '0').then(res => {
         this.$Message.info('解绑成功')
