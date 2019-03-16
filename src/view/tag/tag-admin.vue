@@ -720,7 +720,7 @@ export default {
       var that = this
       let mode = '0'
       this.currentGoodPage = 1
-      let tagTemp = this.filter((item) => {
+      let tagTemp = this.tagData.filter((item) => {
         return item.id === this.bindTagId
       })
       if (tagTemp.goodId === null && tagTemp.goodId === 0) {
