@@ -71,6 +71,11 @@
                       <Option value="barCode">条码</Option>
                   </Select>
             </Input>
+            <Input type="text" style="margin-left:8px;width: 300px" v-model="setConfig" >
+                  <Select v-model="setConfigValue" slot="prepend" style="width: 100px">
+                      <Option value="channelId">信道</Option>
+                  </Select>
+            </Input>
             <Button style="margin-left:10px;" type="primary" @click="onSetting">设置</Button>
           </div>
           <div style="display:flex; align-items:center;margin-top:10px;">
@@ -265,7 +270,9 @@ export default {
       testBarCode: '',
       testChannelId: '',
       testHardVersion: '',
-      testMode: '0'
+      testMode: '0',
+      setConfig: 'channelId',
+      setConfigValue: ''
     }
   },
   created () {
@@ -355,7 +362,20 @@ export default {
         items.push(params)
       }
       this.$set(data, 'items', items)
-      settingRoute(data)
+      for (let j = 0; j < this.settingQueryString.split(',').length; ++j) {
+        let updateRow = this.routeData.filter((item) => {
+          console.log(item.barCode + ' ' + this.settingQueryString.split(',')[j])
+          return item.barCode === this.settingQueryString.split(',')[j]
+        })
+        console.log(updateRow)
+        updateRow[0][this.setConfigValue] = this.setConfig
+        console.log(updateRow[0])
+        updateRouter(updateRow[0]).then(res => {
+          settingRoute(data).then(res => {
+            this.$Message.info('设置成功')
+          })
+        })
+      }
     },
     onTest () {
       let data = {}
