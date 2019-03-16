@@ -1,11 +1,11 @@
 <template>
     <div ref="container" style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;">
-      <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
+      <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px',marginBottom:'10px' }">
         <div slot="title">
             <Row type="flex" justify="center" align="middle">
-                <Col span="20"><p>总店信息</p></Col>
+                <Col span="24"><p>总店信息</p></Col>
             </Row>
-
+            <Table border :columns="tableColumns" :data="centerShopData"></Table>
           </div>
       </Card>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
@@ -16,7 +16,7 @@
                     <Col span="2"><Button type="primary" @click="shopReload">刷新</Button></Col>
               </Row>
           </div>
-          <super_table @onDoubleClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="shopData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="shopDataCount"></super_table>
+          <super_table @onDoubleClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="subShopData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="shopDataCount"></super_table>
         </Card>
         <Modal :width="1040" v-model="editModal" title="修改商店信息" @on-ok="editOK">
             <div>
@@ -98,7 +98,8 @@ export default {
       countPerPage: 6,
       currentPage: 1,
       shopDataCount: 0,
-      shopData: [],
+      centerShopData: [],
+      subShopData: [],
       tableColumns: [
         {
           title: '商店编码',
@@ -186,6 +187,7 @@ export default {
   },
   created () {
     this.getShopTableData({ page: 0, count: this.countPerPage })
+    this.getCenterShop()
   },
   mounted () {
     var that = this
@@ -202,12 +204,23 @@ export default {
     }
   },
   methods: {
+    getCenterShop () {
+      getAllShop({ query: 'type', queryString: 1 }).then(res => {
+        this.centerShopData = res.data.data
+      })
+    },
     getShopTableData ({ page, count, query, queryString }) {
+      this.subShopData = []
       var that = this
       that.isTableLoading = true
       getAllShop({ page: page, count: count, query: query, queryString: queryString }).then(res => {
-        that.shopData = res.data.data
-        that.shopDataCount = res.data.code
+        for (let i = 0; i < res.data.data.length; ++i) {
+          if (res.data.data[i].type === 1) {
+          } else if (res.data.data[i].type === 0) {
+            that.subShopData.push(res.data.data[i])
+          }
+        }
+        that.shopDataCount = res.data.code - that.centerShopData.length
         that.isTableLoading = false
       })
     },

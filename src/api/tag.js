@@ -94,7 +94,7 @@ export const bindStyle = (tid, sid) => {
     }
   })
 }
-export const bindGood = (q1, qs1, q2, qs2) => {
+export const bindGood = (q1, qs1, q2, qs2, mode) => {
   return axios.request({
     url: 'tag/bind',
     method: 'put',
@@ -103,7 +103,7 @@ export const bindGood = (q1, qs1, q2, qs2) => {
       ArgsString1: qs1,
       sourceArgs2: q2,
       ArgsString2: qs2,
-      mode: '2'
+      mode: mode
     }
   })
 }

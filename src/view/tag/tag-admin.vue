@@ -219,7 +219,7 @@ export default {
           title: '操作',
           key: 'action',
           align: 'center',
-          width: '150',
+          width: '180',
           render: (h, params) => {
             return h('div', [
               h('Button', {
@@ -238,6 +238,22 @@ export default {
                   }
                 }
               }, '绑定'),
+              h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                style: {
+                  margin: '2px'
+                },
+                on: {
+                  'click': (event) => {
+                    event.stopPropagation()
+                    let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
+                    this.onUnBind(temp)
+                  }
+                }
+              }, '解绑'),
               h('Button', {
                 props: {
                   type: 'error',
@@ -703,7 +719,7 @@ export default {
     onBindGood () {
       var that = this
       this.currentGoodPage = 1
-      bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId).then(res => {
+      bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId, '2').then(res => {
         that.$Modal.success({
           title: '消息',
           content: '成功绑定商品'
@@ -725,6 +741,22 @@ export default {
         }
       }
       return false
+    },
+    onUnBind (data) {
+      var that = this
+      if (data.goodId === null || data.goodId === 0) {
+        this.$Message.error('该标签未绑定商品')
+      }
+      bindGood('id', data.goodId, 'id', data.id, '0').then(res => {
+        this.$Message.info('解绑成功')
+        getGood(that.bindGoodSelectId).then(res => {
+          that.rightGoodDataCount = res.data.code
+          const data = res.data.data
+          that.goodRightData = data
+          that.isRightGoodTableLoading = false
+          that.bindGoodSelectId = 0
+        })
+      })
     }
   }
 

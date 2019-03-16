@@ -86,16 +86,34 @@
                       <Option value="2">AP发送无线帧</Option>
                       <Option value="3">AP停止发送无线帧 </Option>
                       <Option value="4">AP接收无线帧</Option>
-                      <Option value="4">AP停止接收无线帧</Option>
+                      <Option value="5">AP停止接收无线帧</Option>
+                      <Option value="9">获取接收无线帧RSSI</Option>
             </Select>
             <Input type="text" style="margin-left:8px;width: 300px" v-model="testQueryString"  placeholder="条件" >
                   <Select v-model="testQuery" slot="prepend" style="width: 100px">
                       <Option value="barCode">条码</Option>
                   </Select>
             </Input>
-            <Input  v-model="testBarCode" placeholder="输入条码" style="margin-left:8px;width: 240px"></Input>
-            <Input  v-model="testChannelId" placeholder="输入通道" style="margin-left:8px;width: 240px"></Input>
-            <Input  v-model="testHardVersion" placeholder="输入硬件版本" style="margin-left:8px;width: 240px"></Input>
+            <Input v-if="testMode==0" v-model="testBarCode" placeholder="输入条码" style="margin-left:8px;width: 240px"></Input>
+            <Input v-model="testChannelId" placeholder="输入信道" style="margin-left:8px;width: 240px"></Input>
+            <Input v-if="testMode==0" v-model="testHardVersion" placeholder="输入硬件版本" style="margin-left:8px;width: 240px"></Input>
+            <Button style="margin-left:10px;" type="primary" @click="onTest">开始</Button>
+          </div>
+          <div style="display:flex; align-items:center;margin-top:10px;">
+            <span>AP测试</span>
+            <Select style="margin-left:8px;width: 200px" v-model="testMode">
+                      <Option value="6">设置目标服务器IP </Option>
+                      <Option value="7">删除当前历史连接IP记录</Option>
+                      <Option value="8">查询历史连接IP列表</Option>
+            </Select>
+            <Input type="text" style="margin-left:8px;width: 300px" v-model="testQueryString"  placeholder="条件" >
+                  <Select v-model="testQuery" slot="prepend" style="width: 100px">
+                      <Option value="barCode">条码</Option>
+                  </Select>
+            </Input>
+            <Input v-if="testMode===0" v-model="testBarCode" placeholder="输入条码" style="margin-left:8px;width: 240px"></Input>
+            <Input v-model="testChannelId" placeholder="输入信道" style="margin-left:8px;width: 240px"></Input>
+            <Input v-if="testMode===0" v-model="testHardVersion" placeholder="输入硬件版本" style="margin-left:8px;width: 240px"></Input>
             <Button style="margin-left:10px;" type="primary" @click="onTest">开始</Button>
           </div>
           <corn-selector :isModalShow="isScanCronModalShow" @onOk="onScanCron" @onIsShow="onScanIsShow"></corn-selector>
@@ -107,6 +125,9 @@ import { getAllRoute, changeRoute, scanRoute, scanAll, settingRoute, testRouter,
 import super_table from '@/components/table/supertable.vue'
 import routerExpand from '@/components/table/router-expand.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
+var rssiWorker = new Worker('@/worker/updateRSSI.js')
+var RSSIID = ''
+var RSSIDATA = ''
 export default {
   components: {
     routerExpand,
@@ -171,7 +192,7 @@ export default {
 
         },
         {
-          title: '通道',
+          title: '信道',
           key: 'channelId',
           filter: {
             type: 'Input'
@@ -367,9 +388,7 @@ export default {
           console.log(item.barCode + ' ' + this.settingQueryString.split(',')[j])
           return item.barCode === this.settingQueryString.split(',')[j]
         })
-        console.log(updateRow)
         updateRow[0][this.setConfig] = this.setConfigValue
-        console.log(updateRow[0])
         updateRouter(updateRow[0]).then(res => {
           settingRoute(data).then(res => {
             this.$Message.info('设置成功')
@@ -390,6 +409,21 @@ export default {
       }
       this.$set(data, 'items', items)
       testRouter(data, this.testBarCode, this.testChannelId, this.testHardVersion, this.testMode)
+      if (this.testMode === 4) {
+        rssiWorker.postMessage(true)
+        oW.onmessage = function (ev) {
+          alert(ev.data)
+        }
+        this.$Modal.info({
+          title: 'RSSi信息',
+          render: (h, params) => {
+            return h('span', [
+              h('p', 'RSSID:' + RSSIID),
+              h('p', 'RSSDATA:' + RSSIDATA)
+            ])
+          }
+        })
+      }
     },
     routeReload () {
       this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
