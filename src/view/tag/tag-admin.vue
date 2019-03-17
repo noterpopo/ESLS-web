@@ -74,7 +74,7 @@ export default {
         {
           title: '价签id',
           key: 'barCode',
-          width: '200',
+          width: '140',
           filter: {
             type: 'Input'
           }
@@ -82,6 +82,7 @@ export default {
         {
           title: '价签类型',
           key: 'screenType',
+          width: '80',
           filter: {
             type: 'Input'
           }
@@ -89,12 +90,14 @@ export default {
         {
           title: '电量',
           key: 'power',
+          width: '70',
           filter: {
             type: 'Input'
           }
         },
         {
           title: '宽/高',
+          width: '90',
           render: (h, params) => {
             return h('p', params.row.resolutionWidth + '/' + params.row.resolutionHeight)
           },
@@ -105,6 +108,7 @@ export default {
         {
           title: 'AP RSSI',
           key: 'apRssi',
+          width: '60',
           filter: {
             type: 'Input'
           }
@@ -112,6 +116,7 @@ export default {
         {
           title: 'Tag RSSI',
           key: 'tagRssi',
+          width: '60',
           filter: {
             type: 'Input'
           }
@@ -119,7 +124,7 @@ export default {
         {
           title: '绑定样式',
           key: 'styleId',
-          width: '200',
+          width: '180',
           render: (h, params) => {
             let styleFiltters = []
             let data = {
@@ -176,13 +181,13 @@ export default {
           }
         },
         {
-          title: '是否工作',
+          title: '通讯状态',
           key: 'isWorking',
-          width: '140',
+          width: '120',
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '工作中' : '通讯异常'
+            const text = row.isWorking === 1 ? '在线' : '离线'
 
             return h('Tag', {
               props: {
@@ -190,9 +195,42 @@ export default {
                 color: color
               }
             }, text)
-          },
-          filter: {
-            type: 'Input'
+          }
+        },
+        {
+          title: '绑定状态',
+          width: '120',
+          render: (h, params) => {
+            let isBind = true
+            if (params.row.goodId === '' || params.row.goodId === 0) {
+              isBind = false
+            }
+            const color = isBind ? 'primary' : 'error'
+            const text = isBind ? '已绑' : '未绑'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          }
+        },
+        {
+          title: '使用状态',
+          key: 'forbidState',
+          width: '120',
+          render: (h, params) => {
+            const row = params.row
+            const color = row.forbidState === 1 ? 'primary' : 'error'
+            const text = row.forbidState === 1 ? '启用' : '禁用'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
           }
         },
         {

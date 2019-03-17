@@ -15,11 +15,13 @@ import '@/assets/icons/iconfont.css'
 import TreeTable from 'tree-table-vue'
 import VOrgTree from 'v-org-tree'
 import 'v-org-tree/dist/v-org-tree.css'
+import VueWorker from 'vue-worker'
 // import $ from 'jquery'
 // 实际打包时应该不引入mock
 /* eslint-disable */
 //if (process.env.NODE_ENV !== 'production') require('@/mock')
 
+Vue.use(VueWorker)
 Vue.use(iView, {
   i18n: (key, value) => i18n.t(key, value)
 })

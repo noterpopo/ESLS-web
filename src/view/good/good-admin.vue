@@ -379,13 +379,13 @@ export default {
           }
         },
         {
-          title: '禁用',
+          title: '状态',
           width: '120',
           key: 'isWorking',
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '启用' : '禁用'
+            const text = row.isWorking === 1 ? '在线' : '离线'
 
             return h('Tag', {
               props: {

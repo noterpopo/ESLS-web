@@ -123,6 +123,7 @@ export default {
   data () {
     return {
       windowWidth: 0,
+      rssiWorker: null,
       isTableLoading: false,
       countPerPage: 6,
       currentPage: 1,
@@ -201,7 +202,7 @@ export default {
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '工作中' : '通讯异常'
+            const text = row.isWorking === 1 ? '在线' : '离线'
 
             return h('Tag', {
               props: {
@@ -396,19 +397,20 @@ export default {
       }
       this.$set(data, 'items', items)
       testRouter(data, this.testBarCode, this.testChannelId, this.testHardVersion, this.testMode)
-      if (this.testMode === 4) {
+      if (this.testMode === '4') {
+        this.rssiWorker = this.$worker.run(() => '111').then(res => console.log('55'))
         this.$Modal.info({
           title: 'RSSi信息',
           render: (h, params) => {
             return h('span', [
-              h('p', 'RSSID:' + RSSIID),
-              h('p', 'RSSDATA:' + RSSIDATA)
+              h('p', 'RSSID:'),
+              h('p', 'RSSDATA:')
             ])
           }
         })
       }
-      if (this.testMode === 5) {
-
+      if (this.testMode === '5') {
+        this.rssiWorker = null
       }
     },
     routeReload () {
@@ -448,6 +450,7 @@ export default {
       this.$set(data, 'items', items)
       removeRouter(data).then(res => {
         this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+        this.$Message.info('发送移除命令成功')
       })
     }
   }

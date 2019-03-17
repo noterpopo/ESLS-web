@@ -112,7 +112,7 @@ export default {
           render: (h, params) => {
             const row = params.row
             const color = row.waitUpdate === 1 ? 'primary' : 'error'
-            const text = row.waitUpdate === 1 ? '已经更新' : '等待更新'
+            const text = row.waitUpdate === 1 ? '在线' : '离线'
 
             return h('Tag', {
               props: {

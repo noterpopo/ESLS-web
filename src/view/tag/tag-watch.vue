@@ -3,7 +3,8 @@
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px'}">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
-                <Col span="24"><p>价签信息</p></Col>
+                <Col span="22"><p>价签信息</p></Col>
+                <Col span="2"><Button type="primary" @click="tagReload">刷新</Button></Col>
             </Row>
           </div>
           <super_table @onSelectionChange="handleSelectionChange" :pageSize="countPerPage" :current.sync="currentTagPage" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="tagDataCount"></super_table>
@@ -25,12 +26,18 @@
                       <Option :value="3" >对路由器下所有标签定期刷新</Option>
                   </Select>
                 </Col>
-                <Col span="6">
-                <Input type="text" v-model="flushQueryStr"  placeholder="筛选条件" style="width: 300px" >
-                  <Select v-model="flushQuery" slot="prepend" style="width: 100px">
-                      <Option value="barCode">条码</Option>
+                <Col v-if="this.flushMode==0||this.flushMode==2" span="6">
+                  <Input type="text" v-model="flushQueryStr"  placeholder="筛选条件" style="width: 300px" >
+                    <Select v-model="flushQuery" slot="prepend" style="width: 100px">
+                        <Option value="barCode">条码</Option>
+                    </Select>
+                  </Input>
+                </Col>
+                <Col v-if="this.flushMode==1||this.flushMode==3" span="6">
+                  <Select v-model="flushQueryStr" style="width: 300px">
+                    <Option v-for="(item) in routeData" :key="item.id" :value="item.barCode">{{item.barCode}}</Option>
                   </Select>
-                </Input></Col>
+                </Col>
                 <Col span="7">
                 <Input  v-model="flushCronExp" placeholder="输入cron表达式" style="width: 360px" >
                   <Button slot="append" @click="isFlushCronModalShow=true">选择时间</Button>
@@ -49,20 +56,19 @@
                       <Option :value="1" >对路由器下所有标签</Option>
                   </Select>
                 </Col>
-                <Col span="6">
+                <Col span="6" v-if="lightMode==0">
                 <Input type="text" v-model="lightQueryStr"  placeholder="筛选条件" style="width: 300px" >
                   <Select v-model="lightQuery" slot="prepend" style="width: 100px">
                       <Option value="barCode">条码</Option>
                   </Select>
                 </Input></Col>
-                <Col span="2">
-                  <Select v-model="isLight" style="width: 100px">
-                      <Option :value="0">结束闪灯</Option>
-                      <Option :value="1">闪灯</Option>
+                <Col span="6" v-if="lightMode==1">
+                  <Select v-model="lightQueryStr" style="width: 300px">
+                    <Option v-for="(item) in routeData" :key="item.id" :value="item.barCode">{{item.barCode}}</Option>
                   </Select>
                 </Col>
                 <Col span="1"><Button type="primary" @click="onLight">闪灯</Button></Col>
-
+                <Col span="1"><Button type="primary" @click="onLightOff">结束闪灯</Button></Col>
             </Row>
           </div>
           <div>
@@ -71,7 +77,7 @@
                 <Col span="4">
                   <Select v-model="removeMode" style="width:220px">
                       <Option :value="0" >对标签</Option>
-                      <Option :value="1" >对路由器下所有标签</Option>
+                      <!-- <Option :value="1" >对路由器下所有标签</Option> -->
                   </Select>
                 </Col>
                 <Col span="6">
@@ -95,12 +101,17 @@
                       <Option :value="3" >对路由器下所有标签定期巡检</Option>
                   </Select>
                 </Col>
-                <Col span="6">
+                <Col span="6" v-if="scanMode==0||scanMode==2">
                 <Input type="text" v-model="scanQueryStr"  placeholder="筛选条件" style="width: 300px" >
                   <Select v-model="scanQuery" slot="prepend" style="width: 100px">
                       <Option value="barCode">条码</Option>
                   </Select>
                 </Input></Col>
+                <Col v-if="this.scanMode==1||this.scanMode==3" span="6">
+                  <Select v-model="scanQueryStr" style="width: 300px">
+                    <Option v-for="(item) in routeData" :key="item.id" :value="item.barCode">{{item.barCode}}</Option>
+                  </Select>
+                </Col>
                 <Col span="7">
                 <Input  v-model="scanCronExp" placeholder="输入cron表达式" style="width: 360px" >
                   <Button slot="append" @click="isScanCronModalShow=true">选择时间</Button>
@@ -119,12 +130,17 @@
                       <Option :value="1" >对路由器</Option>
                   </Select>
                 </Col>
-                <Col span="6">
+                <Col span="6" v-if="this.statusMode==0">
                 <Input type="text" v-model="statusQueryStr"  placeholder="筛选条件" style="width: 300px" >
                   <Select v-model="statusQuery" slot="prepend" style="width: 100px">
                       <Option value="barCode">条码</Option>
                   </Select>
                 </Input></Col>
+                <Col v-if="this.statusMode==1" span="6">
+                  <Select v-model="statusQueryStr" style="width: 300px">
+                    <Option v-for="(item) in routeData" :key="item.id" :value="item.barCode">{{item.barCode}}</Option>
+                  </Select>
+                </Col>
                 <Col span="2">
                   <Select v-model="isStatus" style="width: 100px">
                       <Option :value="0">禁用</Option>
@@ -145,6 +161,7 @@
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import { getAllTag, flushTag, lightTag, removeTag, scanTag, statusTag, scanAll } from '@/api/tag'
+import { getAllRoute } from '@/api/route'
 export default {
   components: {
     super_table,
@@ -152,6 +169,7 @@ export default {
   },
   data () {
     return {
+      routeData: [],
       isTableLoading: false,
       countPerPage: 6,
       currentTagPage: 1,
@@ -165,7 +183,7 @@ export default {
         {
           title: '价签id',
           key: 'barCode',
-          width: '200',
+          width: '150',
           filter: {
             type: 'Input'
           }
@@ -194,6 +212,7 @@ export default {
         {
           title: 'AP RSSI',
           key: 'apRssi',
+          width: '100',
           filter: {
             type: 'Input'
           }
@@ -201,6 +220,7 @@ export default {
         {
           title: 'Tag RSSI',
           key: 'tagRssi',
+          width: '100',
           filter: {
             type: 'Input'
           }
@@ -208,17 +228,19 @@ export default {
         {
           title: '电量',
           key: 'power',
+          width: '100',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '是否工作',
+          title: '通讯状态',
           key: 'isWorking',
+          width: '120',
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '工作中' : '通讯异常'
+            const text = row.isWorking === 1 ? '在线' : '离线'
 
             return h('Tag', {
               props: {
@@ -226,9 +248,42 @@ export default {
                 color: color
               }
             }, text)
-          },
-          filter: {
-            type: 'Input'
+          }
+        },
+        {
+          title: '绑定状态',
+          width: '120',
+          render: (h, params) => {
+            let isBind = true
+            if (params.row.goodId === '' || params.row.goodId === 0) {
+              isBind = false
+            }
+            const color = isBind ? 'primary' : 'error'
+            const text = isBind ? '已绑' : '未绑'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          }
+        },
+        {
+          title: '使用状态',
+          key: 'forbidState',
+          width: '120',
+          render: (h, params) => {
+            const row = params.row
+            const color = row.forbidState === 1 ? 'primary' : 'error'
+            const text = row.forbidState === 1 ? '启用' : '禁用'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
           }
         },
         {
@@ -277,6 +332,9 @@ export default {
   },
   created () {
     this.getTagTableData({ page: 0, count: this.countPerPage })
+    getAllRoute({ page: 0, count: 100 }).then(res => {
+      this.routeData = res.data.data
+    })
   },
   mounted () {
     var that = this
@@ -352,7 +410,21 @@ export default {
         items.push(params)
       }
       this.$set(data, 'items', items)
-      lightTag(data, this.isLight, this.lightMode)
+      lightTag(data, this.isLight, 1)
+    },
+    onLightOff () {
+      let data = {}
+      let params = {}
+      let items = []
+      let idArray = this.lightQueryStr.split(',')
+      for (let i = 0; i < idArray.length; ++i) {
+        params = {}
+        this.$set(params, 'query', this.lightQuery)
+        this.$set(params, 'queryString', idArray[i])
+        items.push(params)
+      }
+      this.$set(data, 'items', items)
+      lightTag(data, this.isLight, 0)
     },
     onRemove () {
       let data = {}
@@ -423,6 +495,9 @@ export default {
         this.lightQueryStr = ''
         this.removeQueryStr = ''
       }
+    },
+    tagReload () {
+      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
     }
   }
 
