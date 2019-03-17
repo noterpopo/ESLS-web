@@ -12,13 +12,13 @@
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                     <Col span="20"><p>分店信息</p></Col>
-                    <Col span="2"><Button type="primary" @click="addShop">添加商店</Button></Col>
+                    <Col span="2"><Button type="primary" @click="addShop">添加店铺</Button></Col>
                     <Col span="2"><Button type="primary" @click="shopReload">刷新</Button></Col>
               </Row>
           </div>
           <super_table @onDoubleClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="subShopData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="shopDataCount"></super_table>
         </Card>
-        <Modal :width="1040" v-model="editModal" title="修改商店信息" @on-ok="editOK">
+        <Modal :width="1040" v-model="editModal" title="修改店铺信息" @on-ok="editOK">
             <div>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="1"><p>编码：</p></Col>
@@ -50,7 +50,7 @@
                 </Row>
             </div>
         </Modal>
-        <Modal :width="1040" v-model="addModal" title="添加商店" @on-ok="addOK">
+        <Modal :width="1040" v-model="addModal" title="添加店铺" @on-ok="addOK">
             <div>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="1"><p>编码：</p></Col>
@@ -102,7 +102,7 @@ export default {
       subShopData: [],
       tableColumns: [
         {
-          title: '商店编码',
+          title: '店铺编码',
           key: 'number',
           filter: {
             type: 'Input'
@@ -176,7 +176,7 @@ export default {
         type: 1,
         number: 'FFFFF',
         fatherShop: 'FFFFF',
-        name: '默认商店名字',
+        name: '默认店铺名字',
         manager: '默认管理员',
         address: '默认地址',
         account: '默认账户',
@@ -228,7 +228,7 @@ export default {
       var that = this
       this.$Modal.confirm({
         title: '警告',
-        content: '确定删除该商店吗？',
+        content: '确定删除该店铺吗？',
         onOk: function () {
           deleteShop(id)
             .then(() => {

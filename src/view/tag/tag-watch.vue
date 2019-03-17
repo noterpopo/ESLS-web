@@ -410,7 +410,7 @@ export default {
         items.push(params)
       }
       this.$set(data, 'items', items)
-      lightTag(data, this.isLight, 1)
+      lightTag(data, 1, this.lightMode)
     },
     onLightOff () {
       let data = {}
@@ -424,7 +424,7 @@ export default {
         items.push(params)
       }
       this.$set(data, 'items', items)
-      lightTag(data, this.isLight, 0)
+      lightTag(data, 0, this.lightMode)
     },
     onRemove () {
       let data = {}

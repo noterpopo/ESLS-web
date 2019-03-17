@@ -181,13 +181,15 @@ export default {
           }
         },
         {
-          title: '通讯状态',
-          key: 'isWorking',
+          title: '绑定状态',
           width: '120',
           render: (h, params) => {
-            const row = params.row
-            const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '在线' : '离线'
+            let isBind = true
+            if (params.row.goodId === '' || params.row.goodId === 0) {
+              isBind = false
+            }
+            const color = isBind ? 'primary' : 'error'
+            const text = isBind ? '已绑' : '未绑'
 
             return h('Tag', {
               props: {
@@ -198,15 +200,13 @@ export default {
           }
         },
         {
-          title: '绑定状态',
+          title: '通讯状态',
+          key: 'isWorking',
           width: '120',
           render: (h, params) => {
-            let isBind = true
-            if (params.row.goodId === '' || params.row.goodId === 0) {
-              isBind = false
-            }
-            const color = isBind ? 'primary' : 'error'
-            const text = isBind ? '已绑' : '未绑'
+            const row = params.row
+            const color = row.isWorking === 1 ? 'primary' : 'error'
+            const text = row.isWorking === 1 ? '在线' : '离线'
 
             return h('Tag', {
               props: {

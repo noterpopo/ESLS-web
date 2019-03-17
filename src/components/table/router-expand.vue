@@ -21,10 +21,6 @@
         </Row>
         <Row>
             <Col span="8">
-                <span class="expand-key">运行时间： </span>
-                <span class="expand-value">{{ row.execTime }}</span>
-            </Col>
-            <Col span="8">
                 <span class="expand-key">完成时间：</span>
                 <span class="expand-value">{{ row.completeTime }}</span>
             </Col>

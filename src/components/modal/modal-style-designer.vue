@@ -5,12 +5,17 @@
           <div class="left">
               <div class="infoarea">
                 <Card dis-hover>
-                  <p slot="title">样式信息</p>
+                  <div slot="title">
+                    <Row type="flex" justify="center" align="middle">
+                        <Col span="6"><p>样式信息</p></Col>
+                        <Col span="18"><p>当前选择区域：{{currentClickSourceColumn}}</p></Col>
+                    </Row>
+                </div>
                   <p :style="{fontSize: '16px'}">样式id：{{styleid}}</p>
                   <p :style="{fontSize: '16px'}">样式宽度：{{styleWidth}}</p>
                   <p :style="{fontSize: '16px'}">样式高度：{{styleHeight}}</p>
                   <div :style="{display:'flex',flexWrap: 'wrap',marginTop:'4px'}">
-                    <Checkbox style="margin:2px;" v-for="(item) in currentDispmsData" :key="item.id" :value="item.status==1" @on-change="onCheckItem($event,item)">{{item.name}}</Checkbox>
+                    <Checkbox style="margin:2px;" v-for="(item) in currentDispmsData" :key="item.id" :value="item.status==1" @on-change="onCheckItem($event,item)">{{item.sourceColumn}}</Checkbox>
                   </div>
                   <Button :style="{marginTop:'10px'}" type="primary" @click="reset">恢复默认值</Button>
                   <Button v-if="mode!='new'" :style="{marginLeft:'10px',marginTop:'10px'}" type="primary" @click="saveAsNew">另存为新样式</Button>
@@ -139,6 +144,7 @@ export default {
   },
   data () {
     return {
+      currentClickSourceColumn: '',
       styleid: 0,
       styleWidth: 0,
       styleHeight: 0,
@@ -516,6 +522,7 @@ export default {
       }
     },
     onActivated (index) {
+      this.currentClickSourceColumn = this.currentDispmsData[index].sourceColumn
     },
     onDrag ([x, y], index) {
       this.$set(this.currentDispmsData[index], 'x', x)
