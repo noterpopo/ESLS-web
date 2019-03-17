@@ -62,14 +62,14 @@
             <Button style="margin-left:10px;" type="primary" @click="onSetting">设置</Button>
           </div>
           <div style="display:flex; align-items:center;margin-top:10px;">
-            <span>AP测试</span>
+            <span>AP信息读取</span>
             <Select style="margin-left:8px;width: 200px" v-model="testMode">
-                      <Option value="0">信息写入</Option>
+                      <!-- <Option value="0">信息写入</Option> -->
                       <Option value="1">AP信息读取</Option>
-                      <Option value="2">AP发送无线帧</Option>
+                      <!-- <Option value="2">AP发送无线帧</Option>
                       <Option value="3">AP停止发送无线帧 </Option>
                       <Option value="4">AP接收无线帧</Option>
-                      <Option value="5">AP停止接收无线帧</Option>
+                      <Option value="5">AP停止接收无线帧</Option> -->
             </Select>
             <Input type="text" style="margin-left:8px;width: 300px" v-model="testQueryString"  placeholder="条件" >
                   <Select v-model="testQuery" slot="prepend" style="width: 100px">
@@ -187,8 +187,8 @@ export default {
 
         },
         {
-          title: '商店',
-          key: 'shop',
+          title: '店铺',
+          key: 'name',
           width: '200',
           filter: {
             type: 'Input'

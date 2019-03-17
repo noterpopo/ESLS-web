@@ -86,6 +86,7 @@
 </template>
 <script>
 import { getAllShop, updateShop, deleteShop } from '@/api/shop'
+import { getAllRoute } from '@/api/route'
 import super_table from '@/components/table/supertable.vue'
 export default {
   components: {
@@ -100,6 +101,7 @@ export default {
       shopDataCount: 0,
       centerShopData: [],
       subShopData: [],
+      routerData: [],
       tableColumns: [
         {
           title: '店铺编码',
@@ -111,13 +113,6 @@ export default {
         {
           title: '名称',
           key: 'name',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '总店',
-          key: 'fatherShop',
           filter: {
             type: 'Input'
           }
@@ -139,6 +134,36 @@ export default {
         {
           title: '电话',
           key: 'phone',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '路由器',
+          render: (h, params) => {
+            let currentRoute = []
+            for (let i = 0; i < params.row.routers.length; ++i) {
+              currentRoute.push(params.row.routers[i].id)
+            }
+            return h('Select', {
+              props: {
+                multiple: true,
+                value: currentRoute
+              },
+              on: {
+                'on-open-change': (val) => {
+                }
+              }
+            }, this.routerData.map((item) => {
+              return h('Option', {
+                props: {
+                  value: item.id,
+                  label: item.barCode
+                }
+              })
+            })
+            )
+          },
           filter: {
             type: 'Input'
           }
@@ -188,6 +213,9 @@ export default {
   created () {
     this.getShopTableData({ page: 0, count: this.countPerPage })
     this.getCenterShop()
+    getAllRoute({ page: 0, count: 100 }).then(res => {
+      this.routerData = res.data.data
+    })
   },
   mounted () {
     var that = this
