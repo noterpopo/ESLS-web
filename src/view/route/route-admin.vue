@@ -10,23 +10,6 @@
           <super_table @onSelectionChange="handleSelectionChange" @onClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="routeData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="routeDataCount"></super_table>
         </Card>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px',marginTop:'10px'}">
-            <div slot="title">
-                <Row type="flex" justify="center" align="middle">
-                    <Col span="24"><p>IP设置</p></Col>
-                </Row>
-            </div>
-            <div>
-                <Select v-model="ipMode" :style="{width:'160px'}">
-                    <Option :value="0">自动分配</Option>
-                    <Option :value="1">手动设置</Option>
-                </Select>
-                <InputNumber  :style="{marginLeft:'10px'}" :disabled="ipMode===0" :max="255" :min="1" v-model="from"></InputNumber>
-                <span :style="{marginLeft:'4px',marginRight:'4px'}">~</span>
-                <InputNumber  :disabled="ipMode===0" :max="255" :min="1" v-model="to"></InputNumber>
-                <Button style="margin-left:10px;" type="primary" @click="setIp">确定</Button>
-            </div>
-        </Card>
-        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px',marginTop:'10px'}">
           <div slot="title">
                 <Row type="flex" justify="center" align="middle">
                     <Col span="24"><p>路由器设置</p></Col>
@@ -113,18 +96,24 @@
             <Input v-if="testMode==7||testMode==8" v-model="testBarCode" placeholder="输入条码" style="margin-left:8px;width: 240px"></Input>
             <Button style="margin-left:10px;" type="primary" @click="onTest">开始</Button>
           </div>
+          <div style="display:flex; align-items:center;margin-top:10px;">
+            <span>路由器移除</span>
+            <Input type="text" style="margin-left:8px;width: 300px" v-model="removeQueryString"  placeholder="条件" >
+                  <Select v-model="removeQuery" slot="prepend" style="width: 100px">
+                      <Option value="barCode">条码</Option>
+                  </Select>
+            </Input>
+            <Button style="margin-left:10px;" type="primary" @click="onRemove">开始</Button>
+          </div>
           <corn-selector :isModalShow="isScanCronModalShow" @onOk="onScanCron" @onIsShow="onScanIsShow"></corn-selector>
         </Card>
     </div>
 </template>
 <script>
-import { getAllRoute, changeRoute, scanRoute, scanAll, settingRoute, testRouter, updateRouter } from '@/api/route'
+import { getAllRoute, changeRoute, scanRoute, scanAll, settingRoute, testRouter, updateRouter, removeRouter } from '@/api/route'
 import super_table from '@/components/table/supertable.vue'
 import routerExpand from '@/components/table/router-expand.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
-var rssiWorker = new Worker('@/worker/updateRSSI.js')
-var RSSIID = ''
-var RSSIDATA = ''
 export default {
   components: {
     routerExpand,
@@ -290,7 +279,9 @@ export default {
       testHardVersion: '',
       testMode: '0',
       setConfig: 'channelId',
-      setConfigValue: ''
+      setConfigValue: '',
+      removeQuery: 'barCode',
+      removeQueryString: ''
     }
   },
   created () {
@@ -406,10 +397,6 @@ export default {
       this.$set(data, 'items', items)
       testRouter(data, this.testBarCode, this.testChannelId, this.testHardVersion, this.testMode)
       if (this.testMode === 4) {
-        rssiWorker.postMessage(true)
-        rssiWorker.onmessage = function (ev) {
-          alert(ev.data)
-        }
         this.$Modal.info({
           title: 'RSSi信息',
           render: (h, params) => {
@@ -421,7 +408,7 @@ export default {
         })
       }
       if (this.testMode === 5) {
-        rssiWorker.postMessage(true)
+
       }
     },
     routeReload () {
@@ -438,12 +425,30 @@ export default {
         this.scanQueryString = temp
         this.settingQueryString = temp
         this.testQueryString = temp
+        this.removeQueryString = temp
       } else {
         this.routeQueryString = ''
         this.scanQueryString = ''
         this.settingQueryString = ''
         this.testQueryString = ''
+        this.removeQueryString = ''
       }
+    },
+    onRemove () {
+      let data = {}
+      let params = {}
+      let items = []
+      let idArray = this.removeQueryString.split(',')
+      for (let i = 0; i < idArray.length; ++i) {
+        params = {}
+        this.$set(params, 'query', this.removeQuery)
+        this.$set(params, 'queryString', idArray[i])
+        items.push(params)
+      }
+      this.$set(data, 'items', items)
+      removeRouter(data).then(res => {
+        this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+      })
     }
   }
 }

@@ -71,3 +71,11 @@ export const testRouter = (data, barCode, channelId, hardVersion, mode) => {
     data: data
   })
 }
+
+export const removeRouter = (data) => {
+  return axios.request({
+    url: 'router/remove',
+    method: 'put',
+    data: data
+  })
+}
