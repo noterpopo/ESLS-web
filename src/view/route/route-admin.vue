@@ -19,12 +19,12 @@
             <span>指定属性更换路由器</span>
             <Input style="margin-left:8px;width: 300px" type="text" v-model="tagQueryString"  placeholder="筛选条件" >
                   <Select v-model="tagQuery" slot="prepend" style="width: 100px">
-                      <Option value="barCode">条码</Option>
+                      <Option value="barCode">源条码</Option>
                   </Select>
             </Input>
             <Input type="text" style="margin-left:8px;width: 300px" v-model="routeQueryString"  placeholder="目的条件" >
                   <Select v-model="routeQuery" slot="prepend" style="width: 100px">
-                      <Option value="barCode">条码</Option>
+                      <Option value="barCode">目的条码</Option>
                   </Select>
             </Input>
             <Button style="margin-left:10px;" type="primary" @click="changeRoute">确定</Button>
@@ -278,7 +278,7 @@ export default {
       testBarCode: '',
       testChannelId: '',
       testHardVersion: '',
-      testMode: '0',
+      testMode: '1',
       setConfig: 'channelId',
       setConfigValue: '',
       removeQuery: 'barCode',

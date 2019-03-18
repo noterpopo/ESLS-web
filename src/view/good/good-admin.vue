@@ -633,7 +633,6 @@ export default {
     getLabelData (tid) {
       var that = this
       let goodInfo = that.goodData.filter(function (item) { return item.barCode === that.currentSelectedRow.barCode })
-      console.log(goodInfo)
       that.item.itemName = goodInfo[0].name
       that.item.itemUnit = goodInfo[0].unit
       that.item.itemNorm = goodInfo[0].spec
@@ -646,7 +645,6 @@ export default {
       that.itemOnSalePrice = goodInfo[0].promotePrice + ''
       getTag(tid).then(res => {
         const tempTag = res.data.data
-        console.log(tempTag)
         getStyle(tempTag[0].styleId).then(res => {
           const dispData = res.data.data
           that.$refs.label_canvas.initData(dispData, tempTag[0].resolutionWidth, tempTag[0].resolutionHeight)
@@ -654,7 +652,9 @@ export default {
       })
     },
     onShowIdChange () {
-      this.getLabelData(this.showId)
+      if (this.showId) {
+        this.getLabelData(this.showId)
+      }
     }
 
   }
