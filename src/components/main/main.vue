@@ -48,6 +48,7 @@ import { getNewTagList, routeEqual } from '@/libs/util'
 import routers from '@/router/routers'
 import minLogo from '@/assets/images/logo-min.jpg'
 import maxLogo from '@/assets/images/logo.jpg'
+import store from '@/store'
 import './main.less'
 export default {
   name: 'Main',
@@ -80,7 +81,8 @@ export default {
       return this.$store.state.app.tagRouter
     },
     userName () {
-      return this.$store.state.user.userName
+      console.log(store.getters.userName)
+      return store.getters.userName
     },
     cacheList () {
       const list = ['ParentView', ...this.tagNavList.length ? this.tagNavList.filter(item => !(item.meta && item.meta.notCache)).map(item => item.name) : []]

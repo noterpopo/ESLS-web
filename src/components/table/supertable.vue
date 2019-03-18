@@ -130,3 +130,11 @@ export default {
   }
 }
 </script>
+<style>
+tr.ivu-table-row-hover td{
+  background-color:rgb(220, 244, 253)!important;
+}
+.ivu-table-row-highlight td {
+  background-color: rgb(220, 241, 255)!important;
+}
+</style>

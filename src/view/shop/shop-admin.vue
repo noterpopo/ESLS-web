@@ -151,7 +151,8 @@ export default {
                 value: currentRoute
               },
               on: {
-                'on-open-change': (val) => {
+                'on-change': (data) => {
+                  this.onUpdateRouter(data)
                 }
               }
             }, this.routerData.map((item) => {
@@ -198,7 +199,7 @@ export default {
       editModal: false,
       addModal: false,
       addShopData: {
-        type: 1,
+        type: 0,
         number: 'FFFFF',
         fatherShop: 'FFFFF',
         name: '默认店铺名字',
@@ -232,6 +233,17 @@ export default {
     }
   },
   methods: {
+    onUpdateRouter (data) {
+      let routersInfo = this.routerData.filter((item) => {
+        for (let i = 0; i < data.length; ++i) {
+          if (item.id === data[i]) {
+            return true
+          }
+        }
+        return false
+      })
+      console.log(routersInfo)
+    },
     getCenterShop () {
       getAllShop({ query: 'type', queryString: 1 }).then(res => {
         this.centerShopData = res.data.data

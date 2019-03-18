@@ -58,7 +58,9 @@ export default {
     messageUnreadCount: state => state.messageUnreadList.length,
     messageReadedCount: state => state.messageReadedList.length,
     messageTrashCount: state => state.messageTrashList.length,
-    token: state => state.token
+    token: state => state.token,
+    userName: state => state.userName,
+    access: state => state.access
 
   },
   actions: {
@@ -73,6 +75,7 @@ export default {
           // 获取TOKEN
           commit('setToken', res.headers.esls)
           commit('setUserId', res.data.data.id)
+          commit('setUserName', res.data.data.name)
           resolve()
         }).catch(err => {
           reject(err)
@@ -92,7 +95,8 @@ export default {
       return new Promise((resolve, reject) => {
         try {
           getUserInfo(state.userId).then(res => {
-            const data = res.data.data
+            const data = res.data.data[0]
+            // commit('setToken', data.esls)
             commit('setUserName', data.name)
             // commit('setUserId', data.user_id)
             // TODO 设置权限
