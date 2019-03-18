@@ -57,6 +57,7 @@
             <Input type="text" style="margin-left:8px;width: 300px" v-model="setConfigValue" >
                   <Select v-model="setConfig" slot="prepend" style="width: 100px">
                       <Option value="channelId">信道</Option>
+                      <Option value="ip">ip地址</Option>
                   </Select>
             </Input>
             <Button style="margin-left:10px;" type="primary" @click="onSetting">设置</Button>

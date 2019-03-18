@@ -151,8 +151,8 @@ export default {
                 value: currentRoute
               },
               on: {
-                'on-change': (data) => {
-                  this.onUpdateRouter(data)
+                'on-change': (val) => {
+                  this.onUpdateRouter(params.row, val)
                 }
               }
             }, this.routerData.map((item) => {
@@ -233,7 +233,7 @@ export default {
     }
   },
   methods: {
-    onUpdateRouter (data) {
+    onUpdateRouter (row, data) {
       let routersInfo = this.routerData.filter((item) => {
         for (let i = 0; i < data.length; ++i) {
           if (item.id === data[i]) {
@@ -242,7 +242,11 @@ export default {
         }
         return false
       })
+      console.log(row)
       console.log(routersInfo)
+      row.routers = routersInfo
+      console.log(row)
+      // TODO: 上传
     },
     getCenterShop () {
       getAllShop({ query: 'type', queryString: 1 }).then(res => {
