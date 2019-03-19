@@ -51,3 +51,21 @@ export const getAllUser = ({ page, count, query, queryString }) => {
     }
   })
 }
+
+export const addUserRole = (uid, roleData) => {
+  return axios.request({
+    url: 'user/addRole',
+    method: 'post',
+    data: {
+      collectionIds: [roleData],
+      ids: [uid]
+    }
+  })
+}
+export const delUserRole = (uid, roleIds) => {
+  return axios.request({
+    url: 'user/delete/' + uid,
+    method: 'post',
+    data: roleIds
+  })
+}

@@ -34,11 +34,10 @@
     </div>
 </template>
 <script>
-import { getAllUser, switchUserUsable, deleteUser } from '@/api/user'
+import { getAllUser, switchUserUsable, deleteUser, addUserRole, delUserRole } from '@/api/user'
 import { getAllRole, addPerm, delPerm, addRole, delRole } from '@/api/role'
 import { getAllPermissions } from '@/api/permission'
 import super_table from '@/components/table/supertable.vue'
-import store from '@/store'
 export default {
   components: {
     super_table
@@ -95,22 +94,31 @@ export default {
         {
           title: '角色',
           key: 'roleList',
+          width: '200',
           render: (h, params) => {
-            let roleName = []
-            $.ajax({
-              url: 'http://39.108.106.167:8086/user/role/' + params.row.id,
-              async: false,
-              headers: {
-                ESLS: store.getters.token
+            let currentRole = []
+            for (let i = 0; i < params.row.roleList.split(' ').length; ++i) {
+              currentRole.push(parseInt(params.row.roleList.split(' ')[i]))
+            }
+            return h('Select', {
+              props: {
+                multiple: true,
+                value: currentRole
               },
-              type: 'get',
-              success: (res) => {
-                res.data.map((item) => {
-                  roleName.push(item.name)
-                })
+              on: {
+                'on-change': (val) => {
+                  this.onUpdateRole(params.row, val, params.row.roleList.split(' ').length - 1)
+                }
               }
+            }, this.roleData.map((item) => {
+              return h('Option', {
+                props: {
+                  value: item.id,
+                  label: item.name
+                }
+              })
             })
-            return h('p', roleName.join(','))
+            )
           },
           filter: {
             type: 'Input'
@@ -215,6 +223,26 @@ export default {
     }
   },
   methods: {
+    onUpdateRole (row, val, curlength) {
+      console.log(val)
+      console.log(curlength)
+      if (curlength < val.length) {
+        addUserRole(row.id, val).then(res => {
+          this.getUserTableData({ page: this.currentPage - 1, count: this.countPerPage })
+          this.$Message.info('添加角色成功')
+        })
+      } else if (val.length < curlength) {
+        let rmRole = row.roleList.split(' ').filter((item) => {
+          if (item === '') return false
+          return val.indexOf(parseInt(item)) === -1
+        })
+        rmRole = rmRole.map((item) => { return parseInt(item) })
+        delUserRole(row.id, rmRole).then(res => {
+          this.$Message.info('删除角色成功')
+          this.getUserTableData({ page: this.currentPage - 1, count: this.countPerPage })
+        })
+      }
+    },
     addRole () {
       this.$Modal.confirm({
         title: '新角色信息',
