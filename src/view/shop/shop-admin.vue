@@ -242,14 +242,10 @@ export default {
         }
         return false
       })
-      console.log(row)
-      console.log(routersInfo)
       row.routers = routersInfo
-      console.log(row)
       updateShop(row).then(res => {
         this.$Message.info('修改路由器成功')
       })
-      // TODO: 上传
     },
     getCenterShop () {
       getAllShop({ query: 'type', queryString: 1 }).then(res => {

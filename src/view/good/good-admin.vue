@@ -210,6 +210,7 @@
     </div>
 </template>
 <script>
+// TODO: tag表格搜索
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import { getAllGood, updateGood, deleteGood, getBindedTags, getGood, cronUpdate } from '@/api/good'
@@ -565,8 +566,13 @@ export default {
     },
     onTableSearch (search) {
       var key = Object.keys(search)
+      if (key.length === 0) {
+        this.getGoodTableData({ page: 0, count: this.countPerPage })
+        this.currentTagPage = 1
+        return
+      }
       var value = search[key]
-      this.getGoodTableData({ queryId: key[0], queryString: value })
+      if (search) { this.getGoodTableData({ queryId: key[0], queryString: value }) }
     },
     onTableClick (currentRow) {
       this.currentSelectedRow = this.goodData.find(function (item) { return item.barCode === currentRow.barCode })
