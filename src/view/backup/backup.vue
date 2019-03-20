@@ -1,6 +1,6 @@
 <template>
     <div ref="container" style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;">
-        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
+        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
             <Tabs :animated="false">
                 <TabPane label="导出数据表">
                     <super_table :data="tableData" :columns="tableColumns" :isLoading="isTableLoading"></super_table>
