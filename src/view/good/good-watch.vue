@@ -183,10 +183,12 @@ export default {
         that.intervalid = setInterval(() => {
           getAllTag({ queryId: 'waitUpdate', queryString: '0' }).then(res => {
             that.currentUpdate = that.updateSum - res.data.data.length
+            if (res.data.data.length === 0) {
+              clearInterval(this.intervalid)
+            }
             console.log(that.currentUpdate)
           })
-        }, 2000)
-        console.log(this.updateSum)
+        }, 200)
         this.getGoodTableData(this.pageNum, this.countPerPage)
         this.$Modal.info({
           title: '更新进度',
