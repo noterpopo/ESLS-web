@@ -16,10 +16,12 @@
 </template>
 <script>
 import { getAllGood, submitUpdate } from '@/api/good'
+import { getAllTag } from '@/api/tag'
 export default {
   data () {
     return {
       windowWidth: 0,
+      intervalid: 0,
       isTableLoading: false,
       goodData: [],
       tableColumns: [
@@ -112,7 +114,7 @@ export default {
           render: (h, params) => {
             const row = params.row
             const color = row.waitUpdate === 1 ? 'primary' : 'error'
-            const text = row.waitUpdate === 1 ? '在线' : '离线'
+            const text = row.waitUpdate === 1 ? '已经更新' : '等待更新'
 
             return h('Tag', {
               props: {
@@ -126,6 +128,9 @@ export default {
           }
         }
       ],
+      updateSum: 1,
+      currentUpdate: 0,
+      updateStatus: 'active',
       selectid: [],
       pageNum: 0,
       countPerPage: 10
@@ -173,7 +178,32 @@ export default {
         temp.queryString = this.selectid[i] + ''
         data.push(temp)
       }
-      submitUpdate(data).then(res => { that.getGoodTableData(this.pageNum, this.countPerPage) })
+      submitUpdate(data).then(res => {
+        this.updateSum = res.data.data.sum
+        that.intervalid = setInterval(() => {
+          getAllTag({ queryId: 'waitUpdate', queryString: '0' }).then(res => {
+            that.currentUpdate = that.updateSum - res.data.data.length
+            console.log(that.currentUpdate)
+          })
+        }, 2000)
+        console.log(this.updateSum)
+        this.getGoodTableData(this.pageNum, this.countPerPage)
+        this.$Modal.info({
+          title: '更新进度',
+          render: (h, params) => {
+            return h('Progress', {
+              props: {
+                percent: (that.currentUpdate / that.updateSum) * 100,
+                status: that.updateStatus
+              }
+            })
+          },
+          onOk: () => {
+            clearInterval(this.intervalid)
+            console.log('end')
+          }
+        })
+      })
     }
   }
 

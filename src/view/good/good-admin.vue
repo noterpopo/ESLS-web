@@ -649,6 +649,9 @@ export default {
       that.item.itemBarCode = goodInfo[0].barCode
       that.item.itemPrice = goodInfo[0].price + ''
       that.itemOnSalePrice = goodInfo[0].promotePrice + ''
+      if (tid === 0) {
+        return
+      }
       getTag(tid).then(res => {
         const tempTag = res.data.data
         getStyle(tempTag[0].styleId).then(res => {
