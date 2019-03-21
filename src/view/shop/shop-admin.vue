@@ -243,6 +243,7 @@ export default {
         return false
       })
       row.routers = routersInfo
+      console.log(row)
       updateShop(row).then(res => {
         this.$Message.info('修改路由器成功')
       })
