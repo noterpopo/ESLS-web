@@ -189,8 +189,15 @@ export default {
         that.intervalid = setInterval(() => {
           getAllTag({ queryId: 'waitUpdate', queryString: '0' }).then(res => {
             that.currentUpdate = that.updateSum - res.data.data.length
-            if (res.data.data.length === 0) {
+            if (res.data.data.length < 0) {
+              that.updateStatus = 'wrong'
               clearInterval(this.intervalid)
+            } else if (that.currentUpdate < 0) {
+              clearInterval(this.intervalid)
+              that.updateStatus = 'wrong'
+            } else if (res.data.data.length === 0) {
+              clearInterval(this.intervalid)
+              that.updateStatus = 'success'
             }
             console.log(that.currentUpdate)
           })

@@ -34,7 +34,7 @@ import tagExpand from '@/components/table/tag-expand.vue'
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import e_label from '@/components/e-label/e-lable.vue'
-import { getAllTag, bindStyle, bindGood } from '@/api/tag'
+import { getAllTag, bindStyle, bindGood, deleteTag } from '@/api/tag'
 import { getAllGood, getGood, getBindedTags } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
 import { coppyArray } from '@/libs/util'
@@ -585,7 +585,16 @@ export default {
       })
     },
     remove (id) {
-
+      var that = this
+      let dId = id
+      console.log(id)
+      this.$Modal.confirm({
+        title: '警告',
+        content: '确定删除该价签吗？',
+        onOk: function () {
+          deleteTag(dId).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) })
+        }
+      })
     },
     onTableSearch (search) {
       var key = Object.keys(search)
