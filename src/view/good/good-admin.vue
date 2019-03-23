@@ -6,13 +6,13 @@
               <Row type="flex" justify="start" align="middle">
                   <Col span="21"><p>商品信息</p></Col>
                   <Col span="1"><Button type="primary" @click="goodReload">刷新</Button></Col>
-                  <Col span="2"><Button type="primary" @click="addGood">添加商品</Button></Col>
+                  <Col span="2" v-if="hasEditAccess"><Button type="primary" @click="addGood">添加商品</Button></Col>
               </Row>
             </div>
             <super_table :pageSize="countPerPage" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
-            <Button type="primary" @click="isUploadShow=true">上传文件</Button>
+            <Button v-if="hasFileAccess" type="primary" @click="isUploadShow=true">上传文件</Button>
             <Button type="primary" style="margin-left:10px;" @click="downloadGoodsData">下载文件</Button>
-            <Button type="primary" style="margin-left:10px;" @click="isCronSetShow=true">设置定期更新</Button>
+            <Button v-if="hasUploadAccess" type="primary" style="margin-left:10px;" @click="isCronSetShow=true">设置定期更新</Button>
             <Modal v-model="isUploadShow" title="上传商品信息文件">
               <div>
                 <Select v-model="uploadMode">
@@ -314,6 +314,7 @@ export default {
           key: 'action',
           align: 'center',
           render: (h, params) => {
+            let DeleteAccess = store.getters.access.indexOf(10) === -1
             return h('div', [
               h('Button', {
                 props: {
@@ -321,7 +322,8 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px'
+                  margin: '2px',
+                  display: DeleteAccess ? 'none' : 'inline-block'
                 },
                 on: {
                   'click': (event) => {
@@ -487,6 +489,18 @@ export default {
   computed: {
     upLaodUrl: function () {
       return 'http://39.108.106.167:8086/good/upload?mode=' + this.uploadMode
+    },
+    hasEditAccess: () => {
+      return store.getters.access.indexOf(2) !== -1
+    },
+    hasDeleteAccess: () => {
+      return store.getters.access.indexOf(10) !== -1
+    },
+    hasUploadAccess: () => {
+      return store.getters.access.indexOf(22) !== -1
+    },
+    hasFileAccess: () => {
+      return store.getters.access.indexOf(23) !== -1
     }
   },
   watch: {
@@ -575,6 +589,9 @@ export default {
       if (search) { this.getGoodTableData({ queryId: key[0], queryString: value }) }
     },
     onTableClick (currentRow) {
+      if (store.getters.access.indexOf(2) === -1) {
+        return
+      }
       this.currentSelectedRow = this.goodData.find(function (item) { return item.barCode === currentRow.barCode })
       this.editModal = true
     },

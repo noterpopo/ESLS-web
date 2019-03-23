@@ -15,7 +15,7 @@
                 <Col span="24"><p>设置面板</p></Col>
             </Row>
           </div>
-          <div>
+          <div v-if="hasFlushAccess">
             <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
                 <Col span="2"><p>刷新：</p></Col>
                 <Col span="4">
@@ -47,7 +47,7 @@
             </Row>
           </div>
 
-          <div>
+          <div v-if="isHasLightAccess">
             <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
                 <Col span="2"><p>闪灯：</p></Col>
                 <Col span="4">
@@ -71,7 +71,7 @@
                 <Col span="1"><Button type="primary" @click="onLightOff">结束闪灯</Button></Col>
             </Row>
           </div>
-          <div>
+          <div v-if="hasRemoveAccess">
             <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
                 <Col span="2"><p>移除：</p></Col>
                 <Col span="4">
@@ -90,7 +90,7 @@
 
             </Row>
           </div>
-          <div>
+          <div v-if="hasScanAccess">
             <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
                 <Col span="2"><p>巡检：</p></Col>
                 <Col span="4">
@@ -121,7 +121,7 @@
 
             </Row>
           </div>
-          <div>
+          <div v-if="hasEditAccess&&hasStatusAccess">
             <Row type="flex" justify="start" align="middle" class="Row" style="marginBottom:4px">
                 <Col span="2"><p>状态：</p></Col>
                 <Col span="4">
@@ -162,6 +162,7 @@ import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import { getAllTag, flushTag, lightTag, removeTag, scanTag, statusTag, scanAll } from '@/api/tag'
 import { getAllRoute } from '@/api/route'
+import store from '@/store'
 export default {
   components: {
     super_table,
@@ -335,6 +336,26 @@ export default {
     getAllRoute({ page: 0, count: 100 }).then(res => {
       this.routeData = res.data.data
     })
+  },
+  computed: {
+    isHasLightAccess: () => {
+      return store.getters.access.indexOf(1) !== -1
+    },
+    hasEditAccess: () => {
+      return store.getters.access.indexOf(2) !== -1
+    },
+    hasStatusAccess: () => {
+      return store.getters.access.indexOf(12) !== -1
+    },
+    hasFlushAccess: () => {
+      return store.getters.access.indexOf(14) !== -1
+    },
+    hasScanAccess: () => {
+      return store.getters.access.indexOf(15) !== -1
+    },
+    hasRemoveAccess: () => {
+      return store.getters.access.indexOf(17) !== -1
+    }
   },
   mounted () {
     var that = this

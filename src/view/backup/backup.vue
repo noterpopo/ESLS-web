@@ -2,10 +2,10 @@
     <div ref="container" style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;">
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
             <Tabs :animated="false">
-                <TabPane label="导出数据表">
+                <TabPane v-if="hasExportAccess" label="导出数据表">
                     <super_table :data="tableData" :columns="tableColumns" :isLoading="isTableLoading"></super_table>
                 </TabPane>
-                <TabPane label="导入数据表">
+                <TabPane v-if="hasImportAccess" label="导入数据表">
                     <Select v-model="uploadName" :transfer="true">
                         <Option v-for="(item) in tableData" :key="item.keyName" :value="item.keyName">{{translate[item.keyName]}}</Option>
                     </Select>
@@ -122,6 +122,14 @@ export default {
     })
     window.onresize = function () {
       that.windowWidth = that.$refs.container.offsetWidth
+    }
+  },
+  computed: {
+    hasImportAccess: () => {
+      return store.getters.access.indexOf(6) !== -1
+    },
+    hasExportAccess: () => {
+      return store.getters.access.indexOf(7) !== -1
     }
   },
   methods: {

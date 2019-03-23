@@ -34,6 +34,7 @@
 import { getAllCycleJob, updateCycleJob, deleteCyclejobs } from '@/api/cycylejob'
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
+import store from '@/store'
 export default {
   components: {
     super_table,
@@ -83,6 +84,7 @@ export default {
           align: 'center',
           width: '150',
           render: (h, params) => {
+            let DeleteAccess = store.getters.access.indexOf(10) === -1
             return h('div', [
               h('Button', {
                 props: {
@@ -90,7 +92,8 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px'
+                  margin: '2px',
+                  display: DeleteAccess ? 'none' : 'inline-block'
                 },
                 on: {
                   'click': (event) => {
@@ -124,6 +127,11 @@ export default {
   watch: {
     currentPage () {
       this.getCycyleJobTableData({ page: this.currentPage - 1, count: this.countPerPage })
+    }
+  },
+  computed: {
+    hasEditAccess: () => {
+      return store.getters.access.indexOf(2) !== -1
     }
   },
   methods: {
@@ -163,6 +171,9 @@ export default {
       this.getCycyleJobTableData({ page: this.currentPage - 1, count: this.countPerPage })
     },
     onTableClick (currentRow) {
+      if (store.getters.access.indexOf(2) === -1) {
+        return
+      }
       this.currentCycyleJobData = currentRow
       this.editModal = true
     },

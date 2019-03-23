@@ -12,7 +12,7 @@
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                     <Col span="20"><p>分店信息</p></Col>
-                    <Col span="2"><Button type="primary" @click="addShop">添加店铺</Button></Col>
+                    <Col span="2"><Button v-if="hasEditAccess" type="primary" @click="addShop">添加店铺</Button></Col>
                     <Col span="2"><Button type="primary" @click="shopReload">刷新</Button></Col>
               </Row>
           </div>
@@ -88,6 +88,7 @@
 import { getAllShop, updateShop, deleteShop } from '@/api/shop'
 import { getAllRoute } from '@/api/route'
 import super_table from '@/components/table/supertable.vue'
+import store from '@/store'
 export default {
   components: {
     super_table
@@ -142,13 +143,15 @@ export default {
           title: '路由器',
           render: (h, params) => {
             let currentRoute = []
+            let isDisable = store.getters.access.indexOf(2) === -1
             for (let i = 0; i < params.row.routers.length; ++i) {
               currentRoute.push(params.row.routers[i].id)
             }
             return h('Select', {
               props: {
                 multiple: true,
-                value: currentRoute
+                value: currentRoute,
+                disabled: isDisable
               },
               on: {
                 'on-change': (val) => {
@@ -175,6 +178,7 @@ export default {
           align: 'center',
           width: '150',
           render: (h, params) => {
+            let DeleteAccess = store.getters.access.indexOf(10) === -1
             return h('div', [
               h('Button', {
                 props: {
@@ -182,7 +186,8 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px'
+                  margin: '2px',
+                  display: DeleteAccess ? 'none' : 'inline-block'
                 },
                 on: {
                   'click': (event) => {
@@ -230,6 +235,11 @@ export default {
   watch: {
     currentPage () {
       this.getShopTableData({ page: this.currentPage - 1, count: this.countPerPage })
+    }
+  },
+  computed: {
+    hasEditAccess: () => {
+      return store.getters.access.indexOf(2) !== -1
     }
   },
   methods: {
@@ -295,6 +305,9 @@ export default {
       this.getShopTableData({ page: this.currentPage - 1, count: this.countPerPage })
     },
     onTableClick (currentRow) {
+      if (store.getters.access.indexOf(2) === -1) {
+        return
+      }
       this.currentShopData = currentRow
       this.editModal = true
     },

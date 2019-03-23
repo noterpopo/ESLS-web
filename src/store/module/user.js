@@ -1,13 +1,14 @@
 import {
   login,
-  getUserInfo
+  getUserInfo,
+  getRoleInfo
 } from '@/api/user'
 import { setToken, getToken } from '@/libs/util'
 
 export default {
   state: {
     userName: '',
-    userId: '',
+    userId: '' || localStorage.getItem('user_id'),
     token: getToken(),
     access: ''
 
@@ -72,9 +73,20 @@ export default {
           userName,
           password
         }).then(res => {
+          let per = new Set()
+          getRoleInfo(res.data.data.id).then(pers => {
+            const data = pers.data.data
+            for (let i = 0; i < data.length; ++i) {
+              data[i].permissions.map((item) => {
+                per.add(item.id)
+              })
+            }
+            commit('setAccess', Array.from(per))
+          })
           // 获取TOKEN
           commit('setToken', res.headers.esls)
           commit('setUserId', res.data.data.id)
+          localStorage.setItem('user_id', res.data.data.id)
           commit('setUserName', res.data.data.name)
           resolve()
         }).catch(err => {
@@ -87,6 +99,7 @@ export default {
       return new Promise((resolve, reject) => {
         commit('setToken', '')
         commit('setAccess', [])
+        localStorage.setItem('user_id', 0)
         resolve()
       })
     },
@@ -96,8 +109,18 @@ export default {
         try {
           getUserInfo(state.userId).then(res => {
             const data = res.data.data[0]
-            // commit('setToken', data.esls)
             commit('setUserName', data.name)
+            let per = new Set()
+            getRoleInfo(state.userId).then(pers => {
+              const data = pers.data.data
+              for (let i = 0; i < data.length; ++i) {
+                data[i].permissions.map((item) => {
+                  per.add(item.id)
+                })
+              }
+              commit('setAccess', Array.from(per))
+              console.log(state.access)
+            })
             // commit('setUserId', data.user_id)
             // TODO 设置权限
             // commit('setAccess', data.access)

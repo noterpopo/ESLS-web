@@ -15,7 +15,7 @@
                     <Col span="24"><p>路由器设置</p></Col>
                 </Row>
           </div>
-          <div style="display:flex; align-items:center;">
+          <div v-if="hasChangeAccess" style="display:flex; align-items:center;">
             <span>指定属性更换路由器</span>
             <Input style="margin-left:8px;width: 300px" type="text" v-model="tagQueryString"  placeholder="筛选条件" >
                   <Select v-model="tagQuery" slot="prepend" style="width: 100px">
@@ -30,7 +30,7 @@
             <Button style="margin-left:10px;" type="primary" @click="changeRoute">确定</Button>
 
           </div>
-          <div style="display:flex; align-items:center;margin-top:10px;">
+          <div v-if="hasScanAccess" style="display:flex; align-items:center;margin-top:10px;">
             <span>巡检</span>
             <Select style="margin-left:8px;width: 200px" v-model="scanMode">
                       <Option value="0">指定路由器</Option>
@@ -46,8 +46,8 @@
             </Input>
             <Button style="margin-left:10px;" type="primary" @click="onScan">开始</Button>
             <Button style="margin-left:10px;" type="primary" @click="onAllScan">对全部路由器巡检</Button>
-          </div>
-           <div style="display:flex; align-items:center;margin-top:10px;">
+          </div >
+           <div v-if="hasEditAccess&&hasSettingAccess" style="display:flex; align-items:center;margin-top:10px;">
             <span>设置路由器</span>
             <Input type="text" style="margin-left:8px;width: 300px" v-model="settingQueryString"  placeholder="条件" >
                   <Select v-model="settingQuery" slot="prepend" style="width: 100px">
@@ -82,7 +82,7 @@
             <Input v-if="testMode==0" v-model="testHardVersion" placeholder="输入硬件版本" style="margin-left:8px;width: 240px"></Input>
             <Button style="margin-left:10px;" type="primary" @click="onTest">开始</Button>
           </div>
-          <div style="display:flex; align-items:center;margin-top:10px;">
+          <div v-if="hasEditAccess" style="display:flex; align-items:center;margin-top:10px;">
             <span>IP</span>
             <Select style="margin-left:8px;width: 200px" v-model="testMode">
                       <Option value="6">设置目标服务器IP </Option>
@@ -115,6 +115,7 @@ import { getAllRoute, changeRoute, scanRoute, scanAll, settingRoute, testRouter,
 import super_table from '@/components/table/supertable.vue'
 import routerExpand from '@/components/table/router-expand.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
+import store from '@/store'
 export default {
   components: {
     routerExpand,
@@ -220,12 +221,14 @@ export default {
           title: '是否启用',
           key: 'state',
           render: (h, params) => {
+            let StatusAccess = store.getters.access.indexOf(12) === -1
             const row = params.row
             const isUsable = row.state === 1
             return h('i-switch', {
               props: {
                 value: isUsable,
-                size: 'large'
+                size: 'large',
+                disabled: StatusAccess
               },
               on: {
                 'on-change': (val) => {
@@ -301,6 +304,20 @@ export default {
     })
     window.onresize = function () {
       that.windowWidth = that.$refs.container.offsetWidth
+    }
+  },
+  computed: {
+    hasEditAccess: () => {
+      return store.getters.access.indexOf(2) !== -1
+    },
+    hasSettingAccess: () => {
+      return store.getters.access.indexOf(25) !== -1
+    },
+    hasChangeAccess: () => {
+      return store.getters.access.indexOf(26) !== -1
+    },
+    hasScanAccess: () => {
+      return store.getters.access.indexOf(27) !== -1
     }
   },
   methods: {

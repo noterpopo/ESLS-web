@@ -5,7 +5,7 @@
             <div slot="title">
                 <Row type="flex" justify="center" align="middle">
                     <Col span="22"><p>样式信息</p></Col>
-                    <Col span="2"><Button type="primary" @click="addStyle">新建样式</Button></Col>
+                    <Col span="2" v-if="hasEditAccess"><Button type="primary" @click="addStyle">新建样式</Button></Col>
                 </Row>
               </div>
             <super_table :pageSize="countPerPage" :current.sync="currentPage" :dataNum="dataNum" class="e-label-table" @onSearch="onTableSearch" @onClick="onTableClick" :data="styleData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="dataNum"></super_table>
@@ -61,6 +61,7 @@ import e_label from '@/components/e-label/e-lable.vue'
 import super_table from '@/components/table/supertable.vue'
 import modal_style_designer from '@/components/modal/modal-style-designer.vue'
 import { getStyle, getAllStyle, deleteStyle } from '@/api/style'
+import store from '@/store'
 export default {
   components: {
     e_label,
@@ -134,6 +135,9 @@ export default {
           key: 'action',
           align: 'center',
           render: (h, params) => {
+            let isAccess = store.getters.access.indexOf(2) === -1
+            let DeleteAccess = store.getters.access.indexOf(10) === -1
+            let EditAccess = store.getters.access.indexOf(18) === -1
             return h('div', [
               h('Button', {
                 props: {
@@ -141,7 +145,8 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px'
+                  margin: '2px',
+                  display: isAccess ? 'none' : 'inline-block'
                 },
                 on: {
                   'click': (event) => {
@@ -157,7 +162,8 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px'
+                  margin: '2px',
+                  display: DeleteAccess || EditAccess ? 'none' : 'inline-block'
                 },
                 on: {
                   'click': (event) => {
@@ -180,6 +186,11 @@ export default {
   watch: {
     currentPage () {
       this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage })
+    }
+  },
+  computed: {
+    hasEditAccess: () => {
+      return store.getters.access.indexOf(2) !== -1
     }
   },
   mounted () {

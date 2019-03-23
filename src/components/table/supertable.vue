@@ -1,7 +1,7 @@
 <template>
     <div>
-        <Table size="small" border :data="filters" :columns="tableColumnsFilters" stripe></Table>
-        <Table size="small" highlight-row @on-row-click="handleClick" @on-row-dblclick="handleDoubleClick" @on-selection-change="handleSelection" :show-header=false border :data="data" :columns="columns" :loading="isLoading" stripe></Table>
+        <Table v-if="hasSearchAccess" size="small" border :data="filters" :columns="tableColumnsFilters" stripe></Table>
+        <Table size="small" highlight-row @on-row-click="handleClick" @on-row-dblclick="handleDoubleClick" @on-selection-change="handleSelection" :show-header="!hasSearchAccess" border :data="data" :columns="columns" :loading="isLoading" stripe></Table>
         <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
             <Page :total="dataNum" :page-size="pageSize" :current="current" @on-change="changePage"></Page>
@@ -12,6 +12,7 @@
 
 <script>
 // https://github.com/azhengyongqin/iview-filter-table
+import store from '@/store'
 export default {
   name: 'super_table',
   props: {
@@ -86,6 +87,11 @@ export default {
       }
       this.$set(filter, 'render', render)
       this.tableColumnsFilters.push(filter)
+    }
+  },
+  computed: {
+    hasSearchAccess: () => {
+      return store.getters.access.indexOf(11) !== -1
     }
   },
   methods: {

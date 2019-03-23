@@ -97,18 +97,15 @@ export default {
         },
         {
           title: '宽/高',
-          width: '90',
+          width: '82',
           render: (h, params) => {
             return h('p', params.row.resolutionWidth + '/' + params.row.resolutionHeight)
-          },
-          filter: {
-            type: 'Input'
           }
         },
         {
           title: 'AP RSSI',
           key: 'apRssi',
-          width: '60',
+          width: '65',
           filter: {
             type: 'Input'
           }
@@ -116,7 +113,7 @@ export default {
         {
           title: 'Tag RSSI',
           key: 'tagRssi',
-          width: '60',
+          width: '65',
           filter: {
             type: 'Input'
           }
@@ -127,6 +124,7 @@ export default {
           width: '180',
           render: (h, params) => {
             let styleFiltters = []
+            let isDiable = (store.getters.access.indexOf(2) === -1) || (store.getters.access.indexOf(13) === -1)
             let data = {
               items: [
                 {
@@ -151,7 +149,8 @@ export default {
             })
             return h('Select', {
               props: {
-                value: params.row.styleId
+                value: params.row.styleId,
+                disabled: isDiable
               },
               on: {
                 'on-change': (val) => {
@@ -259,6 +258,8 @@ export default {
           align: 'center',
           width: '180',
           render: (h, params) => {
+            let hasBindGoodAccess = store.getters.access.indexOf(3) === -1
+            let DeleteAccess = store.getters.access.indexOf(10) === -1
             return h('div', [
               h('Button', {
                 props: {
@@ -282,7 +283,8 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px'
+                  margin: '2px',
+                  display: hasBindGoodAccess ? 'none' : 'inline-block'
                 },
                 on: {
                   'click': (event) => {
@@ -298,7 +300,8 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px'
+                  margin: '2px',
+                  display: DeleteAccess ? 'none' : 'inline-block'
                 },
                 on: {
                   'click': (event) => {
@@ -563,6 +566,11 @@ export default {
     },
     currentRightGoodPage () {
       this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage })
+    }
+  },
+  computed: {
+    hasEditAccess: () => {
+      return store.getters.access.indexOf(2) !== -1
     }
   },
   methods: {
