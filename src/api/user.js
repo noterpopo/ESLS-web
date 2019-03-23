@@ -69,3 +69,10 @@ export const delUserRole = (uid, roleIds) => {
     data: roleIds
   })
 }
+export const registryUser = (userInfo) => {
+  return axios.request({
+    url: '/user/registry',
+    method: 'post',
+    data: userInfo
+  })
+}

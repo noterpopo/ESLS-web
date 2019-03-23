@@ -267,7 +267,8 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px'
+                  margin: '2px',
+                  display: hasBindGoodAccess ? 'none' : 'inline-block'
                 },
                 on: {
                   'click': (event) => {
@@ -283,8 +284,7 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px',
-                  display: hasBindGoodAccess ? 'none' : 'inline-block'
+                  margin: '2px'
                 },
                 on: {
                   'click': (event) => {

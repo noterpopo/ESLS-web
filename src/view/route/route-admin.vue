@@ -97,7 +97,7 @@
             <Input v-if="testMode==7||testMode==8" v-model="testBarCode" placeholder="输入条码" style="margin-left:8px;width: 240px"></Input>
             <Button style="margin-left:10px;" type="primary" @click="onTest">开始</Button>
           </div>
-          <div style="display:flex; align-items:center;margin-top:10px;">
+          <div v-if="hasRemoveAccess" style="display:flex; align-items:center;margin-top:10px;">
             <span>路由器移除</span>
             <Input type="text" style="margin-left:8px;width: 300px" v-model="removeQueryString"  placeholder="条件" >
                   <Select v-model="removeQuery" slot="prepend" style="width: 100px">
@@ -318,6 +318,9 @@ export default {
     },
     hasScanAccess: () => {
       return store.getters.access.indexOf(27) !== -1
+    },
+    hasRemoveAccess: () => {
+      return store.getters.access.indexOf(37) !== -1
     }
   },
   methods: {
