@@ -140,3 +140,10 @@ export const getUsableStyle = (query, queryString) => {
     }
   })
 }
+
+export const updateTag = () => {
+  return axios.request({
+    url: 'tags/test',
+    method: 'put'
+  })
+}

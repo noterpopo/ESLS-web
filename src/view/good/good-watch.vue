@@ -188,20 +188,26 @@ export default {
         this.updateSum = res.data.data.sum
         that.intervalid = setInterval(() => {
           getAllTag({ queryId: 'waitUpdate', queryString: '0' }).then(res => {
-            that.currentUpdate = that.updateSum - res.data.data.length
-            if (res.data.data.length < 0) {
+            let onlinedata = res.data.data.filter((item) => {
+              return item.isWorking === 1 && item.forbidState === 1
+            })
+            that.currentUpdate = that.updateSum - onlinedata.length
+            if (onlinedata.length < 0) {
               that.updateStatus = 'wrong'
+              that.$Message.error('变价失败')
               clearInterval(this.intervalid)
             } else if (that.currentUpdate < 0) {
               clearInterval(this.intervalid)
               that.updateStatus = 'wrong'
-            } else if (res.data.data.length === 0) {
+              that.$Message.error('变价失败')
+            } else if (onlinedata.length === 0) {
               clearInterval(this.intervalid)
+              that.$Message.info('成功设置' + this.updateSum + '个价签')
               that.updateStatus = 'success'
             }
             console.log(that.currentUpdate)
           })
-        }, 200)
+        }, 100)
         this.getGoodTableData(this.pageNum, this.countPerPage)
         this.$Modal.info({
           title: '更新进度',
@@ -215,7 +221,6 @@ export default {
           },
           onOk: () => {
             clearInterval(this.intervalid)
-            console.log('end')
           }
         })
       })

@@ -31,58 +31,80 @@
                           <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.text.split('.')[0] +'.'}}</span>
                           <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', verticalAlign:'super',fontSize :(item.sourceColumn==='promotePrice'?decFontSizePromotePrice:decFontSizePrice)+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{ item.text.split('.')[1]}}</span>
                         </span>
-                        <hr v-else-if="item.columnType === '线段'"></hr>
+                        <hr :style="{height:item.backup+'px',background : '#000'}" v-else-if="item.columnType === '线段'"></hr>
                         <img v-else-if="item.columnType === '二维码'" id="qrCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
                         <img v-else-if="item.columnType === '条形码'" id="barCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
                         <img v-else-if="item.columnType === '图片'" id="img" :style="{ width:item.width+'px', height:item.height+'px'}"/>
                     </vue-draggable-resizable>
                     <div slot="content">
-                      <div v-if="item.columnType === '二维码'||item.columnType === '条形码'||item.columnType === '图片'||item.columnType === '线段'" class="float-edit-img">
+                      <div v-if="item.columnType === '二维码'||item.columnType === '条形码'||item.columnType === '图片'" class="float-edit-img">
                         <div>
                           <span :style="{fontSize:'16px', marginRight: '4px'}">x:</span>
-                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.x"/>
+                          <InputNumber @on-change="onNumChange($event,val)" :min="0" :step="8" size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.x"/>
                         </div>
                         <div>
                           <span :style="{fontSize:'16px', marginRight: '4px'}">y:</span>
-                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.y"/>
+                          <InputNumber @on-change="onNumChange" :min="0" :step="8" size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.y"/>
                         </div>
                         <div>
                           <span :style="{fontSize:'16px', marginRight: '4px'}">宽:</span>
-                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.width"/>
+                          <InputNumber @on-change="onNumChange" :min="0" :step="8" size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.width"/>
                         </div>
                         <div>
                           <span :style="{fontSize:'16px', marginRight: '4px'}">高:</span>
-                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.height"/>
+                          <InputNumber @on-change="onNumChange" :min="0" :step="8" size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.height"/>
+                        </div>
+                      </div>
+                      <div v-else-if="item.columnType === '线段'" class="float-edit-line">
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">x:</span>
+                          <InputNumber @on-change="onNumChange($event,val)" :min="0" :step="8" size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.x"/>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">y:</span>
+                          <InputNumber @on-change="onNumChange" :min="0" :step="8" size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.y"/>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">宽:</span>
+                          <InputNumber @on-change="onNumChange" :min="0" :step="8" size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.width"/>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">高:</span>
+                          <InputNumber @on-change="onNumChange" :min="0" :step="8" size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.height"/>
+                        </div>
+                        <div>
+                          <span :style="{fontSize:'16px', marginRight: '4px'}">线高:</span>
+                          <InputNumber @on-change="onNumChange" :min="0" :max="8" size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.backup"/>
                         </div>
                       </div>
                       <div v-else class="float-edit-text">
                         <div>
                           <span :style="{fontSize:'16px', marginRight: '4px'}">x:</span>
-                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.x"/>
+                          <InputNumber @on-change="onNumChange" :min="0" :step="8" size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.x"/>
                         </div>
                         <div>
                           <span :style="{fontSize:'16px', marginRight: '4px'}">y:</span>
-                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.y"/>
+                          <InputNumber @on-change="onNumChange" :min="0" :step="8" size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.y"/>
                         </div>
                         <div>
                           <span :style="{fontSize:'16px', marginRight: '4px'}">宽:</span>
-                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.width"/>
+                          <InputNumber @on-change="onNumChange" :min="0" :step="8" size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.width"/>
                         </div>
                         <div>
                           <span :style="{fontSize:'16px', marginRight: '4px'}">高:</span>
-                          <InputNumber size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.height"/>
+                          <InputNumber @on-change="onNumChange" :min="0" :step="8" size="small" type="text" :style="{width:'40px',marginRight: '4px'}" v-model="item.height"/>
                         </div>
                         <div>
                           <span :style="{fontSize:'16px', marginRight: '4px'}">字号:</span>
-                          <InputNumber size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontSize"/>
+                          <InputNumber :min="0"  size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontSize"/>
                         </div>
                         <div v-if="item.sourceColumn==='price'">
                           <span :style="{fontSize:'16px', marginRight: '4px'}">小数字号:</span>
-                          <InputNumber size="small" :style="{width:'76px',marginRight: '4px'}" v-model="decFontSizePrice"/>
+                          <InputNumber :min="0" size="small" :style="{width:'76px',marginRight: '4px'}" v-model="decFontSizePrice"/>
                         </div>
                         <div v-if="item.sourceColumn==='promotePrice'">
                           <span :style="{fontSize:'16px', marginRight: '4px'}">小数字号:</span>
-                          <InputNumber size="small" :style="{width:'76px',marginRight: '4px'}" v-model="decFontSizePromotePrice"/>
+                          <InputNumber :min="0" size="small" :style="{width:'76px',marginRight: '4px'}" v-model="decFontSizePromotePrice"/>
                         </div>
                         <div>
                           <span :style="{fontSize:'16px', marginRight: '4px'}">字体:</span>
@@ -477,6 +499,10 @@ export default {
     }
   },
   methods: {
+    onNumChange (e, val) {
+      console.log(e)
+      console.log(val)
+    },
     getStyleData (id, type, w, h, mode) {
       this.mode = mode
       this.dispmsData = []
@@ -525,10 +551,16 @@ export default {
       this.currentClickSourceColumn = this.currentDispmsData[index].sourceColumn
     },
     onDrag ([x, y], index) {
+      x = x - x % 8
+      y = y - y % 8
       this.$set(this.currentDispmsData[index], 'x', x)
       this.$set(this.currentDispmsData[index], 'y', y)
     },
     onResize ([x, y, width, height], index) {
+      x = x - x % 8
+      y = y - y % 8
+      width = width - width % 8
+      height = height - height % 8
       this.$set(this.currentDispmsData[index], 'x', x)
       this.$set(this.currentDispmsData[index], 'y', y)
       this.$set(this.currentDispmsData[index], 'width', width)
@@ -782,6 +814,15 @@ Input{
 }
 .float-edit-img{
   width: 280px;
+  height: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  align-content: center;
+}
+.float-edit-line{
+  width: 300px;
   height: 30px;
   display: flex;
   flex-wrap: wrap;

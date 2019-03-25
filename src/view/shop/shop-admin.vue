@@ -244,18 +244,10 @@ export default {
   },
   methods: {
     onUpdateRouter (row, data) {
-      let routersInfo = this.routerData.filter((item) => {
-        for (let i = 0; i < data.length; ++i) {
-          if (item.id === data[i]) {
-            return true
-          }
-        }
-        return false
-      })
-      row.routers = routersInfo
+      console.log(data)
+      row.routers = data
       console.log(row)
       updateShop(row).then(res => {
-        this.$Message.info('修改路由器成功')
       })
     },
     getCenterShop () {

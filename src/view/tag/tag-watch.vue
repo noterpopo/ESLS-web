@@ -3,8 +3,9 @@
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px'}">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
-                <Col span="22"><p>价签信息</p></Col>
+                <Col span="20"><p>价签信息</p></Col>
                 <Col span="2"><Button type="primary" @click="tagReload">刷新</Button></Col>
+                <Col span="2"><Button type="primary" @click="updateTag">一键改价</Button></Col>
             </Row>
           </div>
           <super_table @onSelectionChange="handleSelectionChange" :pageSize="countPerPage" :current.sync="currentTagPage" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="tagDataCount"></super_table>
@@ -160,7 +161,7 @@
 // TODO 翻页选择缓存
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
-import { getAllTag, flushTag, lightTag, removeTag, scanTag, statusTag, scanAll } from '@/api/tag'
+import { getAllTag, flushTag, lightTag, removeTag, scanTag, statusTag, scanAll, updateTag } from '@/api/tag'
 import { getAllRoute } from '@/api/route'
 import store from '@/store'
 export default {
@@ -372,6 +373,10 @@ export default {
     }
   },
   methods: {
+    updateTag () {
+      updateTag().then(res => {
+      })
+    },
     getTagTableData ({ page, count, queryId, queryString }) {
       var that = this
       that.isTableLoading = true
