@@ -1,7 +1,7 @@
 <template>
     <div class="container" ref="container">
         <div class="top">
-          <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
+          <Card :bordered="false" v-bind:style="{ width: windowWidth*0.99 + 'px' }">
             <div slot="title">
               <Row type="flex" justify="start" align="middle">
                   <Col span="21"><p>商品信息</p></Col>
@@ -9,7 +9,7 @@
                   <Col span="2" v-if="hasEditAccess"><Button type="primary" @click="addGood">添加商品</Button></Col>
               </Row>
             </div>
-            <super_table :pageSize="countPerPage" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
+            <super_table :pageSize="countPerPageGood" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
             <Button v-if="hasFileAccess" type="primary" @click="isUploadShow=true">上传文件</Button>
             <Button type="primary" style="margin-left:10px;" @click="downloadGoodsData">下载文件</Button>
             <Button v-if="hasUploadAccess" type="primary" style="margin-left:10px;" @click="isCronSetShow=true">设置定期更新</Button>
@@ -181,15 +181,15 @@
           </Card>
         </div>
         <div class="bottom" v-bind:style="{ marginTop:'10px'}">
-          <div v-bind:style="{ width: windowWidth*0.9 + 'px',display:'flex',justifyContent: 'space-between'}">
-            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.6 + 'px'}">
+          <div v-bind:style="{ width: windowWidth*0.99 + 'px',display:'flex',justifyContent: 'space-between'}">
+            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.72 + 'px'}">
               <div slot="title">
                 <Row type="flex" justify="center" align="middle">
                     <Col span="22"><p>价签信息</p></Col>
                     <Col span="2"><Button type="primary" @click="tagReload">刷新</Button></Col>
                 </Row>
               </div>
-              <super_table :pageSize="countPerPage" @onClick="onTagTableClick" :current.sync="currentTagPage" :data="tagData" :columns="tagTableColumns" :isLoading="isTagTableLoading" :dataNum="tagDataNum"></super_table>
+              <super_table :pageSize="countPerPageTag" @onClick="onTagTableClick" :current.sync="currentTagPage" :data="tagData" :columns="tagTableColumns" :isLoading="isTagTableLoading" :dataNum="tagDataNum"></super_table>
             </Card>
             <Card :bordered="false" >
               <div slot="title">
@@ -244,10 +244,16 @@ export default {
       addModal: false,
       dataNum: 0,
       tagDataNum: 0,
-      countPerPage: 5,
+      countPerPageGood: 7,
+      countPerPageTag: 3,
       goodData: [],
       tagData: [],
       tableColumns: [
+        {
+          type: 'index',
+          width: 60,
+          align: 'center'
+        },
         {
           title: '名称',
           key: 'name',
@@ -265,12 +271,14 @@ export default {
         {
           title: '价格',
           key: 'price',
+          width: '80',
           filter: {
             type: 'Input'
           }
         },
         {
           title: '促销价',
+          width: '80',
           key: 'promotePrice',
           filter: {
             type: 'Input'
@@ -278,7 +286,15 @@ export default {
         },
         {
           title: '货号',
+          width: '160',
           key: 'shelfNumber',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '二维码',
+          key: 'qrCode',
           filter: {
             type: 'Input'
           }
@@ -291,7 +307,25 @@ export default {
           }
         },
         {
-          title: '状态',
+          title: '绑定状态',
+          width: '120',
+          render: (h, params) => {
+            const row = params.row
+            const color = row.tagIdList.length !== 0 ? 'primary' : 'error'
+            const text = row.tagIdList.length !== 0 ? '已绑' : '未绑'
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          },
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '更新状态',
           key: 'waitUpdate',
           render: (h, params) => {
             const row = params.row
@@ -312,6 +346,7 @@ export default {
         {
           title: '操作',
           key: 'action',
+          width: '80',
           align: 'center',
           render: (h, params) => {
             let DeleteAccess = store.getters.access.indexOf(10) === -1
@@ -339,6 +374,11 @@ export default {
       ],
       tagTableColumns: [
         {
+          type: 'index',
+          width: 60,
+          align: 'center'
+        },
+        {
           title: '价签id',
           key: 'barCode',
           width: '160',
@@ -348,9 +388,42 @@ export default {
         },
         {
           title: '价签类型',
-          key: 'screenType',
-          filter: {
-            type: 'Input'
+          width: '120',
+          render: (h, params) => {
+            let size = ''
+            let type = ''
+            if (params.row.resolutionWidth === '212') {
+              size = '2.13寸'
+            } else if (params.row.resolutionWidth === '400') {
+              size = '4.2寸'
+            } else if (params.row.resolutionWidth === '296') {
+              size = '2.9寸'
+            } else if (params.row.resolutionWidth === '250') {
+              size = '2.5寸'
+            }
+            if (params.row.screenType.indexOf('三色')) {
+              type = 'EPD'
+            }
+            return h('p', size + type + '屏幕')
+          }
+        },
+        {
+          title: 'AP/信道',
+          width: '140',
+          render: (h, params) => {
+            let result = null
+            $.ajax({
+              url: 'http://39.108.106.167:8086/router/' + params.row.routerId,
+              async: false,
+              headers: {
+                ESLS: store.getters.token
+              },
+              type: 'get',
+              success: (res) => {
+                result = res.data[0].barCode + '/' + res.data[0].channelId
+              }
+            })
+            return h('p', result)
           }
         },
         {
@@ -483,8 +556,8 @@ export default {
   created () {
     this.currentPage = 1
     this.currentTagPage = 1
-    this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPage })
-    this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
+    this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood })
+    this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag })
   },
   computed: {
     upLaodUrl: function () {
@@ -505,10 +578,10 @@ export default {
   },
   watch: {
     currentPage () {
-      this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPage })
+      this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood })
     },
     currentTagPage () {
-      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
+      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag })
     }
   },
   methods: {
@@ -553,10 +626,10 @@ export default {
       this.canShowData = []
       this.showId = 0
       this.$refs.label_canvas.initData(null, 0, 0)
-      this.getGoodTableData({ page: 0, count: this.countPerPage })
+      this.getGoodTableData({ page: 0, count: this.countPerPageGood })
     },
     tagReload () {
-      this.getTagTableData({ page: 0, count: this.countPerPage })
+      this.getTagTableData({ page: 0, count: this.countPerPageTag })
     },
     getTagTableData (page, count) {
       var that = this
@@ -581,7 +654,7 @@ export default {
     onTableSearch (search) {
       var key = Object.keys(search)
       if (key.length === 0) {
-        this.getGoodTableData({ page: 0, count: this.countPerPage })
+        this.getGoodTableData({ page: 0, count: this.countPerPageGood })
         this.currentTagPage = 1
         return
       }
@@ -637,21 +710,21 @@ export default {
         title: '警告',
         content: '确定删除该商品吗？',
         onOk: function () {
-          deleteGood(dId).then(res => { that.getGoodTableData({ page: that.currentPage - 1, count: that.countPerPage }) })
+          deleteGood(dId).then(res => { that.getGoodTableData({ page: that.currentPage - 1, count: that.countPerPageGood }) })
         }
       })
     },
     asyncEditOK () {
       this.getLabelData(this.showId)
       var that = this
-      updateGood(that.currentSelectedRow).then(res => { that.editModal = false; that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPage }) })
+      updateGood(that.currentSelectedRow).then(res => { that.editModal = false; that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood }) })
     },
     addGood () {
       this.addModal = true
     },
     asyncAddOK () {
       var that = this
-      updateGood(that.addGooddata).then(res => { that.addModal = false; that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPage }) })
+      updateGood(that.addGooddata).then(res => { that.addModal = false; that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood }) })
     },
     getLabelData (tid) {
       var that = this

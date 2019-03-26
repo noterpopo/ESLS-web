@@ -1,6 +1,6 @@
 <template>
     <div class="container" ref="container">
-        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px'}">
+        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px'}">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                 <Col span="20"><p>价签信息</p></Col>
@@ -10,7 +10,7 @@
           </div>
           <super_table @onSelectionChange="handleSelectionChange" :pageSize="countPerPage" :current.sync="currentTagPage" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="tagDataCount"></super_table>
         </Card>
-        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px',marginTop:'10px'}">
+        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px',marginTop:'10px'}">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                 <Col span="24"><p>设置面板</p></Col>
@@ -183,6 +183,11 @@ export default {
           width: '50'
         },
         {
+          type: 'index',
+          width: 60,
+          align: 'center'
+        },
+        {
           title: '价签id',
           key: 'barCode',
           width: '150',
@@ -191,10 +196,43 @@ export default {
           }
         },
         {
+          title: 'AP/信道',
+          width: '140',
+          render: (h, params) => {
+            let result = null
+            $.ajax({
+              url: 'http://39.108.106.167:8086/router/' + params.row.routerId,
+              async: false,
+              headers: {
+                ESLS: store.getters.token
+              },
+              type: 'get',
+              success: (res) => {
+                result = res.data[0].barCode + '/' + res.data[0].channelId
+              }
+            })
+            return h('p', result)
+          }
+        },
+        {
           title: '价签类型',
-          key: 'screenType',
-          filter: {
-            type: 'Input'
+          width: '120',
+          render: (h, params) => {
+            let size = ''
+            let type = ''
+            if (params.row.resolutionWidth === '212') {
+              size = '2.13寸'
+            } else if (params.row.resolutionWidth === '400') {
+              size = '4.2寸'
+            } else if (params.row.resolutionWidth === '296') {
+              size = '2.9寸'
+            } else if (params.row.resolutionWidth === '250') {
+              size = '2.5寸'
+            }
+            if (params.row.screenType.indexOf('三色')) {
+              type = 'EPD'
+            }
+            return h('p', size + type + '屏幕')
           }
         },
         {

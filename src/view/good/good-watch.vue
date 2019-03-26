@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;" ref="container">
-        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
+        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                 <Col span="22"><p>等待改价列表</p></Col>
@@ -28,6 +28,11 @@ export default {
       tableColumns: [
         {
           type: 'selection',
+          width: 60,
+          align: 'center'
+        },
+        {
+          type: 'index',
           width: 60,
           align: 'center'
         },
@@ -109,9 +114,25 @@ export default {
           }
         },
         {
-          title: '状态',
+          title: '绑定状态',
+          render: (h, params) => {
+            const row = params.row
+            const color = row.tagIdList.length !== 0 ? 'primary' : 'error'
+            const text = row.tagIdList.length !== 0 ? '已绑' : '未绑'
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          },
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '更新状态',
           key: 'waitUpdate',
-          width: '140',
           render: (h, params) => {
             const row = params.row
             const color = row.waitUpdate === 1 ? 'primary' : 'error'

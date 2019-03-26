@@ -1,6 +1,6 @@
 <template>
     <div ref="container" style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;">
-      <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px',marginBottom:'10px' }">
+      <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px',marginBottom:'10px' }">
         <div slot="title">
             <Row type="flex" justify="center" align="middle">
                 <Col span="24"><p>总店信息</p></Col>
@@ -8,7 +8,7 @@
             <Table border :columns="tableColumns" :data="centerShopData"></Table>
           </div>
       </Card>
-        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
+        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                     <Col span="20"><p>分店信息</p></Col>
@@ -104,6 +104,11 @@ export default {
       subShopData: [],
       routerData: [],
       tableColumns: [
+        {
+          type: 'index',
+          width: 60,
+          align: 'center'
+        },
         {
           title: '店铺编码',
           key: 'number',

@@ -54,6 +54,11 @@ export default {
       logData: [],
       tableColumns: [
         {
+          type: 'index',
+          width: 60,
+          align: 'center'
+        },
+        {
           title: '用户名',
           key: 'username'
         },

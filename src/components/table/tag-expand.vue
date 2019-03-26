@@ -30,16 +30,34 @@
             </Col>
             <Col span="8">
                 <span class="expand-key"> 路由： </span>
-                <span class="expand-value">{{ row.routerId }}</span>
+                <span class="expand-value">{{ getRouterIdById(row.routerId) }}</span>
             </Col>
         </Row>
     </div>
 </template>
 <script>
+import store from '@/store'
 export default {
   name: 'tagExpand',
   props: {
     row: Object
+  },
+  methods: {
+    getRouterIdById (id) {
+      let result = null
+      $.ajax({
+        url: 'http://39.108.106.167:8086/router/' + id,
+        async: false,
+        headers: {
+          ESLS: store.getters.token
+        },
+        type: 'get',
+        success: (res) => {
+          result = res.data[0].barCode
+        }
+      })
+      return result
+    }
   }
 }
 </script>

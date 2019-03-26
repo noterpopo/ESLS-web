@@ -1,6 +1,6 @@
 <template>
     <div  ref="container" style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;">
-        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
+        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                     <Col span="22"><p>路由器信息</p></Col>
@@ -9,7 +9,7 @@
           </div>
           <super_table @onSelectionChange="handleSelectionChange" @onClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="routeData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="routeDataCount"></super_table>
         </Card>
-        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px',marginTop:'10px'}">
+        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px',marginTop:'10px'}">
           <div slot="title">
                 <Row type="flex" justify="center" align="middle">
                     <Col span="24"><p>路由器设置</p></Col>
@@ -135,6 +135,11 @@ export default {
         {
           type: 'selection',
           width: 50
+        },
+        {
+          type: 'index',
+          width: 60,
+          align: 'center'
         },
         {
           type: 'expand',

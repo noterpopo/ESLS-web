@@ -103,6 +103,11 @@ export default {
       styleData: [],
       tableColumns: [
         {
+          type: 'index',
+          width: 60,
+          align: 'center'
+        },
+        {
           title: '样式id',
           key: 'styleNumber',
           filter: {

@@ -1,6 +1,6 @@
 <template>
     <div ref="container" style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;">
-        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
+        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                     <Col span="22"><p>定期任务信息</p></Col>

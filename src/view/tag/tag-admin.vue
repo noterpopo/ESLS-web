@@ -1,7 +1,7 @@
 <template>
     <div class="container" ref="container">
         <div class="top">
-            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
+            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
                 <div slot="title">
                 <Row type="flex" justify="center" align="middle">
                     <Col span="22"><p>价签信息</p></Col>
@@ -14,8 +14,8 @@
             </Modal>
             </Card>
         </div>
-        <div class="bottom" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
-            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.9 + 'px' }">
+        <div class="bottom" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
+            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
                 <div slot="title">
                 <Row type="flex" justify="start" align="middle">
                     <Col span="22"><p>商品信息</p></Col>
@@ -72,6 +72,11 @@ export default {
           }
         },
         {
+          type: 'index',
+          width: 60,
+          align: 'center'
+        },
+        {
           title: '价签id',
           key: 'barCode',
           width: '140',
@@ -81,10 +86,42 @@ export default {
         },
         {
           title: '价签类型',
-          key: 'screenType',
-          width: '80',
-          filter: {
-            type: 'Input'
+          width: '120',
+          render: (h, params) => {
+            let size = ''
+            let type = ''
+            if (params.row.resolutionWidth === '212') {
+              size = '2.13寸'
+            } else if (params.row.resolutionWidth === '400') {
+              size = '4.2寸'
+            } else if (params.row.resolutionWidth === '296') {
+              size = '2.9寸'
+            } else if (params.row.resolutionWidth === '250') {
+              size = '2.5寸'
+            }
+            if (params.row.screenType.indexOf('三色')) {
+              type = 'EPD'
+            }
+            return h('p', size + type + '屏幕')
+          }
+        },
+        {
+          title: 'AP/信道',
+          width: '140',
+          render: (h, params) => {
+            let result = null
+            $.ajax({
+              url: 'http://39.108.106.167:8086/router/' + params.row.routerId,
+              async: false,
+              headers: {
+                ESLS: store.getters.token
+              },
+              type: 'get',
+              success: (res) => {
+                result = res.data[0].barCode + '/' + res.data[0].channelId
+              }
+            })
+            return h('p', result)
           }
         },
         {
@@ -95,13 +132,7 @@ export default {
             type: 'Input'
           }
         },
-        {
-          title: '宽/高',
-          width: '82',
-          render: (h, params) => {
-            return h('p', params.row.resolutionWidth + '/' + params.row.resolutionHeight)
-          }
-        },
+
         {
           title: 'AP RSSI',
           key: 'apRssi',
@@ -256,7 +287,6 @@ export default {
           title: '操作',
           key: 'action',
           align: 'center',
-          width: '180',
           render: (h, params) => {
             let hasBindGoodAccess = store.getters.access.indexOf(3) === -1
             let DeleteAccess = store.getters.access.indexOf(10) === -1
@@ -318,6 +348,11 @@ export default {
       goodRightData: [],
       tableRightGoodColumns: [
         {
+          type: 'index',
+          width: 60,
+          align: 'center'
+        },
+        {
           title: '名称',
           key: 'name',
           filter: {
@@ -374,6 +409,11 @@ export default {
       ],
       goodData: [],
       tableModalGoodColumns: [
+        {
+          type: 'index',
+          width: 60,
+          align: 'center'
+        },
         {
           title: '条码',
           key: 'barCode',
@@ -474,6 +514,11 @@ export default {
       ],
       styleData: [],
       tableModalStyleColumns: [
+        {
+          type: 'index',
+          width: 60,
+          align: 'center'
+        },
         {
           title: '样式id',
           key: 'id',
