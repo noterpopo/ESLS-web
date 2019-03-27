@@ -157,6 +157,7 @@ export default {
     }
   },
   mounted () {
+    document.getElementsByTagName('body')[0].setAttribute('style', 'transform: scale(' + document.body.clientWidth / 1920 + ')')
     /**
      * @description 初始化设置面包屑导航和标签导航
      */
@@ -178,3 +179,4 @@ export default {
   }
 }
 </script>
+<style>

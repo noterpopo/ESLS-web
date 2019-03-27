@@ -181,7 +181,7 @@
           </Card>
         </div>
         <div class="bottom" v-bind:style="{ marginTop:'10px'}">
-          <div v-bind:style="{ width: windowWidth*0.99 + 'px',display:'flex',justifyContent: 'space-between'}">
+          <div v-bind:style="{ width: windowWidth*0.99 + 'px',display:'flex',justifyContent: 'space-between',flexWrap:'wrap'}">
             <Card :bordered="false" v-bind:style="{ width: windowWidth*0.71 + 'px'}">
               <div slot="title">
                 <Row type="flex" justify="center" align="middle">
