@@ -182,7 +182,7 @@
         </div>
         <div class="bottom" v-bind:style="{ marginTop:'10px'}">
           <div v-bind:style="{ width: windowWidth*0.99 + 'px',display:'flex',justifyContent: 'space-between'}">
-            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.72 + 'px'}">
+            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.71 + 'px'}">
               <div slot="title">
                 <Row type="flex" justify="center" align="middle">
                     <Col span="22"><p>价签信息</p></Col>
@@ -202,8 +202,7 @@
                     </Col>
                 </Row>
               </div>
-              <e_label v-bind="item" ref="label_canvas" v-bind:style="{ width:'400px',height:'300px'}" >
-              </e_label>
+              <e_label v-bind="item" ref="label_canvas" v-bind:style="{ width:'400px',height:'300px'}" ></e_label>
             </Card>
           </div>
         </div>
@@ -214,14 +213,18 @@
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import { getAllGood, updateGood, deleteGood, getBindedTags, getGood, cronUpdate } from '@/api/good'
-import { getAllTag, getTag } from '@/api/tag'
+import { getAllTag, getTag, lightTag, flushTag, removeTag, scanTag, statusTag } from '@/api/tag'
 import e_label from '@/components/e-label/e-lable.vue'
 import { getStyle } from '@/api/style'
 import store from '@/store'
+import { VueContext } from 'vue-context'
+import goodTagExpand from '@/components/table/good-tag-expand.vue'
 export default {
   components: {
     e_label,
     super_table,
+    goodTagExpand,
+    VueContext,
     'corn-selector': cronSelector
   },
   data () {
@@ -255,14 +258,14 @@ export default {
           align: 'center'
         },
         {
-          title: '名称',
+          title: '商品名称',
           key: 'name',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '条形码',
+          title: '商品条码',
           key: 'barCode',
           filter: {
             type: 'Input'
@@ -285,8 +288,12 @@ export default {
           }
         },
         {
+          title: '促销原因',
+          key: 'promotionReason'
+        },
+        {
           title: '货号',
-          width: '160',
+          width: '100',
           key: 'shelfNumber',
           filter: {
             type: 'Input'
@@ -302,6 +309,7 @@ export default {
         {
           title: '导入时间',
           key: 'importTime',
+          width: '140',
           filter: {
             type: 'Input'
           }
@@ -327,6 +335,7 @@ export default {
         {
           title: '更新状态',
           key: 'waitUpdate',
+          width: '140',
           render: (h, params) => {
             const row = params.row
             const color = row.waitUpdate === 1 ? 'primary' : 'error'
@@ -374,21 +383,27 @@ export default {
       ],
       tagTableColumns: [
         {
-          type: 'index',
-          width: 60,
-          align: 'center'
+          type: 'expand',
+          width: 40,
+          render: (h, params) => {
+            return h(goodTagExpand, {
+              props: {
+                row: params.row
+              }
+            })
+          }
         },
         {
           title: '价签id',
           key: 'barCode',
-          width: '160',
+          width: '130',
           filter: {
             type: 'Input'
           }
         },
         {
           title: '价签类型',
-          width: '120',
+          width: '128',
           render: (h, params) => {
             let size = ''
             let type = ''
@@ -402,14 +417,34 @@ export default {
               size = '2.5寸'
             }
             if (params.row.screenType.indexOf('三色')) {
-              type = 'EPD'
+              type = '三色'
+            } else {
+              type = '黑白'
             }
             return h('p', size + type + '屏幕')
           }
         },
         {
+          title: '店铺',
+          render: (h, params) => {
+            let result = null
+            $.ajax({
+              url: 'http://39.108.106.167:8086/router/' + params.row.routerId,
+              async: false,
+              headers: {
+                ESLS: store.getters.token
+              },
+              type: 'get',
+              success: (res) => {
+                result = res.data[0].name
+              }
+            })
+            return h('p', result)
+          }
+        },
+        {
           title: 'AP/信道',
-          width: '140',
+          width: '130',
           render: (h, params) => {
             let result = null
             $.ajax({
@@ -427,22 +462,9 @@ export default {
           }
         },
         {
-          title: '执行时间',
-          key: 'execTime',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '完成时间',
-          key: 'completeTime',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
           title: 'AP RSSI',
           key: 'apRssi',
+          width: '70',
           filter: {
             type: 'Input'
           }
@@ -450,13 +472,14 @@ export default {
         {
           title: 'Tag RSSI',
           key: 'tagRssi',
+          width: '70',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '状态',
-          width: '120',
+          title: '通讯状态',
+          width: '116',
           key: 'isWorking',
           render: (h, params) => {
             const row = params.row
@@ -469,9 +492,23 @@ export default {
                 color: color
               }
             }, text)
-          },
-          filter: {
-            type: 'Input'
+          }
+        },
+        {
+          title: '使用状态',
+          key: 'forbidState',
+          width: '116',
+          render: (h, params) => {
+            const row = params.row
+            const color = row.forbidState === 1 ? 'primary' : 'error'
+            const text = row.forbidState === 1 ? '启用' : '禁用'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
           }
         },
         {
@@ -489,9 +526,98 @@ export default {
                 color: color
               }
             }, text)
-          },
-          filter: {
-            type: 'Input'
+          }
+        },
+        {
+          title: '操作',
+          key: 'action',
+          width: '80',
+          align: 'center',
+          render: (h, params) => {
+            let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
+            let data = {}
+            let tparams = {}
+            let items = []
+            tparams = {}
+            this.$set(tparams, 'query', 'id')
+            this.$set(tparams, 'queryString', temp.id)
+            items.push(tparams)
+            this.$set(data, 'items', items)
+            // let hasBindGoodAccess = store.getters.access.indexOf(3) === -1
+            return h('div', [
+              h('Dropdown', {
+                props: {
+                  trigger: 'click'
+                }
+              }, [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  }
+                }, '操作'),
+                h('DropdownMenu', {
+                  slot: 'list'
+                }, [
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        lightTag(data, 1, 0)
+                      }
+                    }
+                  }, '闪灯'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        lightTag(data, 0, 0)
+                      }
+                    }
+                  }, '熄灯'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        flushTag(data, 0)
+                      }
+                    }
+                  }, '刷屏'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        scanTag(data, 0)
+                      }
+                    }
+                  }, '巡检'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        statusTag(data, 0)
+                      }
+                    }
+                  }, '禁用'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        statusTag(data, 1)
+                      }
+                    }
+                  }, '启用'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        var that = this
+                        this.$Modal.confirm({
+                          title: '警告',
+                          content: '确定移除该价签吗？',
+                          onOk: function () {
+                            removeTag(data, 0).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) })
+                          }
+                        })
+                      }
+                    }
+                  }, '移除')
+                ])
+              ])
+            ])
           }
         }
 
@@ -754,8 +880,10 @@ export default {
       if (this.showId) {
         this.getLabelData(this.showId)
       }
+    },
+    onRightClick () {
+      this.$Message.info('rbtn')
     }
-
   }
 
 }

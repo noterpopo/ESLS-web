@@ -12,6 +12,9 @@
             <Modal @on-cancle='onBindGoodCancel' v-model="isBindGoodModalShow" title="绑定商品" width="1400" @on-ok="onBindGood">
               <super_table  key="3" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageSize="8" :current.sync="currentGoodPage" :dataNum="modalGoodDataCount"></super_table>
             </Modal>
+            <Modal v-model="isActionModalShow" title="操作">
+              <p>hhh</p>
+            </Modal>
             </Card>
         </div>
         <div class="bottom" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
@@ -34,7 +37,7 @@ import tagExpand from '@/components/table/tag-expand.vue'
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import e_label from '@/components/e-label/e-lable.vue'
-import { getAllTag, bindStyle, bindGood, deleteTag } from '@/api/tag'
+import { getAllTag, bindStyle, bindGood, deleteTag, lightTag, flushTag, removeTag, scanTag, statusTag } from '@/api/tag'
 import { getAllGood, getGood, getBindedTags } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
 import { coppyArray } from '@/libs/util'
@@ -48,6 +51,8 @@ export default {
   },
   data () {
     return {
+      currentActionId: '',
+      isActionModalShow: false,
       windowWidth: 0,
       isTableLoading: false,
       isRightGoodTableLoading: false,
@@ -73,11 +78,11 @@ export default {
         },
         {
           type: 'index',
-          width: 60,
+          width: 40,
           align: 'center'
         },
         {
-          title: '价签id',
+          title: '价签条码',
           key: 'barCode',
           width: '140',
           filter: {
@@ -86,7 +91,7 @@ export default {
         },
         {
           title: '价签类型',
-          width: '120',
+          width: '128',
           render: (h, params) => {
             let size = ''
             let type = ''
@@ -100,9 +105,29 @@ export default {
               size = '2.5寸'
             }
             if (params.row.screenType.indexOf('三色')) {
-              type = 'EPD'
+              type = '三色'
+            } else {
+              type = '黑白'
             }
             return h('p', size + type + '屏幕')
+          }
+        },
+        {
+          title: '店铺',
+          render: (h, params) => {
+            let result = null
+            $.ajax({
+              url: 'http://39.108.106.167:8086/router/' + params.row.routerId,
+              async: false,
+              headers: {
+                ESLS: store.getters.token
+              },
+              type: 'get',
+              success: (res) => {
+                result = res.data[0].name
+              }
+            })
+            return h('p', result)
           }
         },
         {
@@ -278,52 +303,112 @@ export default {
                 color: color
               }
             }, text)
-          },
-          filter: {
-            type: 'Input'
           }
         },
         {
           title: '操作',
           key: 'action',
+          width: '80',
           align: 'center',
           render: (h, params) => {
-            let hasBindGoodAccess = store.getters.access.indexOf(3) === -1
+            let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
+            let data = {}
+            let tparams = {}
+            let items = []
+            tparams = {}
+            this.$set(tparams, 'query', 'id')
+            this.$set(tparams, 'queryString', temp.id)
+            items.push(tparams)
+            this.$set(data, 'items', items)
+            // let hasBindGoodAccess = store.getters.access.indexOf(3) === -1
             let DeleteAccess = store.getters.access.indexOf(10) === -1
             return h('div', [
-              h('Button', {
+              h('Dropdown', {
                 props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  margin: '2px',
-                  display: hasBindGoodAccess ? 'none' : 'inline-block'
-                },
-                on: {
-                  'click': (event) => {
-                    event.stopPropagation()
-                    let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
-                    this.onBind(temp.id)
-                  }
+                  trigger: 'click'
                 }
-              }, '绑定'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  margin: '2px'
-                },
-                on: {
-                  'click': (event) => {
-                    event.stopPropagation()
-                    let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
-                    this.onUnBind(temp)
+              }, [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
                   }
-                }
-              }, '解绑'),
+                }, '操作'),
+                h('DropdownMenu', {
+                  slot: 'list'
+                }, [
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        this.onBind(temp.id)
+                      }
+                    }
+                  }, '绑定'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        this.onUnBind(temp)
+                      }
+                    }
+                  }, '解绑'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        lightTag(data, 1, 0)
+                      }
+                    }
+                  }, '闪灯'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        lightTag(data, 0, 0)
+                      }
+                    }
+                  }, '熄灯'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        flushTag(data, 0)
+                      }
+                    }
+                  }, '刷屏'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        scanTag(data, 0)
+                      }
+                    }
+                  }, '巡检'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        statusTag(data, 0)
+                      }
+                    }
+                  }, '禁用'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        statusTag(data, 1)
+                      }
+                    }
+                  }, '启用'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        var that = this
+                        this.$Modal.confirm({
+                          title: '警告',
+                          content: '确定移除该价签吗？',
+                          onOk: function () {
+                            removeTag(data, 0).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) })
+                          }
+                        })
+                      }
+                    }
+                  }, '移除')
+                ])
+              ]),
               h('Button', {
                 props: {
                   type: 'error',
@@ -348,19 +433,14 @@ export default {
       goodRightData: [],
       tableRightGoodColumns: [
         {
-          type: 'index',
-          width: 60,
-          align: 'center'
-        },
-        {
-          title: '名称',
+          title: '商品名称',
           key: 'name',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '条形码',
+          title: '商品条码',
           key: 'barCode',
           filter: {
             type: 'Input'
@@ -381,6 +461,10 @@ export default {
           }
         },
         {
+          title: '促销原因',
+          key: 'promotionReason'
+        },
+        {
           title: '货号',
           key: 'shelfNumber',
           filter: {
@@ -388,22 +472,9 @@ export default {
           }
         },
         {
-          title: '状态',
-          key: 'waitUpdate',
+          title: '价签数量',
           render: (h, params) => {
-            const row = params.row
-            const color = row.waitUpdate === 1 ? 'primary' : 'error'
-            const text = row.waitUpdate === 1 ? '已经更新' : '等待更新'
-
-            return h('Tag', {
-              props: {
-                type: 'dot',
-                color: color
-              }
-            }, text)
-          },
-          filter: {
-            type: 'Input'
+            return h('p', params.row.tagIdList.length)
           }
         }
       ],
@@ -619,6 +690,10 @@ export default {
     }
   },
   methods: {
+    onClickAction (id) {
+      this.isActionModalShow = true
+      this.currentActionId = id
+    },
     getTagTableData (page, count) {
       var that = this
       that.isTableLoading = true
@@ -785,10 +860,10 @@ export default {
       })
     },
     goodReload () {
-      this.getRightGoodTableData({ page: 0, count: this.countPerPage })
+      this.getRightGoodTableData({ page: this.currentGoodPage - 1, count: this.countPerPage })
     },
     tagReload () {
-      this.getTagTableData({ page: 0, count: this.countPerPage })
+      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
     },
     onTagTableClick (currentRow) {
       var that = this
@@ -830,6 +905,7 @@ export default {
         mode = '2'
       }
       bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId, mode).then(res => {
+        that.tagReload()
         that.$Modal.success({
           title: '消息',
           content: '成功绑定商品'
@@ -860,6 +936,7 @@ export default {
       bindGood('id', data.goodId, 'id', data.id, '0').then(res => {
         this.$Message.info('解绑成功')
         this.goodRightData = []
+        this.tagReload()
       })
     }
   }
