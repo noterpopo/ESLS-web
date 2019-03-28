@@ -28,118 +28,41 @@
                   </Select>
             </Input>
             <Button style="margin-left:10px;" type="primary" @click="changeRoute">确定</Button>
-
           </div>
-          <div v-if="hasScanAccess" style="display:flex; align-items:center;margin-top:10px;">
-            <span>巡检</span>
-            <Select style="margin-left:8px;width: 200px" v-model="scanMode">
-                      <Option value="0">指定路由器</Option>
-                      <Option value="1">定期巡检</Option>
-            </Select>
-            <Input type="text" style="margin-left:8px;width: 300px" v-model="scanQueryString"  placeholder="条件" >
-                  <Select v-model="scanQuery" slot="prepend" style="width: 100px">
-                      <Option value="barCode">条码</Option>
-                  </Select>
-            </Input>
-            <Input  v-model="scanCronExp" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
-                  <Button slot="append" @click="isScanCronModalShow=true">选择时间</Button>
-            </Input>
-            <Button style="margin-left:10px;" type="primary" @click="onScan">开始</Button>
-            <Button style="margin-left:10px;" type="primary" @click="onAllScan">对全部路由器巡检</Button>
-          </div >
-           <div v-if="hasEditAccess&&hasSettingAccess" style="display:flex; align-items:center;margin-top:10px;">
-            <span>设置路由器</span>
-            <Input type="text" style="margin-left:8px;width: 300px" v-model="settingQueryString"  placeholder="条件" >
-                  <Select v-model="settingQuery" slot="prepend" style="width: 100px">
-                      <Option value="barCode">条码</Option>
-                  </Select>
-            </Input>
-            <Input type="text" style="margin-left:8px;width: 300px" v-model="setConfigValue" >
-                  <Select v-model="setConfig" slot="prepend" style="width: 100px">
-                      <Option value="channelId">信道</Option>
-                      <Option value="outNetIp">ip地址</Option>
-                  </Select>
-            </Input>
-            <Button style="margin-left:10px;" type="primary" @click="onSetting">设置</Button>
-          </div>
-          <div style="display:flex; align-items:center;margin-top:10px;">
-            <span>AP信息读取</span>
-            <Select style="margin-left:8px;width: 200px" v-model="testMode">
-                      <!-- <Option value="0">信息写入</Option> -->
-                      <Option value="1">AP信息读取</Option>
-                      <!-- <Option value="2">AP发送无线帧</Option>
-                      <Option value="3">AP停止发送无线帧 </Option>
-                      <Option value="4">AP接收无线帧</Option>
-                      <Option value="5">AP停止接收无线帧</Option> -->
-            </Select>
-            <Input type="text" style="margin-left:8px;width: 300px" v-model="testQueryString"  placeholder="条件" >
-                  <Select v-model="testQuery" slot="prepend" style="width: 100px">
-                      <Option value="barCode">条码</Option>
-                  </Select>
-            </Input>
-            <Input v-model="testBarCode" v-if="testMode==0" placeholder="输入条码" style="margin-left:8px;width: 240px"></Input>
-            <Input v-model="testChannelId" v-if="testMode==0||testMode==2||testMode==4" placeholder="输入信道" style="margin-left:8px;width: 240px"></Input>
-            <Input v-if="testMode==0" v-model="testHardVersion" placeholder="输入硬件版本" style="margin-left:8px;width: 240px"></Input>
-            <Button style="margin-left:10px;" type="primary" @click="onTest">开始</Button>
-          </div>
-          <div v-if="hasEditAccess" style="display:flex; align-items:center;margin-top:10px;">
-            <span>IP</span>
-            <Select style="margin-left:8px;width: 200px" v-model="testMode">
-                      <Option value="6">设置目标服务器IP </Option>
-                      <Option value="7">删除当前历史连接IP记录</Option>
-                      <Option value="8">查询历史连接IP列表</Option>
-            </Select>
-            <Input type="text" style="margin-left:8px;width: 300px" v-model="testQueryString"  placeholder="条件" >
-                  <Select v-model="testQuery" slot="prepend" style="width: 100px">
-                      <Option value="barCode">条码</Option>
-                  </Select>
-            </Input>
-            <Input v-if="testMode==7||testMode==8" v-model="testBarCode" placeholder="输入条码" style="margin-left:8px;width: 240px"></Input>
-            <Button style="margin-left:10px;" type="primary" @click="onTest">开始</Button>
-          </div>
-          <div v-if="hasRemoveAccess" style="display:flex; align-items:center;margin-top:10px;">
-            <span>路由器移除</span>
-            <Input type="text" style="margin-left:8px;width: 300px" v-model="removeQueryString"  placeholder="条件" >
-                  <Select v-model="removeQuery" slot="prepend" style="width: 100px">
-                      <Option value="barCode">条码</Option>
-                  </Select>
-            </Input>
-            <Button style="margin-left:10px;" type="primary" @click="onRemove">开始</Button>
-          </div>
-          <corn-selector :isModalShow="isScanCronModalShow" @onOk="onScanCron" @onIsShow="onScanIsShow"></corn-selector>
         </Card>
     </div>
 </template>
 <script>
-import { getAllRoute, changeRoute, scanRoute, scanAll, settingRoute, testRouter, updateRouter, removeRouter } from '@/api/route'
+import { getAllRoute, changeRoute, scanRoute, scanAll, settingRoute, updateRouter } from '@/api/route'
 import super_table from '@/components/table/supertable.vue'
 import routerExpand from '@/components/table/router-expand.vue'
-import cronSelector from '@/components/corn-selector/corn-selector.vue'
+import { flushTag, scanTag } from '@/api/tag'
 import store from '@/store'
+import { getAllShop } from '@/api/shop'
 export default {
   components: {
     routerExpand,
-    super_table,
-    'corn-selector': cronSelector
+    super_table
   },
   data () {
     return {
+      channel: '',
+      ip: '',
       windowWidth: 0,
-      rssiWorker: null,
       isTableLoading: false,
       countPerPage: 6,
       currentPage: 1,
       routeDataCount: 0,
+      shopData: [],
       routeData: [],
       tableColumns: [
         {
-          type: 'selection',
-          width: 50
-        },
-        {
           type: 'index',
           width: 60,
-          align: 'center'
+          align: 'center',
+          indexMethod: (row) => {
+            return row._index + 1 + (this.currentPage - 1) * this.countPerPage
+          }
         },
         {
           type: 'expand',
@@ -153,7 +76,7 @@ export default {
           }
         },
         {
-          title: '路由器条码',
+          title: 'AP条码',
           key: 'barCode',
           width: '200',
           filter: {
@@ -195,12 +118,29 @@ export default {
         },
         {
           title: '店铺',
-          key: 'name',
           width: '200',
-          filter: {
-            type: 'Input'
+          render: (h, params) => {
+            let isDisable = store.getters.access.indexOf(2) === -1
+            return h('Select', {
+              props: {
+                value: params.row.shopId,
+                disabled: isDisable
+              },
+              on: {
+                'on-change': (val) => {
+                  this.onUpdateShop(params.row, val)
+                }
+              }
+            }, this.shopData.map((item) => {
+              return h('Option', {
+                props: {
+                  value: item.id,
+                  label: item.name
+                }
+              })
+            })
+            )
           }
-
         },
         {
           title: '状态',
@@ -260,42 +200,135 @@ export default {
           }
         },
         {
-          title: '硬件版本',
-          key: 'hardVersion',
-          filter: {
-            type: 'Input'
+          title: '操作',
+          key: 'action',
+          width: '80',
+          align: 'center',
+          render: (h, params) => {
+            let temp = this.routeData.find(function (item) { return item.barCode === params.row.barCode })
+            let data = {}
+            let tparams = {}
+            let items = []
+            tparams = {}
+            this.$set(tparams, 'query', 'id')
+            this.$set(tparams, 'queryString', temp.id)
+            items.push(tparams)
+            this.$set(data, 'items', items)
+            // let hasBindGoodAccess = store.getters.access.indexOf(3) === -1
+            return h('div', [
+              h('Dropdown', {
+                props: {
+                  trigger: 'click'
+                }
+              }, [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  }
+                }, '操作'),
+                h('DropdownMenu', {
+                  slot: 'list'
+                }, [
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        this.$Modal.confirm({
+                          title: '设置IP',
+                          render: (h, params) => {
+                            return h('Input', {
+                              props: {
+                                placeholder: '输入IP',
+                                value: temp.outNetIp
+                              },
+                              on: {
+                                'on-change': (event) => {
+                                  temp.outNetIp = event.target.value
+                                }
+                              }
+                            })
+                          },
+                          onOk: () => {
+                            updateRouter(temp).then(res => {
+                              settingRoute(data).then(res => {
+                                this.$Message.info('设置成功')
+                              })
+                            })
+                          }
+                        })
+                      }
+                    }
+                  }, 'IP设置'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        this.$Modal.confirm({
+                          title: '设置信道',
+                          render: (h, params) => {
+                            return h('Input', {
+                              props: {
+                                placeholder: '输入信道',
+                                value: temp.channelId
+                              },
+                              on: {
+                                'on-change': (event) => {
+                                  temp.channelId = event.target.value
+                                }
+                              }
+                            })
+                          },
+                          onOk: () => {
+                            updateRouter(temp).then(res => {
+                              settingRoute(data).then(res => {
+                                this.$Message.info('设置成功')
+                              })
+                            })
+                          }
+                        })
+                      }
+                    }
+                  }, '信道设置'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        scanRoute(data, 0).then(res => {
+                          this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+                        })
+                      }
+                    }
+                  }, '读取AP信息'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        scanTag(data, 1)
+                      }
+                    }
+                  }, '标签巡检'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        flushTag(data, 1)
+                      }
+                    }
+                  }, '标签刷屏')
+                ])
+              ])
+            ])
           }
         }
       ],
       currentSelectRow: {},
-      ipMode: 0,
-      from: 0,
-      to: 0,
       tagQuery: 'barCode',
       tagQueryString: '',
       routeQuery: 'barCode',
-      routeQueryString: '',
-      scanQuery: 'barCode',
-      scanQueryString: '',
-      scanCronExp: '',
-      scanMode: 0,
-      isScanCronModalShow: false,
-      settingQuery: 'barCode',
-      settingQueryString: '',
-      testQuery: 'barCode',
-      testQueryString: '',
-      testBarCode: '',
-      testChannelId: '',
-      testHardVersion: '',
-      testMode: '1',
-      setConfig: 'channelId',
-      setConfigValue: '',
-      removeQuery: 'barCode',
-      removeQueryString: ''
+      routeQueryString: ''
     }
   },
   created () {
     this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+    getAllShop({ page: 0, count: 100 }).then(res => {
+      this.shopData = res.data.data
+    })
   },
   watch: {
     currentPage () {
@@ -329,6 +362,12 @@ export default {
     }
   },
   methods: {
+    onUpdateShop (row, shopId) {
+      row.shopId = shopId
+      updateRouter(row).then(res => {
+        this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+      })
+    },
     onTableClick (currentRow) {
       this.currentSelectRow = currentRow
     },
@@ -352,132 +391,19 @@ export default {
       var value = search[key[0]]
       this.getRouteTableData({ queryId: key[0], queryString: value })
     },
-    setIp () {
-
-    },
     changeRoute () {
       changeRoute(this.tagQuery, this.tagQueryString, this.routeQuery, this.routeQueryString)
-    },
-    onScanCron (data) {
-      this.scanCronExp = data
-    },
-    onScanIsShow (val) {
-      this.isScanCronModalShow = val
-    },
-    onScan () {
-      let data = {}
-      let params = {}
-      let items = []
-      let idArray = this.scanQueryString.split(',')
-      for (let i = 0; i < idArray.length; ++i) {
-        params = {}
-        this.$set(params, 'cron', this.scanCronExp)
-        this.$set(params, 'query', this.scanQuery)
-        this.$set(params, 'queryString', idArray[i])
-        items.push(params)
-      }
-      this.$set(data, 'items', items)
-      scanRoute(data, this.scanMode).then(res => {
-        this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
-      })
     },
     onAllScan () {
       scanAll().then(res => {
         this.getRouteTableData({ page: 0, count: this.countPerPage })
       })
     },
-    onSetting () {
-      let data = {}
-      let params = {}
-      let items = []
-      let idArray = this.settingQueryString.split(',')
-      for (let i = 0; i < idArray.length; ++i) {
-        params = {}
-        this.$set(params, 'query', this.settingQuery)
-        this.$set(params, 'queryString', idArray[i])
-        items.push(params)
-      }
-      this.$set(data, 'items', items)
-      for (let j = 0; j < this.settingQueryString.split(',').length; ++j) {
-        let updateRow = this.routeData.filter((item) => {
-          return item.barCode === this.settingQueryString.split(',')[j]
-        })
-        updateRow[0][this.setConfig] = this.setConfigValue
-        updateRouter(updateRow[0]).then(res => {
-          settingRoute(data).then(res => {
-            this.$Message.info('设置成功')
-          })
-        })
-      }
-    },
-    onTest () {
-      let data = {}
-      let params = {}
-      let items = []
-      let idArray = this.testQueryString.split(',')
-      for (let i = 0; i < idArray.length; ++i) {
-        params = {}
-        this.$set(params, 'query', this.testQuery)
-        this.$set(params, 'queryString', idArray[i])
-        items.push(params)
-      }
-      this.$set(data, 'items', items)
-      testRouter(data, this.testBarCode, this.testChannelId, this.testHardVersion, this.testMode)
-      if (this.testMode === '4') {
-        this.rssiWorker = this.$worker.run(() => '111').then(res => console.log('55'))
-        this.$Modal.info({
-          title: 'RSSi信息',
-          render: (h, params) => {
-            return h('span', [
-              h('p', 'RSSID:'),
-              h('p', 'RSSDATA:')
-            ])
-          }
-        })
-      }
-      if (this.testMode === '5') {
-        this.rssiWorker = null
-      }
-    },
     routeReload () {
       this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
     },
     handleSelectionChange (selection) {
-      let temp = ''
-      for (let i = 0; i < selection.length - 1; ++i) {
-        temp = temp + selection[i].barCode + ','
-      }
-      if (selection.length > 0) {
-        temp = temp + selection[selection.length - 1].barCode
-        this.routeQueryString = temp.split(',')[0]
-        this.scanQueryString = temp
-        this.settingQueryString = temp
-        this.testQueryString = temp
-        this.removeQueryString = temp
-      } else {
-        this.routeQueryString = ''
-        this.scanQueryString = ''
-        this.settingQueryString = ''
-        this.testQueryString = ''
-        this.removeQueryString = ''
-      }
-    },
-    onRemove () {
-      let data = {}
-      let params = {}
-      let items = []
-      let idArray = this.removeQueryString.split(',')
-      for (let i = 0; i < idArray.length; ++i) {
-        params = {}
-        this.$set(params, 'query', this.removeQuery)
-        this.$set(params, 'queryString', idArray[i])
-        items.push(params)
-      }
-      this.$set(data, 'items', items)
-      removeRouter(data).then(res => {
-        this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
-        this.$Message.info('发送移除命令成功')
-      })
+
     }
   }
 }

@@ -3,11 +3,11 @@
       <slot></slot>
       <canvas id="tcanvas" ref="canvas"></canvas>
       <div v-if="isShow" class="right">
-          <div class="editorarea" :style="{width:styleWidth+'px',height:styleHeight+'px'}">
+          <div class="editorarea" :style="{zIndex:'9999',border:'1px solid black',width:styleWidth+'px',height:styleHeight+'px'}">
             <div v-for="(item,index) in dispmsData" :key="index" v-show="item.status===1" :style="{position:'absolute', left:item.x+'px', top:item.y+'px'}">
-              <div :style="{textAlign:'left',position: 'absolute',left: 0+'px',top: 0+'px',width:item.width+'px',height:item.height+'px',backgroundColor:item.backgroundColor==='0'?'black':item.backgroundColor==='1'?'white':'red'}">
-                <span v-if="item.columnType === '字符串'" :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType, lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
-                <span v-else-if="item.columnType === '数字'" >
+              <div :style="{textAlign:'left',position: 'absolute',left: 0+'px',top: 0+'px',width:item.width+'px',height:item.height+'px',backgroundColor:item.backgroundColor==='0'?'black':item.backgroundColor==='1'?'rgba(0,0,0,0)':'red'}">
+                <span v-if="item.columnType === '字符串'" :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', verticalAlign:'top', fontSize :item.fontSize+'px', fontWeight:item.fontType, lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
+                <span v-else-if="item.columnType === '数字'" :style="{lineHeight:item.height+'px'}">
                   <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.text.split('.')[0] +'.'}}</span>
                   <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', verticalAlign:'top',fontSize :(item.sourceColumn==='promotePrice'?decFontSizePromotePrice:decFontSizePrice)+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{ item.text.split('.')[1]}}</span>
                 </span>

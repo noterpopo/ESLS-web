@@ -5,7 +5,7 @@
             <Row type="flex" justify="center" align="middle">
                 <Col span="24"><p>总店信息</p></Col>
             </Row>
-            <Table border :columns="tableColumns" :data="centerShopData"></Table>
+            <Table border @onDoubleClick="onTableClick" :columns="tableColumns" :data="centerShopData"></Table>
           </div>
       </Card>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
@@ -86,7 +86,6 @@
 </template>
 <script>
 import { getAllShop, updateShop, deleteShop } from '@/api/shop'
-import { getAllRoute } from '@/api/route'
 import super_table from '@/components/table/supertable.vue'
 import store from '@/store'
 export default {
@@ -107,7 +106,10 @@ export default {
         {
           type: 'index',
           width: 60,
-          align: 'center'
+          align: 'center',
+          indexMethod: (row) => {
+            return row._index + 1 + (this.currentPage - 1) * this.countPerPage
+          }
         },
         {
           title: '店铺编码',
@@ -148,30 +150,10 @@ export default {
           title: '路由器',
           render: (h, params) => {
             let currentRoute = []
-            let isDisable = store.getters.access.indexOf(2) === -1
             for (let i = 0; i < params.row.routers.length; ++i) {
-              currentRoute.push(params.row.routers[i].id)
+              currentRoute.push(params.row.routers[i].barCode)
             }
-            return h('Select', {
-              props: {
-                multiple: true,
-                value: currentRoute,
-                disabled: isDisable
-              },
-              on: {
-                'on-change': (val) => {
-                  this.onUpdateRouter(params.row, val)
-                }
-              }
-            }, this.routerData.map((item) => {
-              return h('Option', {
-                props: {
-                  value: item.id,
-                  label: item.barCode
-                }
-              })
-            })
-            )
+            return h('p', currentRoute)
           },
           filter: {
             type: 'Input'
@@ -224,9 +206,6 @@ export default {
   created () {
     this.getShopTableData({ page: 0, count: this.countPerPage })
     this.getCenterShop()
-    getAllRoute({ page: 0, count: 100 }).then(res => {
-      this.routerData = res.data.data
-    })
   },
   mounted () {
     var that = this
@@ -248,13 +227,6 @@ export default {
     }
   },
   methods: {
-    onUpdateRouter (row, data) {
-      console.log(data)
-      row.routers = data
-      console.log(row)
-      updateShop(row).then(res => {
-      })
-    },
     getCenterShop () {
       getAllShop({ query: 'type', queryString: 1 }).then(res => {
         this.centerShopData = res.data.data

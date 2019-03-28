@@ -56,7 +56,10 @@ export default {
         {
           type: 'index',
           width: 60,
-          align: 'center'
+          align: 'center',
+          indexMethod: (row) => {
+            return row._index + 1 + (this.currentPage - 1) * this.countPerPage
+          }
         },
         {
           title: '用户名',

@@ -79,7 +79,10 @@ export default {
         {
           type: 'index',
           width: 40,
-          align: 'center'
+          align: 'center',
+          indexMethod: (row) => {
+            return row._index + 1 + (this.currentTagPage - 1) * this.countPerPage
+          }
         },
         {
           title: '价签条码',
@@ -128,6 +131,25 @@ export default {
               }
             })
             return h('p', result)
+          }
+        },
+        {
+          title: '商品名称/条码',
+          width: '200',
+          render: (h, params) => {
+            let result = null
+            $.ajax({
+              url: 'http://39.108.106.167:8086/goods/' + params.row.goodId,
+              async: false,
+              headers: {
+                ESLS: store.getters.token
+              },
+              type: 'get',
+              success: (res) => {
+                result = res.data[0]
+              }
+            })
+            return h('p', result.name + '/' + result.barCode)
           }
         },
         {
@@ -236,32 +258,13 @@ export default {
           }
         },
         {
-          title: '绑定状态',
-          width: '120',
-          render: (h, params) => {
-            let isBind = true
-            if (params.row.goodId === '' || params.row.goodId === 0) {
-              isBind = false
-            }
-            const color = isBind ? 'primary' : 'error'
-            const text = isBind ? '已绑' : '未绑'
-
-            return h('Tag', {
-              props: {
-                type: 'dot',
-                color: color
-              }
-            }, text)
-          }
-        },
-        {
           title: '通讯状态',
           key: 'isWorking',
-          width: '120',
+          width: '140',
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '在线' : '离线'
+            const text = row.isWorking === 1 ? '通讯正常' : '通讯超时'
 
             return h('Tag', {
               props: {
@@ -279,23 +282,6 @@ export default {
             const row = params.row
             const color = row.forbidState === 1 ? 'primary' : 'error'
             const text = row.forbidState === 1 ? '启用' : '禁用'
-
-            return h('Tag', {
-              props: {
-                type: 'dot',
-                color: color
-              }
-            }, text)
-          }
-        },
-        {
-          title: '等待变价',
-          key: 'waitUpdate',
-          width: '140',
-          render: (h, params) => {
-            const row = params.row
-            const color = row.waitUpdate === 1 ? 'primary' : 'error'
-            const text = row.waitUpdate === 1 ? '已经更新' : '等待更新'
 
             return h('Tag', {
               props: {
@@ -483,7 +469,10 @@ export default {
         {
           type: 'index',
           width: 60,
-          align: 'center'
+          align: 'center',
+          indexMethod: (row) => {
+            return row._index + 1 + (this.currentGoodPage - 1) * 8
+          }
         },
         {
           title: '条码',
