@@ -5,7 +5,7 @@
             <Row type="flex" justify="center" align="middle">
                 <Col span="24"><p>总店信息</p></Col>
             </Row>
-            <Table border @onDoubleClick="onTableClick" :columns="tableColumns" :data="centerShopData"></Table>
+            <Table border @on-row-dblclick="onTableClick" :columns="tableColumns" :data="centerShopData"></Table>
           </div>
       </Card>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
@@ -33,10 +33,8 @@
                     <Col span="11"><Input type="text" v-model="currentShopData.phone"/></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="1"><p>总店：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentShopData.fatherShop"/></Col>
-                    <Col span="2"><p style="position:relative;left:10px;">管理员:</p></Col>
-                    <Col span="10"><Input type="text" v-model="currentShopData.manager" /></Col>
+                    <Col span="1"><p >管理员:</p></Col>
+                    <Col span="23"><Input type="text" v-model="currentShopData.manager" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="1"><p>账号：</p></Col>
@@ -65,10 +63,8 @@
                     <Col span="11"><Input type="text" v-model="addShopData.phone"/></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="1"><p>总店：</p></Col>
-                    <Col span="11"><Input type="text" v-model="addShopData.fatherShop"/></Col>
-                    <Col span="2"><p style="position:relative;left:10px;">管理员:</p></Col>
-                    <Col span="10"><Input type="text" v-model="addShopData.manager" /></Col>
+                    <Col span="1"><p>管理员:</p></Col>
+                    <Col span="23"><Input type="text" v-model="addShopData.manager" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="1"><p>账号：</p></Col>
@@ -153,7 +149,7 @@ export default {
             for (let i = 0; i < params.row.routers.length; ++i) {
               currentRoute.push(params.row.routers[i].barCode)
             }
-            return h('p', currentRoute)
+            return h('div', currentRoute.join(','))
           },
           filter: {
             type: 'Input'
@@ -237,6 +233,7 @@ export default {
       var that = this
       that.isTableLoading = true
       getAllShop({ page: page, count: count, query: query, queryString: queryString }).then(res => {
+        console.log(res.data.data)
         for (let i = 0; i < res.data.data.length; ++i) {
           if (res.data.data[i].type === 1) {
           } else if (res.data.data[i].type === 0) {
@@ -245,6 +242,9 @@ export default {
         }
         that.shopDataCount = res.data.code - that.centerShopData.length
         that.isTableLoading = false
+      })
+      getAllShop({ query: 'type', queryString: '1' }).then(res => {
+        this.centerShopData = res.data.data
       })
     },
     remove (id) {
@@ -289,6 +289,7 @@ export default {
       this.addModal = true
     },
     addOK () {
+      this.addShopData.fatherShop = this.centerShopData[0].number
       updateShop(this.addShopData).then(res => {
         this.getShopTableData({ page: 0, count: this.countPerPage })
       })

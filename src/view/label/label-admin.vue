@@ -328,7 +328,7 @@ export default {
               h('Option', {
                 props: {
                   value: '2.9寸',
-                  label: '2.13寸'
+                  label: '2.9寸'
                 }
               })
             ]),
@@ -385,9 +385,6 @@ export default {
           } else if (this.newStyleSize === '2.13寸') {
             w = 212
             h = 104
-          } else if (this.newStyleSize === '2.9寸') {
-            w = 296
-            h = 128
           } else if (this.newStyleSize === '2.5寸') {
             w = 250
             h = 122

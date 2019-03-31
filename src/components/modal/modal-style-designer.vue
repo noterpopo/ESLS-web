@@ -17,7 +17,8 @@
                   <div :style="{display:'flex',flexWrap: 'wrap',marginTop:'4px'}">
                     <Checkbox style="margin:2px;" v-for="(item) in currentDispmsData" :key="item.id" :value="item.status==1" @on-change="onCheckItem($event,item)">{{item.sourceColumn}}</Checkbox>
                   </div>
-                  <Button :style="{marginTop:'10px'}" type="primary" @click="reset">恢复默认值</Button>
+                  <Button :style="{margin:'10px'}" type="primary" @click="addArea">添加自定义字段</Button>
+                  <Button  type="primary" @click="reset">恢复默认值</Button>
                   <Button v-if="mode!='new'" :style="{marginLeft:'10px',marginTop:'10px'}" type="primary" @click="saveAsNew">另存为新样式</Button>
               </Card>
               </div>
@@ -229,13 +230,13 @@ export default {
           backup: '0'
         },
         {
-          id: 12,
+          id: 11,
           name: '线段',
           x: 0,
           y: 0,
           width: 8,
           height: 8,
-          sourceColumn: '0',
+          sourceColumn: 'custom',
           columnType: '线段',
           backgroundColor: '1',
           text: '',
@@ -250,13 +251,13 @@ export default {
           backup: null
         },
         {
-          id: 13,
+          id: 11,
           name: '字符串',
           x: 0,
           y: 0,
           width: 8,
           height: 8,
-          sourceColumn: '0',
+          sourceColumn: 'custom',
           columnType: '字符串',
           backgroundColor: '1',
           text: '原价：￥',
@@ -271,7 +272,7 @@ export default {
           backup: null
         },
         {
-          id: 14,
+          id: 11,
           name: '数字左侧(price)',
           x: 0,
           y: 0,
@@ -292,13 +293,13 @@ export default {
           backup: '1/20/45'
         },
         {
-          id: 16,
+          id: 11,
           name: '字符串',
           x: 0,
           y: 0,
           width: 8,
           height: 8,
-          sourceColumn: '0',
+          sourceColumn: 'custom',
           columnType: '字符串',
           backgroundColor: '1',
           text: '现价：￥',
@@ -313,7 +314,7 @@ export default {
           backup: null
         },
         {
-          id: 17,
+          id: 11,
           name: '数字左侧(promotePrice)',
           x: 0,
           y: 0,
@@ -334,7 +335,7 @@ export default {
           backup: '0/60/123'
         },
         {
-          id: 19,
+          id: 11,
           name: '字符串',
           x: 0,
           y: 0,
@@ -355,7 +356,7 @@ export default {
           backup: null
         },
         {
-          id: 20,
+          id: 11,
           name: '字符串',
           x: 0,
           y: 0,
@@ -377,7 +378,7 @@ export default {
 
         },
         {
-          id: 22,
+          id: 11,
           name: '字符串',
           x: 0,
           y: 0,
@@ -399,7 +400,7 @@ export default {
 
         },
         {
-          id: 22,
+          id: 11,
           name: '字符串',
           x: 0,
           y: 0,
@@ -421,7 +422,7 @@ export default {
 
         },
         {
-          id: 22,
+          id: 11,
           name: '字符串',
           x: 0,
           y: 0,
@@ -443,7 +444,7 @@ export default {
 
         },
         {
-          id: 23,
+          id: 11,
           name: '二维码',
           x: 0,
           y: 0,
@@ -465,7 +466,7 @@ export default {
 
         },
         {
-          id: 24,
+          id: 11,
           name: '条形码',
           x: 0,
           y: 0,
@@ -487,7 +488,7 @@ export default {
 
         },
         {
-          id: 102,
+          id: 11,
           name: '字符串',
           x: 0,
           y: 0,
@@ -510,7 +511,28 @@ export default {
         }
       ],
       indeterminate: true,
-      checkAll: false
+      checkAll: false,
+      newArea: {
+        id: 11,
+        name: '字符串',
+        x: 0,
+        y: 0,
+        width: 8,
+        height: 8,
+        sourceColumn: 'custom',
+        columnType: '字符串',
+        backgroundColor: '1',
+        text: '自定义',
+        startText: '',
+        endText: '',
+        fontType: 'normal',
+        fontFamily: '宋体',
+        fontColor: '0',
+        fontSize: 14,
+        status: 1,
+        imageUrl: '',
+        backup: null
+      }
     }
   },
   updated () {
@@ -545,6 +567,10 @@ export default {
     }
   },
   methods: {
+    addArea () {
+      let newtemp = Object.assign({}, this.newArea)
+      this.currentDispmsData.push(newtemp)
+    },
     onNumChange (val, e) {
       console.log(e)
       console.log(val)

@@ -368,6 +368,7 @@ export default {
       isStatus: 0,
       isFlushCronModalShow: false,
       isScanCronModalShow: false
+
     }
   },
   created () {

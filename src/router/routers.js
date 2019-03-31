@@ -160,7 +160,7 @@ export default [
     name: 'shop',
     meta: {
       icon: 'ios-albums',
-      title: '商店'
+      title: '店铺'
     },
     component: Main,
     children: [
@@ -169,7 +169,7 @@ export default [
         name: 'shop_admin',
         meta: {
           icon: 'ios-albums',
-          title: '商店管理'
+          title: '店铺管理'
         },
         component: () => import('@/view/shop/shop-admin.vue')
       }

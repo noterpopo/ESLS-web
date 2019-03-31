@@ -3,37 +3,67 @@
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
-                    <Col span="22"><p>定期任务信息</p></Col>
-                    <Col span="2"><Button type="primary" @click="cycyleJobReload">刷新</Button></Col>
+                <Col span="22"><p>定期任务信息</p></Col>
+                <Col span="2"><Button type="primary" @click="cycyleJobReload">刷新</Button></Col>
               </Row>
           </div>
           <super_table @onDoubleClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="cycleJobData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="cycleJobDataCount"></super_table>
         </Card>
-        <Modal :width="1040" v-model="editModal" title="修改商店信息" @on-ok="editOK">
-            <div>
-                <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="1"><p>参数：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentCycyleJobData.args"/></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">cron：</p></Col>
-                    <Col span="11">
-                        <Input  v-model="currentCycyleJobData.cron" >
-                            <Button slot="append" @click="isCronModalShow=true">选择时间</Button>
-                        </Input>
-                    </Col>
-                </Row>
-                <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="1"><p>描述：</p></Col>
-                    <Col span="23"><Input type="text" v-model="currentCycyleJobData.description"/></Col>
-                </Row>
-            </div>
-            <corn-selector :isModalShow="isCronModalShow" @onOk="onCron" @onIsShow="onIsShow"></corn-selector>
-        </Modal>
+        <Card :bordered="false" v-bind:style="{ marginTop:'10px', width: windowWidth*0.98 + 'px' }">
+          <div slot="title">
+            <Row type="flex" justify="center" align="middle">
+                    <Col span="24"><p>添加定期任务</p></Col>
+              </Row>
+          </div>
+          <div style="display:flex; align-items:center;margin-top:10px;">
+            <span>商品定期任务：</span>
+            <Select style="margin-left:8px;width: 200px" v-model="goodMode">
+                  <Option :value="-1">商品基本数据</Option>
+                  <Option :value="-2">商品变价数据</Option>
+            </Select>
+              <span style="width:120px;margin-left:10px;">文件路径：</span>
+              <Input type="text" style="width:200px" v-model="goodFilePath" />
+            <Input  v-model="goodCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
+                <Button slot="append" @click="isGoodCronModalShow=true">选择时间</Button>
+            </Input>
+            <Button style="margin-left:10px;" type="primary" @click="onGoodCycle">开始</Button>
+          </div >
+          <div style="display:flex; align-items:center;margin-top:10px;">
+            <span>价签定期刷新：</span>
+            <Select v-model="shopId" style="width: 300px">
+              <Option v-for="(item) in shopData" :key="item.id" :value="item.id">{{item.name}}</Option>
+            </Select>
+            <Input  v-model="tagFlushCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
+                <Button slot="append" @click="isTagFlushCronModalShow=true">选择时间</Button>
+            </Input>
+            <Button style="margin-left:10px;" type="primary" @click="onTagFlushCycle">开始</Button>
+          </div >
+          <div style="display:flex; align-items:center;margin-top:10px;">
+            <span>价签定期巡检：</span>
+            <Select v-model="shopId" style="width: 300px">
+              <Option v-for="(item) in shopData" :key="item.id" :value="item.id">{{item.name}}</Option>
+            </Select>
+            <Input  v-model="tagScanCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
+                <Button slot="append" @click="isTagScanCronModalShow=true">选择时间</Button>
+            </Input>
+            <Button style="margin-left:10px;" type="primary" @click="onTagScanCycle">开始</Button>
+            <Button style="margin-left:10px;" type="primary" @click="onScanAll">对所有价签巡检</Button>
+          </div >
+        </Card>
+        <corn-selector :isModalShow="isCronModalShow" @onOk="onCron" @onIsShow="onIsShow"></corn-selector>
+        <corn-selector :isModalShow="isGoodCronModalShow" @onOk="onGoodCron" @onIsShow="onIsGoodShow"></corn-selector>
+        <corn-selector :isModalShow="isTagFlushCronModalShow" @onOk="onFlushTagCron" @onIsShow="onIsFlushTagShow"></corn-selector>
+        <corn-selector :isModalShow="isTagScanCronModalShow" @onOk="onScanTagCron" @onIsShow="onIsScanTagShow"></corn-selector>
+
     </div>
 </template>
 <script>
 import { getAllCycleJob, updateCycleJob, deleteCyclejobs } from '@/api/cycylejob'
+import { cronUpdate } from '@/api/good'
+import { scanAll } from '@/api/tag'
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
+import { getAllShop } from '@/api/shop'
 import store from '@/store'
 export default {
   components: {
@@ -108,12 +138,24 @@ export default {
       ],
       currentCycyleJobData: {},
       editModal: false,
-      isCronModalShow: false
-
+      isCronModalShow: false,
+      goodMode: -1,
+      goodFilePath: '',
+      goodCronExpr: '',
+      isGoodCronModalShow: false,
+      shopId: -1,
+      shopData: [],
+      tagFlushCronExpr: '',
+      isTagFlushCronModalShow: false,
+      tagScanCronExpr: '',
+      isTagScanCronModalShow: false
     }
   },
   created () {
     this.getCycyleJobTableData({ page: 0, count: this.countPerPage })
+    getAllShop({ page: 0, count: 100 }).then(res => {
+      this.shopData = res.data.data
+    })
   },
   mounted () {
     var that = this
@@ -135,6 +177,14 @@ export default {
     }
   },
   methods: {
+    onScanAll () {
+      scanAll()
+    },
+    onGoodCycle () {
+      cronUpdate(this.goodCronExpr, this.goodFilePath, this.goodMode).then(res => {
+        this.$Message.info('设置成功')
+      })
+    },
     getCycyleJobTableData ({ page, count, query, queryString }) {
       var that = this
       that.isTableLoading = true
@@ -185,8 +235,32 @@ export default {
     onCron (data) {
       this.currentCycyleJobData.cron = data
     },
+    onGoodCron (data) {
+      this.goodCronExpr = data
+    },
+    onFlushTagCron (data) {
+      this.tagFlushCronExpr = data
+    },
+    onScanTagCron (data) {
+      this.tagScanCronExpr = data
+    },
     onIsShow (val) {
       this.isCronModalShow = val
+    },
+    onIsGoodShow (val) {
+      this.isGoodCronModalShow = val
+    },
+    onIsFlushTagShow (val) {
+      this.isTagFlushCronModalShow = val
+    },
+    onIsScanTagShow (val) {
+      this.isTagScanCronModalShow = val
+    },
+    onTagFlushCycle () {
+
+    },
+    onTagScanCycle () {
+
     }
   }
 }

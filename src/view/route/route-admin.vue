@@ -392,7 +392,14 @@ export default {
       this.getRouteTableData({ queryId: key[0], queryString: value })
     },
     changeRoute () {
-      changeRoute(this.tagQuery, this.tagQueryString, this.routeQuery, this.routeQueryString)
+      var that = this
+      changeRoute(this.tagQuery, this.tagQueryString, this.routeQuery, this.routeQueryString).then(r => {
+        let temp = this.routeData.find(function (item) { return item.barCode === that.tagQueryString })
+        temp.state = 0
+        updateRouter(temp).then(res => {
+          this.$Message.info('交换完成')
+        })
+      })
     },
     onAllScan () {
       scanAll().then(res => {

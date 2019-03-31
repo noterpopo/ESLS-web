@@ -182,7 +182,7 @@
         </div>
         <div class="bottom" v-bind:style="{ marginTop:'10px'}">
           <div v-bind:style="{ width: windowWidth*0.99 + 'px',display:'flex',justifyContent: 'space-between',flexWrap:'wrap'}">
-            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.71 + 'px'}">
+            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.70 + 'px'}">
               <div slot="title">
                 <Row type="flex" justify="center" align="middle">
                     <Col span="22"><p>价签信息</p></Col>
@@ -191,7 +191,7 @@
               </div>
               <super_table :pageSize="countPerPageTag" @onClick="onTagTableClick" :current.sync="currentTagPage" :data="tagData" :columns="tagTableColumns" :isLoading="isTagTableLoading" :dataNum="tagDataNum"></super_table>
             </Card>
-            <Card :bordered="false" >
+            <Card :bordered="false" style="width:432px">
               <div slot="title">
                 <Row type="flex" justify="center" align="middle">
                     <Col span="10"><p>预览</p></Col>
@@ -202,7 +202,7 @@
                     </Col>
                 </Row>
               </div>
-              <e_label v-bind="item" ref="label_canvas" v-bind:style="{ width:'400px',height:'300px'}" ></e_label>
+              <e_label v-bind="item" ref="label_canvas" ></e_label>
             </Card>
           </div>
         </div>
@@ -261,15 +261,15 @@ export default {
           }
         },
         {
-          title: '商品名称',
-          key: 'name',
+          title: '商品条码',
+          key: 'barCode',
           filter: {
             type: 'Input'
           }
         },
         {
-          title: '商品条码',
-          key: 'barCode',
+          title: '商品名称',
+          key: 'name',
           filter: {
             type: 'Input'
           }
@@ -397,7 +397,7 @@ export default {
           }
         },
         {
-          title: '价签id',
+          title: '价签条码',
           key: 'barCode',
           width: '130',
           filter: {
@@ -487,7 +487,7 @@ export default {
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '在线' : '离线'
+            const text = row.isWorking === 1 ? '正常' : '超时'
 
             return h('Tag', {
               props: {

@@ -134,7 +134,7 @@ export default {
           }
         },
         {
-          title: '商品名称/条码',
+          title: '商品条码/名称',
           width: '200',
           render: (h, params) => {
             let result = null
@@ -149,7 +149,7 @@ export default {
                 result = res.data[0]
               }
             })
-            return h('p', result.name + '/' + result.barCode)
+            return h('p', result.barCode + '/' + result.name)
           }
         },
         {
@@ -264,7 +264,7 @@ export default {
           render: (h, params) => {
             const row = params.row
             const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '通讯正常' : '通讯超时'
+            const text = row.isWorking === 1 ? '正常' : '超时'
 
             return h('Tag', {
               props: {
