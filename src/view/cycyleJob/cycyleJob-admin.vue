@@ -58,7 +58,7 @@
     </div>
 </template>
 <script>
-import { getAllCycleJob, updateCycleJob, deleteCyclejobs } from '@/api/cycylejob'
+import { getAllCycleJob, updateCycleJob, deleteCyclejobs, scanShoptag, flushShoptag } from '@/api/cycylejob'
 import { cronUpdate } from '@/api/good'
 import { scanAll } from '@/api/tag'
 import super_table from '@/components/table/supertable.vue'
@@ -82,14 +82,6 @@ export default {
         {
           title: '描述',
           key: 'description',
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
-          title: '模式',
-          key: 'mode',
-          width: '80',
           filter: {
             type: 'Input'
           }
@@ -137,7 +129,6 @@ export default {
         }
       ],
       currentCycyleJobData: {},
-      editModal: false,
       isCronModalShow: false,
       goodMode: -1,
       goodFilePath: '',
@@ -225,7 +216,45 @@ export default {
         return
       }
       this.currentCycyleJobData = currentRow
-      this.editModal = true
+      if (currentRow.mode === -1 || currentRow.mode === -2) {
+        this.$Modal.confirm({
+          title: '设置定期任务',
+          render: (h, params) => {
+            var that = this
+            return h('span', [
+              h('p', '文件路径:'),
+              h('Input', {
+                props: {
+                  placeholder: '输入文件路径',
+                  value: currentRow.args
+                },
+                on: {
+                  'on-change': (event) => {
+                    currentRow.args = event.target.value
+                  }
+                }
+              }),
+              h('Input', {
+                attrs: {
+                  style: 'width: 360px'
+                },
+                props: {
+                  value: currentRow.cron
+                }
+              }, [
+                h('Button', {
+                  slot: 'append',
+                  on: {
+                    'click': () => {
+                      that.isGoodCronModalShow = true
+                    }
+                  }
+                }, '选择时间')
+              ])
+            ])
+          }
+        })
+      }
     },
     editOK () {
       updateCycleJob(this.currentCycyleJobData).then(res => {
@@ -257,10 +286,30 @@ export default {
       this.isTagScanCronModalShow = val
     },
     onTagFlushCycle () {
-
+      let data = {}
+      let params = {}
+      let items = []
+      this.$set(params, 'cron', this.tagFlushCronExpr)
+      this.$set(params, 'query', 'id')
+      this.$set(params, 'queryString', this.shopId)
+      items.push(params)
+      this.$set(data, 'items', items)
+      flushShoptag(data).then(res => {
+        this.$Message.info('刷新成功')
+      })
     },
     onTagScanCycle () {
-
+      let data = {}
+      let params = {}
+      let items = []
+      this.$set(params, 'cron', this.tagFlushCronExpr)
+      this.$set(params, 'query', 'id')
+      this.$set(params, 'queryString', this.shopId)
+      items.push(params)
+      this.$set(data, 'items', items)
+      scanShoptag(data).then(res => {
+        this.$Message.info('巡检成功')
+      })
     }
   }
 }

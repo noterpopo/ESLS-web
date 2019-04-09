@@ -27,3 +27,25 @@ export const deleteCyclejobs = (id) => {
     method: 'delete'
   })
 }
+
+export const scanShoptag = (data) => {
+  return axios.request({
+    url: 'shop/cyclejob',
+    method: 'put',
+    data: data,
+    params: {
+      mode: 1
+    }
+  })
+}
+
+export const flushShoptag = (data) => {
+  return axios.request({
+    url: 'shop/cyclejob',
+    method: 'put',
+    data: data,
+    params: {
+      mode: 0
+    }
+  })
+}
