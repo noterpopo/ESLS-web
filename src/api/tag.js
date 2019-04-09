@@ -147,3 +147,10 @@ export const updateTag = () => {
     method: 'put'
   })
 }
+
+export const getOvertimeTag = () => {
+  return axios.request({
+    url: 'tags/overtime',
+    method: 'get'
+  })
+}

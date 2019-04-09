@@ -212,6 +212,7 @@ export default {
       this.getCycyleJobTableData({ page: this.currentPage - 1, count: this.countPerPage })
     },
     onTableClick (currentRow) {
+      var that = this
       if (store.getters.access.indexOf(2) === -1) {
         return
       }
@@ -220,7 +221,6 @@ export default {
         this.$Modal.confirm({
           title: '设置定期任务',
           render: (h, params) => {
-            var that = this
             return h('span', [
               h('p', '文件路径:'),
               h('Input', {
@@ -230,7 +230,7 @@ export default {
                 },
                 on: {
                   'on-change': (event) => {
-                    currentRow.args = event.target.value
+                    that.currentCycyleJobData.args = event.target.value
                   }
                 }
               }),
@@ -239,24 +239,130 @@ export default {
                   style: 'width: 360px'
                 },
                 props: {
-                  value: currentRow.cron
+                  value: that.cronExpr
                 }
               }, [
                 h('Button', {
                   slot: 'append',
                   on: {
                     'click': () => {
-                      that.isGoodCronModalShow = true
+                      that.isCronModalShow = true
                     }
                   }
                 }, '选择时间')
               ])
             ])
+          },
+          onOk: () => {
+            that.editOK()
+          }
+        })
+      } else if (currentRow.mode === 0) {
+        this.currentCycyleJobData.cron = currentRow.args.split('、')[0]
+        this.shopId = currentRow.args.split('、')[2]
+        this.$Modal.confirm({
+          title: '设置定期任务',
+          render: (h, params) => {
+            return h('span', [
+              h('p', '商店:'),
+              h('Select', {
+                props: {
+                  value: that.shopId
+                },
+                on: {
+                  'on-change': (val) => {
+                    that.shopId = val
+                  }
+                }
+              },
+              this.shopData.map((item) => {
+                return h('Option', {
+                  props: {
+                    value: item.id,
+                    label: item.name
+                  }
+                })
+              })
+              ),
+              h('Input', {
+                attrs: {
+                  style: 'width: 360px'
+                },
+                props: {
+                  value: that.currentCycyleJobData.cron
+                }
+              }, [
+                h('Button', {
+                  slot: 'append',
+                  on: {
+                    'click': () => {
+                      that.isCronModalShow = true
+                    }
+                  }
+                }, '选择时间')
+              ])
+            ])
+          },
+          onOk: () => {
+            that.editOK()
+          }
+        })
+      } else if (currentRow.mode === 1) {
+        this.currentCycyleJobData.cron = currentRow.args.split('、')[0]
+        this.shopId = currentRow.args.split('、')[2]
+        this.$Modal.confirm({
+          title: '设置定期任务',
+          render: (h, params) => {
+            return h('span', [
+              h('p', '商店:'),
+              h('Select', {
+                props: {
+                  value: that.shopId
+                },
+                on: {
+                  'on-change': (val) => {
+                    that.shopId = val
+                  }
+                }
+              },
+              this.shopData.map((item) => {
+                return h('Option', {
+                  props: {
+                    value: item.id,
+                    label: item.name
+                  }
+                })
+              })
+              ),
+              h('Input', {
+                attrs: {
+                  style: 'width: 360px'
+                },
+                props: {
+                  value: that.currentCycyleJobData.cron
+                }
+              }, [
+                h('Button', {
+                  slot: 'append',
+                  on: {
+                    'click': () => {
+                      that.isCronModalShow = true
+                    }
+                  }
+                }, '选择时间')
+              ])
+            ])
+          },
+          onOk: () => {
+            that.editOK()
           }
         })
       }
     },
     editOK () {
+      if (this.currentCycyleJobData.mode === 0 || this.currentCycyleJobData.mode === 1) {
+        this.currentCycyleJobData.args = this.currentCycyleJobData.cron + '、id、' + this.shopId + '-'
+      }
       updateCycleJob(this.currentCycyleJobData).then(res => {
         this.getCycyleJobTableData({ page: this.currentPage - 1, count: this.countPerPage })
       })
@@ -296,6 +402,7 @@ export default {
       this.$set(data, 'items', items)
       flushShoptag(data).then(res => {
         this.$Message.info('刷新成功')
+        this.cycyleJobReload()
       })
     },
     onTagScanCycle () {
@@ -309,6 +416,7 @@ export default {
       this.$set(data, 'items', items)
       scanShoptag(data).then(res => {
         this.$Message.info('巡检成功')
+        this.cycyleJobReload()
       })
     }
   }
