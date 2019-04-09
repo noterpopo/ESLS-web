@@ -15,7 +15,7 @@
                   <p :style="{fontSize: '16px'}">样式宽度：{{styleWidth}}</p>
                   <p :style="{fontSize: '16px'}">样式高度：{{styleHeight}}</p>
                   <div :style="{display:'flex',flexWrap: 'wrap',marginTop:'4px'}">
-                    <Checkbox style="margin:2px;" v-for="(item) in currentDispmsData" :key="item.id" :value="item.status==1" @on-change="onCheckItem($event,item)">{{item.sourceColumn}}</Checkbox>
+                    <Checkbox style="margin:2px;" v-for="(item) in currentDispmsData" :key="item.id" :value="item.status==1" @on-change="onCheckItem($event,item)">{{translate[item.sourceColumn]}}</Checkbox>
                   </div>
                   <Button :style="{margin:'10px'}" type="primary" @click="addArea">添加自定义字段</Button>
                   <Button  type="primary" @click="reset">恢复默认值</Button>
@@ -532,6 +532,22 @@ export default {
         status: 1,
         imageUrl: '',
         backup: null
+      },
+      translate: {
+        promotePrice: '促销价',
+        name: '名称',
+        qrCode: '二维码',
+        0: '自定义字段',
+        price: '价格',
+        imageUrl: '',
+        barCode: '条形码',
+        unit: '单位',
+        spec: '规格',
+        category: '类别',
+        origin: '产地',
+        shelfNumber: '货号',
+        stock: '库存',
+        custom: '自定义字段'
       }
     }
   },

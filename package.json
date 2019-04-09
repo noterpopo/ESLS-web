@@ -18,6 +18,7 @@
     "cropperjs": "^1.2.2",
     "dayjs": "^1.7.7",
     "echarts": "^4.0.4",
+    "file-saver": "^2.0.1",
     "html2canvas": "^1.0.0-alpha.12",
     "iview": "^3.2.2",
     "iview-area": "^1.5.17",

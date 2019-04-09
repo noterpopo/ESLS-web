@@ -12,7 +12,6 @@
             <super_table :pageSize="countPerPageGood" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
             <Button v-if="hasFileAccess" type="primary" @click="isUploadShow=true">上传文件</Button>
             <Button type="primary" style="margin-left:10px;" @click="downloadGoodsData">下载文件</Button>
-            <Button v-if="hasUploadAccess" type="primary" style="margin-left:10px;" @click="isCronSetShow=true">设置定期更新</Button>
             <Modal v-model="isUploadShow" title="上传商品信息文件">
               <div>
                 <Select v-model="uploadMode">
@@ -32,21 +31,6 @@
                         <p>点击上传或者拖拽文件上传</p>
                     </div>
                 </Upload>
-              </div>
-            </Modal>
-            <Modal v-model="isCronSetShow" title="设置定期更新" @on-ok="setCronUpdate">
-              <div>
-                <Select v-model="cronMode">
-                  <Option :value="-1">商品基本数据</Option>
-                  <Option :value="-2">商品变价数据</Option>
-                </Select>
-                <div style="margin-top:10px">
-                  <p>文件路径：</p>
-                  <Input type="text" v-model="cronFilePath" />
-                </div>
-                <Input v-model="cronExpr" placeholder="输入cron表达式" style="margin-top:10px;width: 360px" >
-                  <Button slot="append" @click="isCronModalShow=true">选择时间</Button>
-                </Input>
               </div>
             </Modal>
             <Modal :width="1040" v-model="editModal" title="修改商品信息" :loading="editOkLoading" @on-ok="asyncEditOK">

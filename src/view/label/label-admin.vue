@@ -3,9 +3,14 @@
       <div class="left" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
         <Card :bordered="false" class="e-lable-table-card card">
             <div slot="title">
-                <Row type="flex" justify="center" align="middle">
-                    <Col span="22"><p>样式信息</p></Col>
+                <Row type="flex" justify="center" >
+                    <Col span="18"><p>样式信息</p></Col>
                     <Col span="2" v-if="hasEditAccess"><Button type="primary" @click="addStyle">新建样式</Button></Col>
+                    <Col span="2" v-if="hasEditAccess">
+                      <Upload style="margin-left:4px" :show-upload-list="false" action="" :before-upload="inputStyle">
+                        <Button icon="ios-cloud-upload-outline">上传样式</Button>
+                    </Upload>
+                  </Col>
                 </Row>
               </div>
             <super_table :pageSize="countPerPage" :current.sync="currentPage" :dataNum="dataNum" class="e-label-table" @onSearch="onTableSearch" @onClick="onTableClick" :data="styleData" :columns="tableColumns" :isLoading="isTableLoading" :pageNum="dataNum"></super_table>
@@ -60,7 +65,8 @@
 import e_label from '@/components/e-label/e-lable.vue'
 import super_table from '@/components/table/supertable.vue'
 import modal_style_designer from '@/components/modal/modal-style-designer.vue'
-import { getStyle, getAllStyle, deleteStyle } from '@/api/style'
+import { getStyle, getAllStyle, deleteStyle, updateStyle, newStyle } from '@/api/style'
+import FileSaver from 'file-saver'
 import store from '@/store'
 export default {
   components: {
@@ -166,6 +172,23 @@ export default {
               }, '修改'),
               h('Button', {
                 props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                style: {
+                  margin: '2px',
+                  display: isAccess ? 'none' : 'inline-block'
+                },
+                on: {
+                  'click': (event) => {
+                    event.stopPropagation()
+                    let temp = this.styleData.find(function (item) { return item.styleNumber === params.row.styleNumber })
+                    this.exportStyle(temp.id, temp.styleType)
+                  }
+                }
+              }, '导出'),
+              h('Button', {
+                props: {
                   type: 'error',
                   size: 'small'
                 },
@@ -211,6 +234,41 @@ export default {
     }
   },
   methods: {
+    inputStyle (data) {
+      let reader = new FileReader()
+      let str = ''
+      var that = this
+      reader.addEventListener('load', function (e) {
+        str = e.target.result
+        let styledes = data.name.split('.json')[0]
+        let styleDisp = JSON.parse(str)
+        let index = 1
+        for (let i = 0; i < styleDisp.length; ++i) {
+          if (styleDisp[i].status === 1) {
+            that.$set(styleDisp[i], 'regionId', index++)
+          } else {
+            that.$set(styleDisp[i], 'regionId', 0)
+          }
+          delete styleDisp[i].id
+        }
+        console.log(styleDisp)
+        newStyle(styledes).then(res => {
+          const newId = res.data.data.id
+          updateStyle(newId, styleDisp, 0, 0).then(res => {
+            that.$Message.info('导入样式成功')
+            that.reload()
+          })
+        })
+      })
+      reader.readAsText(data)
+      return false
+    },
+    exportStyle (id, name) {
+      getStyle(id).then(res => {
+        let str = JSON.stringify(res.data.data)
+        FileSaver.saveAs(new Blob([str], { type: 'text/plain;charset=utf-8' }), name + '.json')
+      })
+    },
     getLabelData (id, w, h) {
       var that = this
       that.isLabelLoading = true
