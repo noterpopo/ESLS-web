@@ -279,6 +279,45 @@ export default {
           key: 'promotionReason'
         },
         {
+          title: '是否促销',
+          width: '90',
+          key: 'isPromote',
+          render: (h, params) => {
+            var that = this
+            return h('i-switch', {
+              props: {
+                value: params.row.isPromote === 1
+              },
+              on: {
+                'on-change': (val, $event) => {
+                  event.stopPropagation()
+                  if (val) {
+                    params.row.isPromote = 1
+                  } else {
+                    params.row.isPromote = 0
+                  }
+                  updateGood(params.row).then(res => {
+                    getBindedTags({ queryId: 'barCode', queryString: params.row.barCode }).then(res => {
+                      that.tagData = res.data.data
+                      that.canShowData = data.map(function (item) {
+                        if (params.row.isPromote === 0) {
+                          if (item.styleId % 2 !== 0) {
+                            item.styleId++
+                          }
+                        } else {
+                          if (item.styleId % 2 === 0) {
+                            item.styleId--
+                          }
+                        }
+                      })
+                    })
+                  })
+                }
+              }
+            })
+          }
+        },
+        {
           title: '货号',
           width: '100',
           key: 'shelfNumber',
@@ -786,13 +825,16 @@ export default {
         that.tagDataNum = res.data.code
         const data = res.data.data
         that.tagData = data
-        that.canShowData = data.filter(function (item) { return item.styleId !== 0 })
+        that.canShowData = data.filter(function (item) {
+          return item.styleId !== 0 && item.styleId !== 1
+        })
         that.isTagTableLoading = false
         if (that.canShowData.length === 0) {
           that.showId = 0
           this.$refs.label_canvas.initData(null, 0, 0)
         } else {
           that.showId = that.canShowData[0].id
+
           that.getLabelData(that.showId)
         }
       })

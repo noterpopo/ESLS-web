@@ -161,7 +161,7 @@
 // TODO 翻页选择缓存
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
-import { getAllTag, flushTag, lightTag, removeTag, scanTag, statusTag, scanAll, updateTag } from '@/api/tag'
+import { getAllTag, flushTag, lightTag, removeTag, scanTag, statusTag, scanAll } from '@/api/tag'
 import { getAllRoute } from '@/api/route'
 import store from '@/store'
 export default {
@@ -413,8 +413,7 @@ export default {
   },
   methods: {
     updateTag () {
-      updateTag().then(res => {
-      })
+
     },
     getTagTableData ({ page, count, queryId, queryString }) {
       var that = this

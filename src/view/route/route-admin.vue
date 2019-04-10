@@ -194,9 +194,6 @@ export default {
                 slot: 'close'
               }, '禁用')
             ])
-          },
-          filter: {
-            type: 'Input'
           }
         },
         {

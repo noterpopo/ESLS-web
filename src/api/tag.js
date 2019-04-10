@@ -141,10 +141,32 @@ export const getUsableStyle = (query, queryString) => {
   })
 }
 
-export const updateTag = () => {
+export const updateTag = (data) => {
   return axios.request({
-    url: 'tags/test',
-    method: 'put'
+    url: 'tag',
+    method: 'post',
+    data: data
+  })
+}
+
+export const gjTag = (data) => {
+  return axios.request({
+    url: 'tag/update',
+    method: 'post',
+    data: data,
+    params: {
+      mode: 0
+    }
+  })
+}
+
+export const gjTags = () => {
+  return axios.request({
+    url: 'tag/update',
+    method: 'post',
+    params: {
+      mode: 1
+    }
   })
 }
 

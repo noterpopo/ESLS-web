@@ -321,6 +321,11 @@ export default {
     },
     onTableSearch (search) {
       var key = Object.keys(search)
+      if (key.length === 0) {
+        this.getStyleTableData({ page: 0, count: this.countPerPage })
+        this.currentTagPage = 1
+        return
+      }
       var value = search[key]
       this.getStyleTableData({ queryId: key[0], queryString: value })
     },

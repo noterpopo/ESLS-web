@@ -9,7 +9,7 @@
           </div>
           <Table border :loading='isTableLoading' :columns="tableColumns" :data="tagDataPage">
           </Table>
-          <div style="float: right;">
+          <div style="float: right;margin:6px;">
               <Page :total="tagData.length" :page-size="countPerPage" :current="pageNum+1" @on-change="changePage"></Page>
           </div>
 
@@ -61,7 +61,7 @@
     </div>
 </template>
 <script>
-import { getAllTag, getOvertimeTag } from '@/api/tag'
+import { getAllTag, getOvertimeTag, gjTag, gjTags } from '@/api/tag'
 import tagExpand from '@/components/table/tag-expand.vue'
 import store from '@/store'
 import { setInterval, clearInterval } from 'timers'
@@ -275,7 +275,7 @@ export default {
                 'click': (event) => {
                   event.stopPropagation()
                   let temp = this.currentTimeTagData.find(function (item) { return item.barCode === params.row.barCode })
-                  this.$Message.info(temp.barCode)
+                  this.submitTag(temp)
                 }
               }
             }, '变价')
@@ -347,14 +347,37 @@ export default {
         that.isTableLoading = false
       })
     },
+    submitTag (item) {
+      let data = {}
+      let tparams = {}
+      let items = []
+      this.$set(tparams, 'query', 'id')
+      this.$set(tparams, 'queryString', item.id)
+      items.push(tparams)
+      this.$set(data, 'items', items)
+      gjTag(data).then(res => {
+        this.getTagTableData(this.pageNum, this.countPerPage, 3)
+      })
+    },
     submitUpdate () {
       // TODO 批量改价
+      let temp = this.currentTimeTagData.filter((item) => {
+        return item.waitUpdate === 0
+      })
+      let submitNum = temp.length
+
+      gjTags()
+
       let count = 0
       this.intervalid = setInterval(() => {
         this.getTagTableData(this.pageNum, this.countPerPage, 3)
+        temp = this.currentTimeTagData.filter((item) => {
+          return item.waitUpdate === 0
+        })
+        let cNum = temp.length
+        this.successRate = (submitNum - cNum) / submitNum * 100
         count = count + 1
-        console.log(count)
-        if (count > 5) {
+        if (count >= 7) {
           clearInterval(this.intervalid)
         }
       }, 1000
