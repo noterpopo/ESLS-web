@@ -1,7 +1,7 @@
 <template>
     <div>
         <Table v-if="hasSearchAccess" size="small" border :data="filters" :columns="tableColumnsFilters" stripe></Table>
-        <Table size="small" highlight-row @on-row-click="handleClick" @on-row-dblclick="handleDoubleClick" @on-selection-change="handleSelection" :show-header="!hasSearchAccess" border :data="data" :columns="columns" :loading="isLoading" stripe></Table>
+        <Table ref="st" size="small" highlight-row @on-row-click="handleClick" @on-row-dblclick="handleDoubleClick" @on-selection-change="handleSelection" :show-header="!hasSearchAccess" border :data="data" :columns="columns" :loading="isLoading" stripe></Table>
         <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
             <Page :total="dataNum" :page-size="pageSize" :current="current" @on-change="changePage"></Page>
@@ -95,6 +95,10 @@ export default {
     }
   },
   methods: {
+    clearHighlight () {
+      console.log('clear')
+      this.$refs.st.clearCurrentRow()
+    },
     createOptionsRender (index, h) {
       let optionRender = []
       if (this.columns[index].filter.option) {

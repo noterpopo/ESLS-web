@@ -197,7 +197,7 @@
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import { getAllGood, updateGood, deleteGood, getBindedTags, getGood, cronUpdate } from '@/api/good'
-import { getAllTag, getTag, lightTag, flushTag, removeTag, scanTag, statusTag } from '@/api/tag'
+import { getAllTag, getTag, lightTag, flushTag, removeTag, scanTag, statusTag, updateTag } from '@/api/tag'
 import e_label from '@/components/e-label/e-lable.vue'
 import { getStyle } from '@/api/style'
 import store from '@/store'
@@ -299,7 +299,10 @@ export default {
                   updateGood(params.row).then(res => {
                     getBindedTags({ queryId: 'barCode', queryString: params.row.barCode }).then(res => {
                       that.tagData = res.data.data
-                      that.canShowData = data.map(function (item) {
+                      that.canShowData = that.tagData.filter(function (item) {
+                        if (item.styleId === 0) {
+                          return false
+                        }
                         if (params.row.isPromote === 0) {
                           if (item.styleId % 2 !== 0) {
                             item.styleId++
@@ -309,6 +312,21 @@ export default {
                             item.styleId--
                           }
                         }
+                        return true
+                      })
+                      that.canShowData.map((item, index) => {
+                        updateTag(item).then(res => {
+                          console.log(index)
+                          if (index >= that.canShowData.length - 1) {
+                            if (that.canShowData.length === 0) {
+                              that.showId = 0
+                              this.$refs.label_canvas.initData(null, 0, 0)
+                            } else {
+                              that.showId = that.canShowData[0].id
+                              that.getLabelData(that.showId)
+                            }
+                          }
+                        })
                       })
                     })
                   })

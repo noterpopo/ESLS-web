@@ -10,7 +10,7 @@
                 </div>
             <super_table @onClick="onTagTableClick" :pageSize="countPerPage" :current.sync="currentTagPage" @onDoubleClick="onTableClick" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="tagDataCount"></super_table>
             <Modal @on-cancle='onBindGoodCancel' v-model="isBindGoodModalShow" title="绑定商品" width="1400" @on-ok="onBindGood">
-              <super_table  key="3" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageSize="8" :current.sync="currentGoodPage" :dataNum="modalGoodDataCount"></super_table>
+              <super_table  key="3" ref="goodST" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageSize="8" :current.sync="currentGoodPage" :dataNum="modalGoodDataCount"></super_table>
             </Modal>
             <Modal v-model="isActionModalShow" title="操作">
               <p>hhh</p>
@@ -871,10 +871,13 @@ export default {
     },
     onBindStyle (tid, sid) {
       var that = this
-      bindStyle(tid, sid).then(that.$Modal.success({
-        title: '消息',
-        content: '成功绑定样式'
-      }))
+      bindStyle(tid, sid).then(res => {
+        that.tagReload()
+        that.$Modal.success({
+          title: '消息',
+          content: '成功绑定样式'
+        })
+      })
     },
     onBindGoodCancel () {
       this.currentGoodPage = 1
@@ -893,6 +896,13 @@ export default {
       } else {
         mode = '2'
       }
+      if (that.bindGoodSelectId === 0) {
+        that.$Modal.error({
+          title: '错误',
+          content: '请选择商品'
+        })
+        return
+      }
       bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId, mode).then(res => {
         that.tagReload()
         that.$Modal.success({
@@ -905,6 +915,7 @@ export default {
           const data = res.data.data
           that.goodRightData = data
           that.isRightGoodTableLoading = false
+          that.$refs.goodST.clearHighlight()
           that.bindGoodSelectId = 0
         })
       })

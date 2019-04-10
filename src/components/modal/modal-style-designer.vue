@@ -8,7 +8,7 @@
                   <div slot="title">
                     <Row type="flex" justify="center" align="middle">
                         <Col span="6"><p>样式信息</p></Col>
-                        <Col span="18"><p>当前选择区域：{{currentClickSourceColumn}}</p></Col>
+                        <Col span="18"><p>当前选择区域：{{translate[currentClickSourceColumn]}}</p></Col>
                     </Row>
                 </div>
                   <p :style="{fontSize: '16px'}">样式id：{{styleid}}</p>
