@@ -871,6 +871,18 @@ export default {
     },
     onBindStyle (tid, sid) {
       var that = this
+      // let temp = this.tagData.find(function (item) { return item.id === tid })
+      // if (temp.goodId !== 0) {
+      //   getGood(temp.goodId).then(res => {
+      //     let goodTemp = res.data.data
+      //     if (sid % 2 === 0) {
+      //       goodTemp.isPromote = 0
+      //     } else {
+      //       goodTemp.isPromote = 1
+      //     }
+      //     updateGood(goodTemp)
+      //   })
+      // }
       bindStyle(tid, sid).then(res => {
         that.tagReload()
         that.$Modal.success({

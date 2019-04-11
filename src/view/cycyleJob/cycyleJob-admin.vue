@@ -239,7 +239,7 @@ export default {
                   style: 'width: 360px'
                 },
                 props: {
-                  value: that.cronExpr
+                  value: that.currentCycyleJobData.cron
                 }
               }, [
                 h('Button', {

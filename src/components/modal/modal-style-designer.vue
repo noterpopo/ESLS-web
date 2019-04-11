@@ -706,8 +706,18 @@ export default {
         newStyle(styledes).then(res => {
           const newId = res.data.data.id
           updateStyle(newId, that.currentDispmsData, 0, 0).then(res => {
-            that.$emit('reloadTable')
-            this.$Message.info('新建样式成功')
+            if (styledes.indexOf('非促销') !== -1) {
+              styledes = styledes.replace('非促销', '促销')
+            } else {
+              styledes = styledes + '-促销'
+            }
+            newStyle(styledes).then(res => {
+              const newId = res.data.data.id
+              updateStyle(newId, that.currentDispmsData, 0, 0).then(res => {
+                that.$emit('reloadTable')
+                that.$Message.info('新建样式成功')
+              })
+            })
           })
         })
       }
@@ -747,10 +757,20 @@ export default {
           var that = this
           let styledes = this.styleType + '-' + this.newStyleName
           newStyle(styledes).then(res => {
-            const newId = res.data.data.id
-            updateStyle(newId, that.currentDispmsData, 0, 0).then(res => {
-              that.$emit('reloadTable')
-              this.$Message('另存为样式成功')
+            const newIdfcx = res.data.data.id
+            updateStyle(newIdfcx, that.currentDispmsData, 0, 0).then(res => {
+              if (styledes.indexOf('非促销') !== -1) {
+                styledes = styledes.replace('非促销', '促销')
+              } else {
+                styledes = styledes + '-促销'
+              }
+              newStyle(styledes).then(res => {
+                const newIdcx = res.data.data.id
+                updateStyle(newIdcx, that.currentDispmsData, 0, 0).then(res => {
+                  that.$emit('reloadTable')
+                  that.$Message.info('另存为样式成功')
+                })
+              })
             })
           })
         }

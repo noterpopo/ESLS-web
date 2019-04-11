@@ -197,7 +197,7 @@
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import { getAllGood, updateGood, deleteGood, getBindedTags, getGood, cronUpdate } from '@/api/good'
-import { getAllTag, getTag, lightTag, flushTag, removeTag, scanTag, statusTag, updateTag } from '@/api/tag'
+import { getAllTag, getTag, lightTag, flushTag, removeTag, scanTag, statusTag, bindStyle } from '@/api/tag'
 import e_label from '@/components/e-label/e-lable.vue'
 import { getStyle } from '@/api/style'
 import store from '@/store'
@@ -315,7 +315,7 @@ export default {
                         return true
                       })
                       that.canShowData.map((item, index) => {
-                        updateTag(item).then(res => {
+                        bindStyle(item.id, item.styleId).then(res => {
                           console.log(index)
                           if (index >= that.canShowData.length - 1) {
                             if (that.canShowData.length === 0) {
