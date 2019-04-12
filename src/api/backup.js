@@ -5,7 +5,7 @@ export const getAllTable = () => {
     url: 'common/database',
     method: 'get',
     params: {
-      mode: 0
+      mode: 1
     }
   })
 }

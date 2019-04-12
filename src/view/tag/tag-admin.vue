@@ -435,15 +435,31 @@ export default {
         {
           title: '价格',
           key: 'price',
-          filter: {
-            type: 'Input'
+          render: (h, params) => {
+            let t = params.row.price.toString()
+            if (t.indexOf('.') === -1) {
+              t = t + '.00'
+            } else {
+              if (t.split('.')[1].length < 2) {
+                t = t + '0'
+              }
+            }
+            return h('span', {}, t)
           }
         },
         {
           title: '促销价',
           key: 'promotePrice',
-          filter: {
-            type: 'Input'
+          render: (h, params) => {
+            let t = params.row.promotePrice.toString()
+            if (t.indexOf('.') === -1) {
+              t = t + '.00'
+            } else {
+              if (t.split('.')[1].length < 2) {
+                t = t + '0'
+              }
+            }
+            return h('span', {}, t)
           }
         },
         {
