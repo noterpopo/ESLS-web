@@ -119,11 +119,14 @@ export default {
       for (let i = 0; i < data.length; ++i) {
         if (data[i].isWorking === 0) {
           noWorkingTagCount = noWorkingTagCount + 1
-        } else if (data[i].goodId === 0) {
+        }
+        if (data[i].goodId === 0) {
           noBIndTagCount = noBIndTagCount + 1
-        } else if (data[i].forbidState === 0) {
+        }
+        if (data[i].forbidState === 0) {
           disableTagCount = disableTagCount + 1
-        } else {
+        }
+        if (data[i].isWorking !== 0 && data[i].goodId !== 0 && data[i].forbidState !== 0) {
           goodTagCount = goodTagCount + 1
         }
       }
@@ -156,9 +159,11 @@ export default {
       for (let i = 0; i < data.length; ++i) {
         if (data[i].isWorking === 0) {
           noWorkingRouterCount++
-        } else if (data[i].state === 0) {
+        }
+        if (data[i].state === 0) {
           disableRouterCount++
-        } else {
+        }
+        if (data[i].state !== 0 && data[i].isWorking !== 0) {
           goodRouterCount++
         }
       }

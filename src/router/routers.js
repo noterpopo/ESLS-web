@@ -94,7 +94,18 @@ export default [
           title: '商品管理'
         },
         component: () => import('@/view/good/good-admin.vue')
-      },
+      }
+    ]
+  },
+  {
+    path: '/bj',
+    name: 'bj',
+    meta: {
+      icon: 'ios-albums',
+      title: '变价'
+    },
+    component: Main,
+    children: [
       {
         path: 'good-watch',
         name: 'good-watch',
@@ -123,15 +134,6 @@ export default [
           title: '价签管理'
         },
         component: () => import('@/view/tag/tag-admin.vue')
-      },
-      {
-        path: 'tag_watch',
-        name: 'tag_watch',
-        meta: {
-          icon: 'ios-albums',
-          title: '价签监控'
-        },
-        component: () => import('@/view/tag/tag-watch.vue')
       }
     ]
   },
