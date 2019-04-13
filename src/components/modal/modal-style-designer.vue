@@ -152,6 +152,9 @@
                           <span :style="{fontSize:'16px', marginRight: '4px'}">后缀:</span>
                           <Input size="small" type="text" :style="{width:'76px',marginRight: '4px'}" v-model="item.endText"/>
                         </div>
+                        <div v-if="item.sourceColumn=='custom'||item.sourceColumn=='0'">
+                          <Button @click="onDeleteCustom(index)">删除</Button>
+                        </div>
                       </div>
                     </div>
                 </Poptip>
@@ -583,6 +586,9 @@ export default {
     }
   },
   methods: {
+    onDeleteCustom (index) {
+      this.currentDispmsData.splice(index, 1)
+    },
     addArea () {
       let newtemp = Object.assign({}, this.newArea)
       this.currentDispmsData.push(newtemp)

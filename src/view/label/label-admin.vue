@@ -373,7 +373,9 @@ export default {
         onOk: function () {
           deleteStyle(id)
             .then(() => {
-              that.getStyleTableData({ page: that.currentPage - 1, count: that.countPerPage })
+              deleteStyle(id + 1).then(() => {
+                that.getStyleTableData({ page: that.currentPage - 1, count: that.countPerPage })
+              })
             })
         }
       })
