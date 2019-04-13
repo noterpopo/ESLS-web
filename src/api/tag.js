@@ -94,6 +94,19 @@ export const bindStyle = (tid, sid) => {
     }
   })
 }
+
+export const bindStyleWithoutUpdate = (tid, sid) => {
+  return axios.request({
+    url: 'tag/style',
+    method: 'put',
+    params: {
+      tagId: tid,
+      styleId: sid,
+      mode: 0
+    }
+  })
+}
+
 export const bindGood = (q1, qs1, q2, qs2, mode) => {
   return axios.request({
     url: 'tag/bind',

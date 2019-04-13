@@ -222,9 +222,14 @@ export default {
               },
               type: 'post',
               success: (res) => {
-                styleFiltters = res.data
+                styleFiltters = res.data.filter((item) => {
+                  return item.id % 2 === 0
+                })
               }
             })
+            if (params.row.styleId % 2 !== 0) {
+              params.row.styleId--
+            }
             return h('Select', {
               props: {
                 value: params.row.styleId,

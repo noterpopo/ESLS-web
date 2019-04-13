@@ -105,7 +105,7 @@ export default {
       isModal: false,
       dataNum: 0,
       currentPage: 1,
-      countPerPage: 10,
+      countPerPage: 20,
       styleData: [],
       tableColumns: [
         {
@@ -145,8 +145,32 @@ export default {
           }
         },
         {
+          title: '促销',
+          width: '80',
+          render: (h, params) => {
+            let temp = this.styleData.find(function (item) { return item.styleNumber === params.row.styleNumber })
+            return h('i-switch', {
+              props: {
+                value: params.row.isPromote === 1
+              },
+              on: {
+                'on-change': (val, $event) => {
+                  event.stopPropagation()
+                  if (val) {
+                    temp.isPromote = 1
+                  } else {
+                    temp.isPromote = 0
+                  }
+                  this.onTableClick(temp)
+                }
+              }
+            })
+          }
+        },
+        {
           title: '操作',
           key: 'action',
+          width: '200',
           align: 'center',
           render: (h, params) => {
             let isAccess = store.getters.access.indexOf(2) === -1
@@ -166,7 +190,11 @@ export default {
                   'click': (event) => {
                     event.stopPropagation()
                     let temp = this.styleData.find(function (item) { return item.styleNumber === params.row.styleNumber })
-                    this.editStyle(temp.id, temp.styleType, temp.width, temp.height)
+                    if (params.row.isPromote === 0) {
+                      this.editStyle(temp.id, temp.styleType, temp.width, temp.height)
+                    } else {
+                      this.editStyle(temp.id + 1, temp.styleType, temp.width, temp.height)
+                    }
                   }
                 }
               }, '修改'),
@@ -251,7 +279,6 @@ export default {
           }
           delete styleDisp[i].id
         }
-        console.log(styleDisp)
         newStyle(styledes).then(res => {
           const newId = res.data.data.id
           updateStyle(newId, styleDisp, 0, 0).then(res => {
@@ -310,7 +337,9 @@ export default {
       var that = this
       that.isTableLoading = true
       getAllStyle(page, count).then(res => {
-        const data = res.data.data
+        const data = res.data.data.filter((item) => {
+          return item.id % 2 === 0
+        })
         that.dataNum = res.data.code
         that.styleData = data
         that.isTableLoading = false
@@ -330,7 +359,11 @@ export default {
       this.getStyleTableData({ queryId: key[0], queryString: value })
     },
     onTableClick (currentRow) {
-      this.getLabelData(currentRow.id, currentRow.width, currentRow.height)
+      if (currentRow.isPromote === 0) {
+        this.getLabelData(currentRow.id, currentRow.width, currentRow.height)
+      } else {
+        this.getLabelData(currentRow.id + 1, currentRow.width, currentRow.height)
+      }
     },
     remove (id) {
       var that = this
@@ -346,6 +379,7 @@ export default {
       })
     },
     editStyle (styleid, styletype, w, h) {
+      console.log(styleid)
       this.currentStyleID = styleid
       this.isModal = true
       this.$refs.designer.getStyleData(styleid, styletype, w, h)

@@ -45,6 +45,14 @@ export const deleteStyle = (id) => {
   })
 }
 
+export const changeStyle = (data) => {
+  return axios.request({
+    url: '/style',
+    method: 'post',
+    data: data
+  })
+}
+
 export const newStyle = (styleType) => {
   return axios.request({
     url: '/style',

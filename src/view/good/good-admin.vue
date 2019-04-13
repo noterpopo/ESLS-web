@@ -197,7 +197,7 @@
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import { getAllGood, updateGood, deleteGood, getBindedTags, getGood, cronUpdate } from '@/api/good'
-import { getAllTag, getTag, lightTag, flushTag, removeTag, scanTag, statusTag, bindStyle } from '@/api/tag'
+import { getAllTag, getTag, lightTag, flushTag, removeTag, scanTag, statusTag, bindStyleWithoutUpdate } from '@/api/tag'
 import e_label from '@/components/e-label/e-lable.vue'
 import { getStyle } from '@/api/style'
 import store from '@/store'
@@ -321,18 +321,17 @@ export default {
                         }
                         if (params.row.isPromote === 0) {
                           if (item.styleId % 2 !== 0) {
-                            item.styleId++
+                            item.styleId--
                           }
                         } else {
                           if (item.styleId % 2 === 0) {
-                            item.styleId--
+                            item.styleId++
                           }
                         }
                         return true
                       })
                       that.canShowData.map((item, index) => {
-                        bindStyle(item.id, item.styleId).then(res => {
-                          console.log(index)
+                        bindStyleWithoutUpdate(item.id, item.styleId).then(res => {
                           if (index >= that.canShowData.length - 1) {
                             if (that.canShowData.length === 0) {
                               that.showId = 0
