@@ -157,9 +157,6 @@ export default {
                 color: color
               }
             }, text)
-          },
-          filter: {
-            type: 'Input'
           }
         },
         {

@@ -150,9 +150,6 @@ export default {
               currentRoute.push(params.row.routers[i].barCode)
             }
             return h('div', currentRoute.join(','))
-          },
-          filter: {
-            type: 'Input'
           }
         },
         {

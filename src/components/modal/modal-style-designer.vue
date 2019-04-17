@@ -11,11 +11,13 @@
                         <Col span="18"><p>当前选择区域：{{translate[currentClickSourceColumn]}}</p></Col>
                     </Row>
                 </div>
-                  <p :style="{fontSize: '16px'}">样式id：{{styleid}}</p>
+                  <p :style="{fontSize: '16px'}">样式：{{styleType}}</p>
                   <p :style="{fontSize: '16px'}">样式宽度：{{styleWidth}}</p>
                   <p :style="{fontSize: '16px'}">样式高度：{{styleHeight}}</p>
-                  <div :style="{display:'flex',flexWrap: 'wrap',marginTop:'4px'}">
-                    <Checkbox style="margin:2px;" v-for="(item) in currentDispmsData" :key="item.id" :value="item.status==1" @on-change="onCheckItem($event,item)">{{translate[item.sourceColumn]}}</Checkbox>
+                  <div :style="{marginTop:'4px'}">
+                    <div v-for="(item) in currentDispmsData" :key="item.id">
+                      <Checkbox style="margin:2px;" :value="item.status==1" @on-change="onCheckItem($event,item)">{{translate[item.sourceColumn]}}</Checkbox>
+                    </div>
                   </div>
                   <Button :style="{margin:'10px'}" type="primary" @click="addArea">添加自定义字段</Button>
                   <Button  type="primary" @click="reset">恢复默认值</Button>
@@ -852,7 +854,7 @@ Input{
 }
 .float-edit-text{
   width: 280px;
-  height: 160px;
+  height: 190px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;

@@ -395,7 +395,7 @@ export default {
         render: (h, params) => {
           var that = this
           return h('span', [
-            h('p', '样式信息:'),
+            h('p', '样式大小:'),
             h('Select', {
               props: {
                 value: this.newStyleSize
@@ -431,10 +431,12 @@ export default {
                 }
               })
             ]),
-            h('Input', {
+            h('p', {
               attrs: {
                 style: 'margin-top:10px'
-              },
+              }
+            }, '样式名字:'),
+            h('Input', {
               props: {
                 placeholder: '输入名字',
                 value: this.newStyleName
@@ -445,12 +447,14 @@ export default {
                 }
               }
             }),
+            h('p', {
+              attrs: {
+                style: 'margin-top:10px'
+              }
+            }, '样式类型:'),
             h('Select', {
               props: {
                 value: this.newStyleType
-              },
-              attrs: {
-                style: 'margin-top:10px'
               },
               on: {
                 'on-change': function (val) {

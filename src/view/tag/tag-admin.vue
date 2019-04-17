@@ -149,7 +149,7 @@ export default {
                 result = res.data[0]
               }
             })
-            return h('p', result.barCode + '/' + result.name)
+            return h('p', result.barCode + '_' + result.name)
           }
         },
         {
@@ -165,7 +165,7 @@ export default {
               },
               type: 'get',
               success: (res) => {
-                result = res.data[0].barCode + '/' + res.data[0].channelId
+                result = res.data[0].barCode + '_' + res.data[0].channelId
               }
             })
             return h('p', result)
@@ -174,10 +174,7 @@ export default {
         {
           title: '电量',
           key: 'power',
-          width: '70',
-          filter: {
-            type: 'Input'
-          }
+          width: '70'
         },
 
         {

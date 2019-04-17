@@ -60,18 +60,6 @@ export default {
           }
         },
         {
-          title: '性别',
-          key: 'sex',
-          render: (h, params) => {
-            const text = params.row.sex === 0 ? '男' : '女'
-            return h('p', {
-            }, text)
-          },
-          filter: {
-            type: 'Input'
-          }
-        },
-        {
           title: '电话',
           key: 'telephone',
           filter: {
@@ -122,9 +110,6 @@ export default {
               })
             })
             )
-          },
-          filter: {
-            type: 'Input'
           }
         },
         {
@@ -166,9 +151,6 @@ export default {
                 slot: 'close'
               }, '禁用')
             ])
-          },
-          filter: {
-            type: 'Input'
           }
         },
         {

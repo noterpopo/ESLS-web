@@ -368,10 +368,7 @@ export default {
         {
           title: '导入时间',
           key: 'importTime',
-          width: '140',
-          filter: {
-            type: 'Input'
-          }
+          width: '140'
         },
         {
           title: '绑定状态',
