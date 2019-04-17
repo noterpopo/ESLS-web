@@ -418,7 +418,6 @@ export default {
         flag = false
       })
       this.intervalid = setInterval(() => {
-        this.isTableLoading = true
         getAllTag({}).then(res => {
           this.currentTimeTagData = res.data.data
           this.tagData = this.currentTimeTagData.filter((item) => {
@@ -430,7 +429,6 @@ export default {
             return false
           })
           this.changePage(1)
-          this.isTableLoading = false
         })
         let currentTemp = this.tagData.filter((item) => {
           return item.waitUpdate === 0
