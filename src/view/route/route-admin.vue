@@ -212,7 +212,8 @@ export default {
             return h('div', [
               h('Dropdown', {
                 props: {
-                  trigger: 'click'
+                  trigger: 'click',
+                  transfer: true
                 }
               }, [
                 h('Button', {
