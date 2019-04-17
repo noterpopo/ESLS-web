@@ -330,7 +330,7 @@ export default {
           }
         }
         that.isLabelLoading = false
-        that.$refs.label_canvas.initData(dispData, w, h)
+        that.$refs.label_canvas.initData(dispData, w, h, null)
       })
     },
     getStyleTableData (page, count) {

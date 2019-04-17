@@ -550,7 +550,8 @@ export default {
         origin: '产地',
         shelfNumber: '货号',
         stock: '库存',
-        custom: '自定义字段'
+        custom: '自定义字段',
+        provider: '供应商'
       }
     }
   },

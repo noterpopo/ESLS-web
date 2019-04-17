@@ -18,7 +18,8 @@
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px',marginTop:'10px'}">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
-                <Col span="24"><p>变价监控信息</p></Col>
+                <Col span="22"><p>变价监控信息</p></Col>
+                <Col span="2"><Button type="primary" @click="exportCsv">导出csv</Button></Col>
             </Row>
           </div>
           <div>
@@ -65,6 +66,27 @@ import { getAllTag, getOvertimeTag, gjTag, gjTags } from '@/api/tag'
 import tagExpand from '@/components/table/tag-expand.vue'
 import store from '@/store'
 import { setInterval, clearInterval } from 'timers'
+const { Parser } = require('json2csv')
+const fields = ['id',
+  'power',
+  'tagRssi',
+  'apRssi',
+  'state',
+  'hardwareVersion',
+  'softwareVersion',
+  'forbidState',
+  'waitUpdate',
+  'execTime',
+  'completeTime',
+  'barCode',
+  'tagAddress',
+  'screenType',
+  'resolutionWidth',
+  'resolutionHeight',
+  'isWorking',
+  'goodId',
+  'styleId',
+  'routerId']
 export default {
   components: {
     tagExpand
@@ -313,10 +335,35 @@ export default {
     }
   },
   methods: {
+    exportCsv () {
+      const json2csvParser = new Parser({ fields })
+      let csv = json2csvParser.parse(this.overTimeTags)
+      let date = new Date()
+      let timestamp = date.toLocaleString()
+      let fileName = timestamp + '.csv'
+      console.log(csv)
+      var alink = document.createElement('a')
+      alink.id = 'linkDwnldLink'
+      alink.href = this.getDownloadUrl(csv)
+      document.body.appendChild(alink)
+      var linkDom = document.getElementById('linkDwnldLink')
+      linkDom.setAttribute('download', fileName)
+      linkDom.click()
+      document.body.removeChild(linkDom)
+    },
+    getDownloadUrl (csv) {
+      var _utf = '\uFEFF' // 为了使Excel以utf-8的编码模式，同时也是解决中文乱码的问题
+      if (window.Blob && window.URL && window.URL.createObjectURL) {
+        var csvData = new Blob([_utf + csv], {
+          type: 'text/csv'
+        })
+        return URL.createObjectURL(csvData)
+      }
+    },
     getTagTableData (page, count, mode) {
       var that = this
       that.isTableLoading = true
-      getAllTag({ page: page, count: 100 }).then(res => {
+      getAllTag({}).then(res => {
         const data = res.data.data
         that.currentTimeTagData = data
         if (mode === 0) {
@@ -366,22 +413,34 @@ export default {
       })
       let submitNum = temp.length
 
-      gjTags()
-
-      let count = 0
+      let flag = true
+      gjTags().then(() => {
+        flag = false
+      })
       this.intervalid = setInterval(() => {
-        this.getTagTableData(this.pageNum, this.countPerPage, 3)
-        temp = this.currentTimeTagData.filter((item) => {
+        this.isTableLoading = true
+        getAllTag({}).then(res => {
+          this.currentTimeTagData = res.data.data
+          this.tagData = this.currentTimeTagData.filter((item) => {
+            for (let i = 0; i < temp.length; ++i) {
+              if (temp[i].id === item.id) {
+                return true
+              }
+            }
+            return false
+          })
+          this.changePage(1)
+          this.isTableLoading = false
+        })
+        let currentTemp = this.tagData.filter((item) => {
           return item.waitUpdate === 0
         })
-        let cNum = temp.length
+        let cNum = currentTemp.length
         this.successRate = (submitNum - cNum) / submitNum * 100
-        count = count + 1
-        if (count >= 7) {
+        if (!flag) {
           clearInterval(this.intervalid)
         }
-      }, 1000
-      )
+      }, 2000)
     },
     changePage (page) {
       this.pageNum = page - 1

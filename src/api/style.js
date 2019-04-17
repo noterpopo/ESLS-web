@@ -14,6 +14,13 @@ export const getStyle = (id) => {
   })
 }
 
+export const delDispm = (id) => {
+  return axios.request({
+    url: '/dispm/' + id,
+    method: 'delete'
+  })
+}
+
 export const getAllStyle = ({ page, count, queryId, queryString }) => {
   return axios.request({
     url: 'styles/',

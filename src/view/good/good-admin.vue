@@ -166,7 +166,7 @@
         </div>
         <div class="bottom" v-bind:style="{ marginTop:'10px'}">
           <div v-bind:style="{ width: windowWidth*0.99 + 'px',display:'flex',justifyContent: 'space-between',flexWrap:'wrap'}">
-            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.70 + 'px'}">
+            <Card :bordered="false" v-bind:style="{ width: windowWidth*0.71 + 'px'}">
               <div slot="title">
                 <Row type="flex" justify="center" align="middle">
                     <Col span="22"><p>价签信息</p></Col>
@@ -291,10 +291,6 @@ export default {
           }
         },
         {
-          title: '促销原因',
-          key: 'promotionReason'
-        },
-        {
           title: '是否促销',
           width: '90',
           key: 'isPromote',
@@ -335,7 +331,7 @@ export default {
                           if (index >= that.canShowData.length - 1) {
                             if (that.canShowData.length === 0) {
                               that.showId = 0
-                              this.$refs.label_canvas.initData(null, 0, 0)
+                              this.$refs.label_canvas.initData(null, 0, 0, this.item)
                             } else {
                               that.showId = that.canShowData[0].id
                               that.getLabelData(that.showId)
@@ -349,6 +345,10 @@ export default {
               }
             })
           }
+        },
+        {
+          title: '促销原因',
+          key: 'promotionReason'
         },
         {
           title: '货号',
@@ -386,9 +386,6 @@ export default {
                 color: color
               }
             }, text)
-          },
-          filter: {
-            type: 'Input'
           }
         },
         {
@@ -440,7 +437,7 @@ export default {
       tagTableColumns: [
         {
           type: 'expand',
-          width: 40,
+          width: 30,
           render: (h, params) => {
             return h(goodTagExpand, {
               props: {
@@ -452,14 +449,14 @@ export default {
         {
           title: '价签条码',
           key: 'barCode',
-          width: '130',
+          width: '120',
           filter: {
             type: 'Input'
           }
         },
         {
           title: '价签类型',
-          width: '128',
+          width: '110',
           render: (h, params) => {
             let size = ''
             let type = ''
@@ -477,7 +474,7 @@ export default {
             } else {
               type = '黑白'
             }
-            return h('p', size + type + '屏幕')
+            return h('p', size + type + '屏')
           }
         },
         {
@@ -500,7 +497,7 @@ export default {
         },
         {
           title: 'AP/信道',
-          width: '130',
+          width: '134',
           render: (h, params) => {
             let result = null
             $.ajax({
@@ -511,11 +508,16 @@ export default {
               },
               type: 'get',
               success: (res) => {
-                result = res.data[0].barCode + '/' + res.data[0].channelId
+                result = res.data[0].barCode + '_' + res.data[0].channelId
               }
             })
             return h('p', result)
           }
+        },
+        {
+          title: '电量',
+          key: 'power',
+          width: '70'
         },
         {
           title: 'AP RSSI',
@@ -587,7 +589,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: '80',
+          width: '70',
           align: 'center',
           render: (h, params) => {
             let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
@@ -720,7 +722,8 @@ export default {
         itemisOnSale: true,
         itemPrice: '10.19',
         itemOnSalePrice: '444.44',
-        labelStyle: '1'
+        itemProvider: '',
+        itemImgUrl: ''
       },
       canShowData: [],
       showId: 0
@@ -807,7 +810,7 @@ export default {
     goodReload () {
       this.canShowData = []
       this.showId = 0
-      this.$refs.label_canvas.initData(null, 0, 0)
+      this.$refs.label_canvas.initData(null, 0, 0, this.item)
       this.getGoodTableData({ page: 0, count: this.countPerPageGood })
     },
     tagReload () {
@@ -864,7 +867,7 @@ export default {
         that.isTagTableLoading = false
         if (that.canShowData.length === 0) {
           that.showId = 0
-          this.$refs.label_canvas.initData(null, 0, 0)
+          this.$refs.label_canvas.initData(null, 0, 0, this.item)
         } else {
           that.showId = that.canShowData[0].id
 
@@ -923,7 +926,11 @@ export default {
       that.item.itemQRCode = goodInfo[0].qrCode
       that.item.itemBarCode = goodInfo[0].barCode
       that.item.itemPrice = goodInfo[0].price + ''
-      that.itemOnSalePrice = goodInfo[0].promotePrice + ''
+      that.item.itemOnSalePrice = goodInfo[0].promotePrice + ''
+      that.item.itemStock = goodInfo[0].stock
+      that.item.itemImgUrl = goodInfo[0].imageUrl
+      that.item.itemProvider = goodInfo[0].provider
+
       if (tid === 0) {
         return
       }
@@ -931,7 +938,7 @@ export default {
         const tempTag = res.data.data
         getStyle(tempTag[0].styleId).then(res => {
           const dispData = res.data.data
-          that.$refs.label_canvas.initData(dispData, tempTag[0].resolutionWidth, tempTag[0].resolutionHeight)
+          that.$refs.label_canvas.initData(dispData, tempTag[0].resolutionWidth, tempTag[0].resolutionHeight, that.item)
         })
       })
     },

@@ -140,7 +140,7 @@ export default {
   mounted () {
   },
   methods: {
-    initData (data, width, height) {
+    initData (data, width, height, item) {
       if (data === null) {
         this.dispmsData = []
         this.styleWidth = 0
@@ -161,6 +161,35 @@ export default {
           this.decFontSizePrice = parseInt(data[i].backup.split('/')[1])
         } else if (data[i].sourceColumn === 'promotePrice') {
           this.decFontSizePromotePrice = parseInt(data[i].backup.split('/')[1])
+        }
+        if (item !== null) {
+          if (data[i].sourceColumn === 'barCode') {
+            data[i].text = item['itemBarCode']
+          } else if (data[i].sourceColumn === 'qrCode') {
+            data[i].text = item['itemQRCode']
+          } else if (data[i].sourceColumn === 'price') {
+            data[i].text = item['itemPrice']
+          } else if (data[i].sourceColumn === 'promotePrice') {
+            data[i].text = item['itemOnSalePrice']
+          } else if (data[i].sourceColumn === 'name') {
+            data[i].text = item['itemName']
+          } else if (data[i].sourceColumn === 'unit') {
+            data[i].text = item['itemUnit']
+          } else if (data[i].sourceColumn === 'spec') {
+            data[i].text = item['itemNorm']
+          } else if (data[i].sourceColumn === 'category') {
+            data[i].text = item['itemCategory']
+          } else if (data[i].sourceColumn === 'origin') {
+            data[i].text = item['itemOrigin']
+          } else if (data[i].sourceColumn === 'shelfNumber') {
+            data[i].text = item['itemNo']
+          } else if (data[i].sourceColumn === 'stock') {
+            data[i].text = item['itemStock']
+          } else if (data[i].sourceColumn === 'imageUrl') {
+            data[i].text = item['itemImgUrl']
+          } else if (data[i].sourceColumn === 'provider') {
+            data[i].text = item['itemProvider']
+          }
         }
       }
       console.log(data)

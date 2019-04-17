@@ -1,6 +1,6 @@
 import axios from '@/libs/api.request'
 
-export const getAllTag = ({ page, count, queryId, queryString }) => {
+export const getAllTag = ({ page = 0, count = 9999, queryId, queryString }) => {
   return axios.request({
     url: 'tags/',
     method: 'get',

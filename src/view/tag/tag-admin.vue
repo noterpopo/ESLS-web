@@ -826,7 +826,7 @@ export default {
           let id = that.bindTagId
           let currentSelectTag = that.tagData.find(function (item) { return item.id === id })
 
-          that.$refs.label_canvas.initData(dispData, currentSelectTag.resolutionWidth, currentSelectTag.resolutionHeight)
+          that.$refs.label_canvas.initData(dispData, currentSelectTag.resolutionWidth, currentSelectTag.resolutionHeight, null)
         })
       })
     },
@@ -918,17 +918,8 @@ export default {
     },
     onBindGood () {
       var that = this
-      let mode = '0'
+      let mode = '1'
       this.currentGoodPage = 1
-      let tagTemp = this.tagData.filter((item) => {
-        return item.id === this.bindTagId
-      })
-      console.log(tagTemp[0].goodId)
-      if (tagTemp[0].goodId === null || tagTemp[0].goodId === 0) {
-        mode = '1'
-      } else {
-        mode = '2'
-      }
       if (that.bindGoodSelectId === 0) {
         that.$Modal.error({
           title: '错误',

@@ -14,15 +14,11 @@
                 <span class="expand-key">软件版本： </span>
                 <span class="expand-value">{{ row.softwareVersion }}</span>
             </Col>
-            <Col span="8">
-                <span class="expand-key">地址： </span>
-                <span class="expand-value">{{ row.tagAddress }}</span>
-            </Col>
         </Row>
         <Row>
             <Col span="8">
                 <span class="expand-key">运行时间： </span>
-                <span class="expand-value">{{ row.execTime }}</span>
+                <span class="expand-value">{{ row.execTime +' ms' }}</span>
             </Col>
             <Col span="8">
                 <span class="expand-key">完成时间：</span>
