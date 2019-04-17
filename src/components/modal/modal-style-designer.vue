@@ -15,9 +15,10 @@
                   <p :style="{fontSize: '16px'}">样式宽度：{{styleWidth}}</p>
                   <p :style="{fontSize: '16px'}">样式高度：{{styleHeight}}</p>
                   <div :style="{marginTop:'4px'}">
-                    <div v-for="(item) in currentDispmsData" :key="item.id">
-                      <Checkbox style="margin:2px;" :value="item.status==1" @on-change="onCheckItem($event,item)">{{translate[item.sourceColumn]}}</Checkbox>
-                    </div>
+                    <p v-for="(item,index) in currentDispmsData" :key="item.id">
+                      <Checkbox style="margin:2px;" :value="item.status==1" @on-change="onCheckItem($event,item)"></Checkbox>
+                      <span @click.stop="onAreaClick(index)">{{translate[item.sourceColumn]}}</span>
+                    </p>
                   </div>
                   <Button :style="{margin:'10px'}" type="primary" @click="addArea">添加自定义字段</Button>
                   <Button  type="primary" @click="reset">恢复默认值</Button>
@@ -28,7 +29,7 @@
           <div class="right">
               <div class="editorarea" v-if="reRenderFlag" :style="{ zIndex:'9999',border:'1px solid black', width:styleWidth+'px',height:styleHeight+'px'}">
                 <Poptip v-for="(item,index) in currentDispmsData" :key="index" trigger="click" title="编辑框" class="poptipWarp" :style="{ position: 'absolute',left: item.x+'px',top: item.y+'px'}">
-                    <vue-draggable-resizable v-show="item.status===1" :style="{ backgroundColor:item.backgroundColor==='0'?'black':item.backgroundColor==='1'?'width':'red',position: 'relative',left: 0+'px',top: 0+'px'}" :x="item.x" :y="item.y" :w="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
+                    <vue-draggable-resizable :id="'poptip'+index" v-show="item.status===1" :style="{ backgroundColor:item.backgroundColor==='0'?'black':item.backgroundColor==='1'?'width':'red',position: 'relative',left: 0+'px',top: 0+'px'}" :x="item.x" :y="item.y" :w="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
                         <span v-if="item.columnType === '字符串'" :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', verticalAlign:'top', fontSize :item.fontSize+'px', fontWeight:item.fontType, lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
                         <span v-else-if="item.columnType === '数字'" :style="{lineHeight:item.height+'px'}" >
                           <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.text.split('.')[0] +'.'}}</span>
@@ -589,6 +590,10 @@ export default {
     }
   },
   methods: {
+    onAreaClick (index) {
+      let poptipElement = document.getElementById('poptip' + index)
+      poptipElement.click()
+    },
     onDeleteCustom (index) {
       this.currentDispmsData.splice(index, 1)
     },
@@ -786,7 +791,6 @@ export default {
       })
     },
     onCheckItem (status, item) {
-      console.log(status)
       if (status) {
         item.status = 1
       } else {
