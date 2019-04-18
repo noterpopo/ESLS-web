@@ -67,6 +67,9 @@ export default {
               props: {
                 placeholder: '输入' + this.columns[index].title
               },
+              attrs: {
+                style: 'padding-left:10px;padding-right:10px;'
+              },
               on: {
                 input: val => {
                   inputValue = val
@@ -96,7 +99,6 @@ export default {
   },
   methods: {
     clearHighlight () {
-      console.log('clear')
       this.$refs.st.clearCurrentRow()
     },
     createOptionsRender (index, h) {
@@ -146,5 +148,9 @@ tr.ivu-table-row-hover td{
 }
 .ivu-table-row-highlight td {
   background-color: rgb(220, 241, 255)!important;
+}
+.ivu-table-cell{
+  padding: 0px;
+  text-align:center;
 }
 </style>

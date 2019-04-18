@@ -232,6 +232,9 @@ export default {
                 value: params.row.styleId,
                 disabled: isDiable
               },
+              attrs: {
+                style: 'padding-left:10px;padding-right:10px;text-align:left;'
+              },
               on: {
                 'on-change': (val) => {
                   this.onBindStyle(params.row.id, val)
@@ -924,6 +927,10 @@ export default {
           content: '请选择商品'
         })
         return
+      }
+      let temp = that.tagData.filter((item) => { return item.id === that.bindTagId })
+      if (temp[0].goodId !== 0) {
+        mode = '2'
       }
       bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId, mode).then(res => {
         that.tagReload()

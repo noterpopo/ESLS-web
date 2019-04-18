@@ -96,6 +96,9 @@ export default {
                 value: currentRole,
                 disabled: EditAccess
               },
+              attrs: {
+                style: 'padding-left:10px;padding-right:10px;text-align:left;'
+              },
               on: {
                 'on-change': (val) => {
                   this.onUpdateRole(params.row, val, params.row.roleList.split(' ').length - 1)

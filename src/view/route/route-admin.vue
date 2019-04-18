@@ -126,6 +126,9 @@ export default {
                 value: params.row.shopId,
                 disabled: isDisable
               },
+              attrs: {
+                style: 'padding-left:10px;padding-right:10px;text-align:left;'
+              },
               on: {
                 'on-change': (val) => {
                   this.onUpdateShop(params.row, val)
