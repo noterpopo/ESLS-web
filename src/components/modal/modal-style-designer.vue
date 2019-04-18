@@ -519,7 +519,7 @@ export default {
       indeterminate: true,
       checkAll: false,
       newArea: {
-        id: 11,
+        id: 0,
         name: '字符串',
         x: 0,
         y: 0,
@@ -699,10 +699,32 @@ export default {
           title: '提醒',
           content: '是否需要更新到价签',
           onOk: () => {
-            updateStyle(id, this.currentDispmsData, 1, 1)
+            let newData = this.currentDispmsData.filter((item) => {
+              if (item.id === 0) {
+                delete item.id
+                return true
+              }
+              return false
+            })
+            let oldData = this.currentDispmsData.filter((item) => {
+              return item.id !== 0
+            })
+            updateStyle(id, oldData, 1, 1)
+            updateStyle(id, newData, 0, 1)
           },
           onCancel: () => {
-            updateStyle(id, this.currentDispmsData, 1, 0)
+            let newData = this.currentDispmsData.filter((item) => {
+              if (item.id === 0) {
+                delete item.id
+                return true
+              }
+              return false
+            })
+            let oldData = this.currentDispmsData.filter((item) => {
+              return item.id !== 0
+            })
+            updateStyle(id, oldData, 1, 0)
+            updateStyle(id, newData, 0, 0)
           }
         })
       } else {
