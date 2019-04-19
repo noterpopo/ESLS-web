@@ -894,7 +894,7 @@ export default {
     },
     onBindStyle (tid, sid) {
       var that = this
-      if (tid) {
+      if (sid) {
         bindStyle(tid, sid).then(res => {
           that.tagReload()
           that.$Modal.success({
