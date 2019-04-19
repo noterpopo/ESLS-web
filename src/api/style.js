@@ -52,6 +52,13 @@ export const deleteStyle = (id) => {
   })
 }
 
+export const deleteDispm = (id) => {
+  return axios.request({
+    url: '/dispm/' + id,
+    method: 'delete'
+  })
+}
+
 export const changeStyle = (data) => {
   return axios.request({
     url: '/style',

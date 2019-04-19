@@ -169,7 +169,7 @@
 </template>
 <script>
 // https://github.com/mauricius/vue-draggable-resizable
-import { getStyle, updateStyle, newStyle } from '@/api/style'
+import { getStyle, updateStyle, newStyle, deleteDispm } from '@/api/style'
 import { coppyArray } from '@/libs/util'
 import VueDraggableResizable from 'vue-draggable-resizable'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
@@ -709,6 +709,21 @@ export default {
             let oldData = this.currentDispmsData.filter((item) => {
               return item.id !== 0
             })
+            if (this.currentDispmsData.length < this.dispmsData.length) {
+              console.log('hhh')
+              let delData = this.dispmsData.filter((item) => {
+                for (let j = 0; j < this.currentDispmsData.length; ++j) {
+                  if (item.id === this.currentDispmsData[j].id) {
+                    return false
+                  }
+                }
+                return true
+              })
+              console.log(delData)
+              for (let i = 0; i < delData.length; ++i) {
+                deleteDispm(delData[i].id)
+              }
+            }
             updateStyle(id, oldData, 1, 1)
             updateStyle(id, newData, 0, 1)
           },
@@ -723,6 +738,21 @@ export default {
             let oldData = this.currentDispmsData.filter((item) => {
               return item.id !== 0
             })
+            if (this.currentDispmsData.length < this.dispmsData.length) {
+              console.log('hhh')
+              let delData = this.dispmsData.filter((item) => {
+                for (let j = 0; j < this.currentDispmsData.length; ++j) {
+                  if (item.id === this.currentDispmsData[j].id) {
+                    return false
+                  }
+                }
+                return true
+              })
+              console.log(delData)
+              for (let i = 0; i < delData.length; ++i) {
+                deleteDispm(delData[i].id)
+              }
+            }
             updateStyle(id, oldData, 1, 0)
             updateStyle(id, newData, 0, 0)
           }
