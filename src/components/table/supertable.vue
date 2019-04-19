@@ -153,4 +153,8 @@ tr.ivu-table-row-hover td{
   padding: 0px;
   text-align:center;
 }
+.ivu-table-header th{
+  padding: 0px;
+  text-align:center;
+}
 </style>

@@ -408,20 +408,14 @@ export default {
             }, [
               h('Option', {
                 props: {
-                  value: '4.0寸',
-                  label: '4.0寸'
+                  value: '4.2寸',
+                  label: '4.2寸'
                 }
               }),
               h('Option', {
                 props: {
                   value: '2.13寸',
                   label: '2.13寸'
-                }
-              }),
-              h('Option', {
-                props: {
-                  value: '2.5寸',
-                  label: '2.5寸'
                 }
               }),
               h('Option', {
@@ -482,15 +476,20 @@ export default {
           let h = 0
           let styleid = 0
           let styleType = this.newStyleSize + '-' + this.newStyleName + '-' + this.newStyleType
-          if (this.newStyleSize === '4.0寸') {
+          if (this.newStyleSize === '4.2寸') {
             w = 400
             h = 300
           } else if (this.newStyleSize === '2.13寸') {
-            w = 212
-            h = 104
-          } else if (this.newStyleSize === '2.5寸') {
-            w = 250
-            h = 122
+            if (this.styleType === '黑白') {
+              w = 250
+              h = 122
+            } else if (this.styleType === '三色') {
+              w = 212
+              h = 104
+            }
+          } else if (this.newStyleSize === '2.9寸') {
+            w = 296
+            h = 128
           }
           this.isModal = true
           this.$refs.designer.getStyleData(styleid, styleType, w, h, 'new')

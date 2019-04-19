@@ -131,14 +131,12 @@ export default {
           render: (h, params) => {
             let size = ''
             let type = ''
-            if (params.row.resolutionWidth === '212') {
+            if (params.row.resolutionWidth === '212' || params.row.resolutionWidth === '250') {
               size = '2.13寸'
             } else if (params.row.resolutionWidth === '400') {
               size = '4.2寸'
             } else if (params.row.resolutionWidth === '296') {
               size = '2.9寸'
-            } else if (params.row.resolutionWidth === '250') {
-              size = '2.5寸'
             }
             if (params.row.screenType.indexOf('三色')) {
               type = '三色'
