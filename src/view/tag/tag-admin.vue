@@ -136,6 +136,9 @@ export default {
           width: '200',
           render: (h, params) => {
             let result = null
+            if (params.row.goodId === 0) {
+              return h('p', '')
+            }
             $.ajax({
               url: 'http://39.108.106.167:8086/goods/' + params.row.goodId,
               async: false,
@@ -891,6 +894,15 @@ export default {
     },
     onBindStyle (tid, sid) {
       var that = this
+      if (tid) {
+        bindStyle(tid, sid).then(res => {
+          that.tagReload()
+          that.$Modal.success({
+            title: '消息',
+            content: '成功绑定样式'
+          })
+        })
+      }
       // let temp = this.tagData.find(function (item) { return item.id === tid })
       // if (temp.goodId !== 0) {
       //   getGood(temp.goodId).then(res => {
@@ -903,13 +915,6 @@ export default {
       //     updateGood(goodTemp)
       //   })
       // }
-      bindStyle(tid, sid).then(res => {
-        that.tagReload()
-        that.$Modal.success({
-          title: '消息',
-          content: '成功绑定样式'
-        })
-      })
     },
     onBindGoodCancel () {
       this.currentGoodPage = 1
