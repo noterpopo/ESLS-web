@@ -464,7 +464,7 @@ export default {
             } else if (params.row.resolutionWidth === '296') {
               size = '2.9寸'
             }
-            if (params.row.screenType.indexOf('三色')) {
+            if (params.row.screenType.indexOf('三色') !== -1) {
               type = '三色'
             } else {
               type = '黑白'
