@@ -50,10 +50,10 @@
             <Button style="margin-left:10px;" type="primary" @click="onScanAll">对所有价签巡检</Button>
           </div >
         </Card>
-        <corn-selector :isModalShow="isCronModalShow" @onOk="onCron" @onIsShow="onIsShow"></corn-selector>
-        <corn-selector :isModalShow="isGoodCronModalShow" @onOk="onGoodCron" @onIsShow="onIsGoodShow"></corn-selector>
-        <corn-selector :isModalShow="isTagFlushCronModalShow" @onOk="onFlushTagCron" @onIsShow="onIsFlushTagShow"></corn-selector>
-        <corn-selector :isModalShow="isTagScanCronModalShow" @onOk="onScanTagCron" @onIsShow="onIsScanTagShow"></corn-selector>
+        <corn-selector ref="cornSel" :isModalShow="isCronModalShow" @onOk="onCron" @onIsShow="onIsShow"></corn-selector>
+        <corn-selector ref="cornGoodSel" :isModalShow="isGoodCronModalShow" @onOk="onGoodCron" @onIsShow="onIsGoodShow"></corn-selector>
+        <corn-selector ref="cornFlushSel" :isModalShow="isTagFlushCronModalShow" @onOk="onFlushTagCron" @onIsShow="onIsFlushTagShow"></corn-selector>
+        <corn-selector ref="cornScanSel" :isModalShow="isTagScanCronModalShow" @onOk="onScanTagCron" @onIsShow="onIsScanTagShow"></corn-selector>
 
     </div>
 </template>
@@ -246,6 +246,7 @@ export default {
                   slot: 'append',
                   on: {
                     'click': () => {
+                      that.$refs.cornSel.init(that.currentCycyleJobData.cron)
                       that.isCronModalShow = true
                     }
                   }
@@ -296,6 +297,7 @@ export default {
                   slot: 'append',
                   on: {
                     'click': () => {
+                      that.$refs.cornSel.init(that.currentCycyleJobData.cron)
                       that.isCronModalShow = true
                     }
                   }
@@ -346,6 +348,7 @@ export default {
                   slot: 'append',
                   on: {
                     'click': () => {
+                      that.$refs.cornSel.init(that.currentCycyleJobData.cron)
                       that.isCronModalShow = true
                     }
                   }

@@ -88,21 +88,6 @@
                         <Radio label="everyDay" class="radio">
                             每一天
                         </Radio>
-                        <Radio label="fromXstepYWeek" class="radio">
-                            每隔
-                            <InputNumber :max="7" :min="1" v-model="day.stepWeek" @on-change="onDaySelctChange"></InputNumber>
-                            周执行 从
-                            <Select v-model="day.fromWeek" :style="{width:'240px'}" transfer @click.native="(event)=>{event.preventDefault()}" @on-change="onDaySelctChange">
-                                <Option :value="1" >星期天</Option>
-                                <Option :value="2" >星期一</Option>
-                                <Option :value="3" >星期二</Option>
-                                <Option :value="4" >星期三</Option>
-                                <Option :value="5" >星期四</Option>
-                                <Option :value="6" >星期五</Option>
-                                <Option :value="7" >星期六</Option>
-                            </Select>
-                            开始
-                        </Radio>
                         <Radio label="fromXstepYDay" class="radio">
                             每隔
                             <InputNumber :max="31" :min="1" v-model="day.stepDay" @on-change="onDaySelctChange"></InputNumber>
@@ -110,64 +95,10 @@
                             <InputNumber :max="31" :min="1" v-model="day.fromDay" @on-change="onDaySelctChange"></InputNumber>
                             天开始
                         </Radio>
-                        <Radio label="selectedWeek" class="radio">
-                            具体星期几（可多选）
-                            <Select v-model="day.selectedDataWeek" multiple transfer :style="{width:'300px'}" @click.native="(event)=>{event.preventDefault()}" @on-change="onDaySelctChange">
-                                <Option :value="'SUN'" >星期天</Option>
-                                <Option :value="'MON'" >星期一</Option>
-                                <Option :value="'TUE'" >星期二</Option>
-                                <Option :value="'WED'" >星期三</Option>
-                                <Option :value="'THU'" >星期四</Option>
-                                <Option :value="'FRI'" >星期五</Option>
-                                <Option :value="'SAT'" >星期六</Option>
-                            </Select>
-                        </Radio>
                         <Radio label="selectedDay" class="radio">
                             具体天数（可多选）
                             <Select v-model="day.selectedDataDay" multiple transfer :style="{width:'300px'}" @click.native="(event)=>{event.preventDefault()}" @on-change="onDaySelctChange">
                                 <Option v-for="n in 31" :value="n" :key="n">{{ n }}</Option>
-                            </Select>
-                        </Radio>
-                        <Radio label="lastDay" class="radio">
-                            在每月最后一天
-                        </Radio>
-                        <Radio label="lastWorkDay" class="radio">
-                            在每月最后一个工作日
-                        </Radio>
-                        <Radio label="lastWeek" class="radio">
-                            在每月最后一个
-                            <Select v-model="day.lastWeek" transfer :style="{width:'300px'}" @click.native="(event)=>{event.preventDefault()}" @on-change="onDaySelctChange">
-                                <Option :value="1" >星期天</Option>
-                                <Option :value="2" >星期一</Option>
-                                <Option :value="3" >星期二</Option>
-                                <Option :value="4" >星期三</Option>
-                                <Option :value="5" >星期四</Option>
-                                <Option :value="6" >星期五</Option>
-                                <Option :value="7" >星期六</Option>
-                            </Select>
-                        </Radio>
-                        <Radio label="dayToLast" class="radio">
-                            在每个月月底前
-                            <InputNumber :max="31" :min="1" v-model="day.lastDay" @on-change="onDaySelctChange"></InputNumber>
-                            天
-                        </Radio>
-                        <Radio label="dayToWork" class="radio">
-                            离每月
-                            <InputNumber :max="31" :min="1" v-model="day.nearWorkFrom" @on-change="onDaySelctChange"></InputNumber>
-                            号最近的工作日（周一到周五）
-                        </Radio>
-                        <Radio label="weekToMonth" class="radio">
-                            在每个月第
-                            <InputNumber :max="5" :min="1" v-model="day.orderedWeek" @on-change="onDaySelctChange"></InputNumber>
-                            个
-                             <Select v-model="day.dayOfWeek" :style="{width:'240px'}" transfer @click.native="(event)=>{event.preventDefault()}" @on-change="onDaySelctChange">
-                                <Option :value="1" >星期天</Option>
-                                <Option :value="2" >星期一</Option>
-                                <Option :value="3" >星期二</Option>
-                                <Option :value="4" >星期三</Option>
-                                <Option :value="5" >星期四</Option>
-                                <Option :value="6" >星期五</Option>
-                                <Option :value="7" >星期六</Option>
                             </Select>
                         </Radio>
                     </RadioGroup>
@@ -199,7 +130,7 @@
                         </Radio>
                     </RadioGroup>
                 </TabPane>
-                <TabPane label="年">
+                <!-- <TabPane label="年">
                     <RadioGroup vertical v-model="year.radioSelected" class="radio-group" @on-change="onYearSelctChange">
                         <Radio label="everyYear" class="radio">
                             每一年
@@ -225,7 +156,7 @@
                             年
                         </Radio>
                     </RadioGroup>
-                </TabPane>
+                </TabPane> -->
             </Tabs>
         </Modal>
     </div>
@@ -327,6 +258,143 @@ export default {
     }
   },
   methods: {
+    init (cron) {
+      let temp = cron.split(' ')
+      console.log()
+
+      // second
+      if (temp[0].indexOf('*') !== -1) {
+        this.second.radioSelected = 'everySec'
+      } else if (temp[0].indexOf('/') !== -1) {
+        this.second.radioSelected = 'fromXstepYSec'
+        let secondTemp = temp[0].split('/')
+        this.second.from = parseInt(secondTemp[0])
+        this.second.step = parseInt(secondTemp[1])
+      } else if (temp[0].indexOf('-') !== -1) {
+        this.second.radioSelected = 'fromXtoYSec'
+        let secondTemp = temp[0].split('-')
+        this.second.start = parseInt(secondTemp[0])
+        this.second.end = parseInt(secondTemp[1])
+      } else {
+        this.second.radioSelected = 'selectedSec'
+        let arr = []
+        let secondTemp = temp[0].split(',')
+        secondTemp.map((item) => {
+          arr.push(parseInt(item))
+        })
+        this.second.selectedData = arr
+      }
+
+      // minute
+      if (temp[1].indexOf('*') !== -1) {
+        this.minute.radioSelected = 'everyMin'
+      } else if (temp[1].indexOf('/') !== -1) {
+        this.minute.radioSelected = 'fromXstepYMin'
+        let minuteTemp = temp[1].split('/')
+        this.minute.from = parseInt(minuteTemp[0])
+        this.minute.step = parseInt(minuteTemp[1])
+      } else if (temp[1].indexOf('-') !== -1) {
+        this.minute.radioSelected = 'fromXtoYMin'
+        let minuteTemp = temp[1].split('-')
+        this.minute.start = parseInt(minuteTemp[0])
+        this.minute.end = parseInt(minuteTemp[1])
+      } else {
+        this.minute.radioSelected = 'selectedMin'
+        let arr = []
+        let minuteTemp = temp[1].split(',')
+        minuteTemp.map((item) => {
+          arr.push(parseInt(item))
+        })
+        this.minute.selectedData = arr
+      }
+
+      // hour
+      if (temp[2].indexOf('*') !== -1) {
+        this.hour.radioSelected = 'everyHour'
+      } else if (temp[2].indexOf('/') !== -1) {
+        this.hour.radioSelected = 'fromXstepYHour'
+        let hourTemp = temp[2].split('/')
+        this.hour.from = parseInt(hourTemp[0])
+        this.hour.step = parseInt(hourTemp[1])
+      } else if (temp[2].indexOf('-') !== -1) {
+        this.hour.radioSelected = 'fromXtoYHour'
+        let hourTemp = temp[2].split('-')
+        this.hour.start = parseInt(hourTemp[0])
+        this.hour.end = parseInt(hourTemp[1])
+      } else {
+        this.hour.radioSelected = 'selectedHour'
+        let arr = []
+        let hourTemp = temp[2].split(',')
+        hourTemp.map((item) => {
+          arr.push(parseInt(item))
+        })
+        this.hour.selectedData = arr
+      }
+
+      // day
+      if (temp[3].indexOf('*') !== -1) {
+        this.day.radioSelected = 'everyDay'
+      } else if (temp[3].indexOf('/') !== -1) {
+        this.day.radioSelected = 'fromXstepYDay'
+        let dayTemp = temp[3].split('/')
+        this.day.fromDay = parseInt(dayTemp[0])
+        this.day.stepDay = parseInt(dayTemp[1])
+      } else {
+        this.day.radioSelected = 'selectedDay'
+        let arr = []
+        let dayTemp = temp[3].split(',')
+        dayTemp.map((item) => {
+          arr.push(parseInt(item))
+        })
+        this.day.selectedDataDay = arr
+      }
+
+      // month
+      if (temp[4].indexOf('*') !== -1) {
+        this.month.radioSelected = 'everyMonth'
+      } else if (temp[4].indexOf('/') !== -1) {
+        this.month.radioSelected = 'fromXstepYMon'
+        let monthTemp = temp[4].split('/')
+        this.month.from = parseInt(monthTemp[0])
+        this.month.step = parseInt(monthTemp[1])
+      } else if (temp[4].indexOf('-') !== -1) {
+        this.month.radioSelected = 'fromXtoYMon'
+        let monthTemp = temp[4].split('-')
+        this.month.start = parseInt(monthTemp[0])
+        this.month.end = parseInt(monthTemp[1])
+      } else {
+        this.month.radioSelected = 'selectedMon'
+        let arr = []
+        let monthTemp = temp[4].split(',')
+        monthTemp.map((item) => {
+          arr.push(parseInt(item))
+        })
+        this.month.selectedData = arr
+      }
+
+      // // year
+      // if(temp[5].indexOf('*')!==-1){
+      //   this.year.radioSelected='everyYear'
+      // }else if(temp[5].indexOf('/')!==-1){
+      //   this.year.radioSelected='fromXstepYYear'
+      //   let yearTemp=temp[5].split('/')
+      //   this.year.from=parseInt(yearTemp[0])
+      //   this.year.step=parseInt(yearTemp[1])
+      // }else if(temp[5].indexOf('-')!==-1){
+      //   this.year.radioSelected='fromXtoYYear'
+      //   let yearTemp=temp[5].split('-')
+      //   this.year.start=parseInt(yearTemp[0])
+      //   this.year.end=parseInt(yearTemp[1])
+      // }else{
+      //   this.year.radioSelected='selectedYear'
+      //   let arr=[]
+      //   let yearTemp=temp[5].split(',')
+      //   yearTemp.map((item)=>{
+      //     arr.push(parseInt(item))
+      //   })
+      //   this.year.selectedData=arr
+      // }
+    },
     onSecSelctChange () {
       var val = this.second.radioSelected
       if (val === 'everySec') {

@@ -35,7 +35,6 @@
 <script>
 import tagExpand from '@/components/table/tag-expand.vue'
 import super_table from '@/components/table/supertable.vue'
-import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import e_label from '@/components/e-label/e-lable.vue'
 import { getAllTag, bindStyle, bindGood, deleteTag, lightTag, flushTag, removeTag, scanTag, statusTag } from '@/api/tag'
 import { getAllGood, getGood, getBindedTags } from '@/api/good'
@@ -46,8 +45,7 @@ export default {
   components: {
     e_label,
     tagExpand,
-    super_table,
-    'corn-selector': cronSelector
+    super_table
   },
   data () {
     return {

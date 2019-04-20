@@ -161,7 +161,6 @@
                 </Row>
               </div>
             </Modal>
-            <corn-selector :isModalShow="isCronModalShow" @onOk="onCron" @onIsShow="onCronIsShow"></corn-selector>
           </Card>
         </div>
         <div class="bottom" v-bind:style="{ marginTop:'10px'}">
@@ -195,7 +194,6 @@
 <script>
 // TODO: tag表格搜索
 import super_table from '@/components/table/supertable.vue'
-import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import { getAllGood, updateGood, deleteGood, getBindedTags, getGood, cronUpdate } from '@/api/good'
 import { getAllTag, getTag, lightTag, flushTag, removeTag, scanTag, statusTag, bindStyleWithoutUpdate } from '@/api/tag'
 import e_label from '@/components/e-label/e-lable.vue'
@@ -208,8 +206,7 @@ export default {
     e_label,
     super_table,
     goodTagExpand,
-    VueContext,
-    'corn-selector': cronSelector
+    VueContext
   },
   data () {
     return {

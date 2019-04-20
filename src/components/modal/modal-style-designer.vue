@@ -11,7 +11,7 @@
                         <Col span="18"><p>当前选择区域：{{translate[currentClickSourceColumn]}}</p></Col>
                     </Row>
                 </div>
-                  <p :style="{fontSize: '16px'}">样式：{{styleType}}</p>
+                  <p :style="{fontSize: '16px'}">样式：{{styleid}}</p>
                   <p :style="{fontSize: '16px'}">样式宽度：{{styleWidth}}</p>
                   <p :style="{fontSize: '16px'}">样式高度：{{styleHeight}}</p>
                   <div :style="{marginTop:'4px'}">
