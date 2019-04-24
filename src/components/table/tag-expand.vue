@@ -7,21 +7,21 @@
     <div>
         <Row class="expand-row">
             <Col span="8">
-                <span class="expand-key">硬件版本: </span>
+                <span style="margin-left:4px" class="expand-key">硬件版本: </span>
                 <span class="expand-value">{{ row.hardwareVersion }}</span>
             </Col>
             <Col span="8">
-                <span class="expand-key">软件版本： </span>
+                <span style="margin-left:4px" class="expand-key">软件版本： </span>
                 <span class="expand-value">{{ row.softwareVersion }}</span>
             </Col>
         </Row>
         <Row>
             <Col span="8">
-                <span class="expand-key">运行时间： </span>
+                <span style="margin-left:4px" class="expand-key">运行时间： </span>
                 <span class="expand-value">{{ row.execTime +' ms' }}</span>
             </Col>
             <Col span="8">
-                <span class="expand-key">完成时间：</span>
+                <span style="margin-left:4px" class="expand-key">完成时间：</span>
                 <span class="expand-value">{{ row.completeTime }}</span>
             </Col>
             <Col span="8">
