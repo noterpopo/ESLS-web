@@ -157,4 +157,9 @@ tr.ivu-table-row-hover td{
   padding: 0px;
   text-align:center;
 }
+.ivu-table td{
+  display: table-cell;
+  height: 0px;
+  padding: 0px;
+}
 </style>

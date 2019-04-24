@@ -117,6 +117,7 @@
                             <Option value="微软雅黑">微软雅黑</Option>
                             <Option value="宋体">宋体</Option>
                             <Option value="楷体">楷体</Option>
+                            <Option value="aurakaSong">点阵宋</Option>
                           </Select>
                         </div>
                         <div>
