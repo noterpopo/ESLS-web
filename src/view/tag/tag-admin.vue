@@ -229,7 +229,8 @@ export default {
             return h('Select', {
               props: {
                 value: params.row.styleId,
-                disabled: isDiable
+                disabled: isDiable,
+                transfer: true
               },
               attrs: {
                 style: 'padding-left:10px;padding-right:10px;text-align:left;'

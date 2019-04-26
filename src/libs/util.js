@@ -7,6 +7,7 @@ const { title, cookieExpires, useI18n } = config
 export const TOKEN_KEY = 'token'
 
 export const setToken = (token) => {
+  console.log(token)
   Cookies.set(TOKEN_KEY, token, { expires: cookieExpires || 1 })
 }
 
