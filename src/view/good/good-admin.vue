@@ -902,6 +902,24 @@ export default {
     asyncEditOK () {
       this.getLabelData(this.showId)
       var that = this
+      let t = this.currentSelectedRow.price.toString()
+      if (t.indexOf('.') === -1) {
+        t = t + '.00'
+      } else {
+        if (t.split('.')[1].length < 2) {
+          t = t + '0'
+        }
+      }
+      this.currentSelectedRow.price = t
+      let tp = this.currentSelectedRow.promotePrice.toString()
+      if (tp.indexOf('.') === -1) {
+        tp = tp + '.00'
+      } else {
+        if (tp.split('.')[1].length < 2) {
+          tp = tp + '0'
+        }
+      }
+      this.currentSelectedRow.promotePrice = tp
       updateGood(that.currentSelectedRow).then(res => { that.editModal = false; that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood }) })
     },
     addGood () {
@@ -909,6 +927,24 @@ export default {
     },
     asyncAddOK () {
       var that = this
+      let t = this.addGooddata.price.toString()
+      if (t.indexOf('.') === -1) {
+        t = t + '.00'
+      } else {
+        if (t.split('.')[1].length < 2) {
+          t = t + '0'
+        }
+      }
+      this.addGooddata.price = t
+      let tp = this.addGooddata.promotePrice.toString()
+      if (tp.indexOf('.') === -1) {
+        tp = tp + '.00'
+      } else {
+        if (tp.split('.')[1].length < 2) {
+          tp = tp + '0'
+        }
+      }
+      this.addGooddata.promotePrice = tp
       updateGood(that.addGooddata).then(res => { that.addModal = false; that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood }) })
     },
     getLabelData (tid) {

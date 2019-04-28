@@ -480,7 +480,6 @@ export default {
             w = 400
             h = 300
           } else if (this.newStyleSize === '2.13寸') {
-            console.log('2.13')
             if (this.newStyleType === '黑白') {
               w = 250
               h = 122
