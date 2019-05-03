@@ -267,10 +267,10 @@ export default {
           key: 'isWorking',
           width: '140',
           render: (h, params) => {
-            const row = params.row
-            const color = row.isWorking === 1 ? 'primary' : 'error'
-            const text = row.isWorking === 1 ? '正常' : '超时'
-
+            let row = params.row
+            let isWorking = row.exectime === null && row.completetime === null
+            let color = !isWorking ? 'primary' : 'error'
+            let text = !isWorking ? '正常' : '超时'
             return h('Tag', {
               props: {
                 type: 'dot',
