@@ -234,9 +234,9 @@ export default {
           key: 'waitUpdate',
           width: '140',
           render: (h, params) => {
-            const row = params.row
-            const color = row.waitUpdate === 1 ? 'primary' : 'error'
-            const text = row.waitUpdate === 1 ? '已经更新' : '等待更新'
+            let row = params.row
+            let color = row.waitUpdate === 1 ? 'primary' : 'error'
+            let text = row.waitUpdate === 1 ? '已经更新' : '等待更新'
 
             return h('Tag', {
               props: {
@@ -289,6 +289,7 @@ export default {
           render: (h, params) => {
             return h('Button', {
               props: {
+                disabled: params.row.waitUpdate === 1,
                 icon: 'md-refresh',
                 type: 'primary',
                 size: 'small'
@@ -434,12 +435,6 @@ export default {
               }
             }
             return false
-          })
-          this.tagData.map((item, index) => {
-            if (item.waitUpdate === 1) {
-              let btn = document.getElementById('btn' + index)
-              btn.attr('disabled', true)
-            }
           })
           this.changePage(1)
         })
