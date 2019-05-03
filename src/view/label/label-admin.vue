@@ -279,7 +279,13 @@ export default {
           }
           delete styleDisp[i].id
         }
-        newStyle(styledes).then(res => {
+        // TODO
+        newStyle(styledes, 0).then(res => {
+          const newId = res.data.data.id
+          updateStyle(newId, styleDisp, 0, 0).then(res => {
+          })
+        })
+        newStyle(styledes, 1).then(res => {
           const newId = res.data.data.id
           updateStyle(newId, styleDisp, 0, 0).then(res => {
             that.$Message.info('导入样式成功')

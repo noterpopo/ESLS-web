@@ -153,15 +153,6 @@ export default {
       for (var i = 0; i < len; ++i) {
         data[i].fontColor = data[i].fontColor + ''
         data[i].backgroundColor = data[i].backgroundColor + ''
-        if (data[i].sourceColumn === 'barCode') {
-          this.item.itemBarCode = data[i].text
-        } else if (data[i].sourceColumn === 'qrCode') {
-          this.item.itemQRCode = data[i].text
-        } else if (data[i].sourceColumn === 'price') {
-          this.decFontSizePrice = parseInt(data[i].backup.split('/')[1])
-        } else if (data[i].sourceColumn === 'promotePrice') {
-          this.decFontSizePromotePrice = parseInt(data[i].backup.split('/')[1])
-        }
         if (item !== null) {
           if (data[i].sourceColumn === 'barCode') {
             data[i].text = item['itemBarCode']
@@ -190,6 +181,15 @@ export default {
           } else if (data[i].sourceColumn === 'provider') {
             data[i].text = item['itemProvider']
           }
+        }
+        if (data[i].sourceColumn === 'barCode') {
+          this.item.itemBarCode = data[i].text
+        } else if (data[i].sourceColumn === 'qrCode') {
+          this.item.itemQRCode = data[i].text
+        } else if (data[i].sourceColumn === 'price') {
+          this.decFontSizePrice = parseInt(data[i].backup.split('/')[1])
+        } else if (data[i].sourceColumn === 'promotePrice') {
+          this.decFontSizePromotePrice = parseInt(data[i].backup.split('/')[1])
         }
       }
       console.log(data)

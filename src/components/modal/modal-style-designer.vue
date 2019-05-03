@@ -770,7 +770,7 @@ export default {
         }
         var that = this
         let styledes = this.styleType
-        newStyle(styledes).then(res => {
+        newStyle(styledes, 0).then(res => {
           const newId = res.data.data.id
           updateStyle(newId, that.currentDispmsData, 0, 0).then(res => {
             if (styledes.indexOf('非促销') !== -1) {
@@ -778,7 +778,7 @@ export default {
             } else {
               styledes = styledes + '-促销'
             }
-            newStyle(styledes).then(res => {
+            newStyle(styledes, 1).then(res => {
               const newId = res.data.data.id
               updateStyle(newId, that.currentDispmsData, 0, 0).then(res => {
                 that.$emit('reloadTable')
@@ -823,7 +823,7 @@ export default {
         onOk: () => {
           var that = this
           let styledes = this.styleType + '-' + this.newStyleName
-          newStyle(styledes).then(res => {
+          newStyle(styledes, 0).then(res => {
             const newIdfcx = res.data.data.id
             updateStyle(newIdfcx, that.currentDispmsData, 0, 0).then(res => {
               if (styledes.indexOf('非促销') !== -1) {
@@ -831,7 +831,7 @@ export default {
               } else {
                 styledes = styledes + '-促销'
               }
-              newStyle(styledes).then(res => {
+              newStyle(styledes, 1).then(res => {
                 const newIdcx = res.data.data.id
                 updateStyle(newIdcx, that.currentDispmsData, 0, 0).then(res => {
                   that.$emit('reloadTable')

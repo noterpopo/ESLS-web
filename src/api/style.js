@@ -67,12 +67,13 @@ export const changeStyle = (data) => {
   })
 }
 
-export const newStyle = (styleType) => {
+export const newStyle = (styleType, isPromote) => {
   return axios.request({
     url: '/style',
     method: 'get',
     params: {
-      styleType: styleType
+      styleType: styleType,
+      isPromote: isPromote
     }
   })
 }
