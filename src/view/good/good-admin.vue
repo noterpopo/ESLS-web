@@ -900,7 +900,6 @@ export default {
       })
     },
     asyncEditOK () {
-      this.getLabelData(this.showId)
       var that = this
       let t = this.currentSelectedRow.price.toString()
       if (t.indexOf('.') === -1) {
@@ -920,6 +919,7 @@ export default {
         }
       }
       this.currentSelectedRow.promotePrice = tp
+      this.getLabelData(this.showId)
       updateGood(that.currentSelectedRow).then(res => { that.editModal = false; that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood }) })
     },
     addGood () {
@@ -958,8 +958,8 @@ export default {
       that.item.itemNo = goodInfo[0].shelfNumber
       that.item.itemQRCode = goodInfo[0].qrCode
       that.item.itemBarCode = goodInfo[0].barCode
-      that.item.itemPrice = goodInfo[0].price + ''
-      that.item.itemOnSalePrice = goodInfo[0].promotePrice + ''
+      that.item.itemPrice = goodInfo[0].price
+      that.item.itemOnSalePrice = goodInfo[0].promotePrice
       that.item.itemStock = goodInfo[0].stock
       that.item.itemImgUrl = goodInfo[0].imageUrl
       that.item.itemProvider = goodInfo[0].provider

@@ -1,21 +1,6 @@
 <template>
     <div style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;" ref="container">
-        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
-          <div slot="title">
-            <Row type="flex" justify="center" align="middle">
-                <Col span="22"><p>等待变价列表</p></Col>
-                <Col span="2"><Button v-if="hasSubmitAccess" type="primary" @click="submitUpdate">一键改价</Button></Col>
-            </Row>
-          </div>
-          <Table border :loading='isTableLoading' :columns="tableColumns" :data="tagDataPage">
-          </Table>
-          <div style="float: right;margin:6px;">
-              <Page :total="tagData.length" :page-size="countPerPage" :current="pageNum+1" @on-change="changePage"></Page>
-          </div>
-
-        </Card>
-
-        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px',marginTop:'10px'}">
+      <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px'}">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                 <Col span="22"><p>变价监控信息</p></Col>
@@ -56,6 +41,20 @@
                   <span style="width:30px;display:inline-block">{{successRate+'%'}}</span>
                 </Col>
             </Row>
+          </div>
+
+        </Card>
+        <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' ,marginTop:'10px'}">
+          <div slot="title">
+            <Row type="flex" justify="center" align="middle">
+                <Col span="22"><p>等待变价列表</p></Col>
+                <Col span="2"><Button v-if="hasSubmitAccess" type="primary" @click="submitUpdate">一键改价</Button></Col>
+            </Row>
+          </div>
+          <Table border :loading='isTableLoading' :columns="tableColumns" :data="tagDataPage">
+          </Table>
+          <div style="float: right;margin:6px;">
+              <Page :total="tagData.length" :page-size="countPerPage" :current="pageNum+1" @on-change="changePage"></Page>
           </div>
 
         </Card>
@@ -114,8 +113,11 @@ export default {
         },
         {
           type: 'index',
-          width: 50,
-          align: 'center'
+          width: 54,
+          align: 'center',
+          indexMethod: (row) => {
+            return row._index + 1 + (this.pageNum) * this.countPerPage
+          }
         },
         {
           title: '价签条码',
@@ -322,7 +324,11 @@ export default {
     }
   },
   created () {
-    this.getTagTableData(this.pageNum, this.countPerPage, 4)
+    getOvertimeTag().then(r => {
+      this.overTimeTags = r.data.data
+      this.changePage(1)
+    })
+    this.getTagTableData(this.pageNum, this.countPerPage, 3)
   },
   destroyed () {
     clearInterval(this.intervalid)

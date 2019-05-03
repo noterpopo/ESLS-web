@@ -113,7 +113,7 @@ export default {
           width: 60,
           align: 'center',
           indexMethod: (row) => {
-            return row._index + 1 + (this.currentPage - 1) * this.countPerPage
+            return row._index + 1 + (this.currentPage - 1) * (this.countPerPage / 2)
           }
         },
         {
