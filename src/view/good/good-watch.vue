@@ -293,6 +293,9 @@ export default {
                 type: 'primary',
                 size: 'small'
               },
+              attrs: {
+                id: 'btn' + params.row._index
+              },
               on: {
                 'click': (event) => {
                   event.stopPropagation()
@@ -431,6 +434,12 @@ export default {
               }
             }
             return false
+          })
+          this.tagData.map((item, index) => {
+            if (item.waitUpdate === 1) {
+              let btn = document.getElementById('btn' + index)
+              btn.attr('disabled', true)
+            }
           })
           this.changePage(1)
         })
