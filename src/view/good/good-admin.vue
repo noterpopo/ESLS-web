@@ -537,7 +537,7 @@ export default {
           key: 'isWorking',
           render: (h, params) => {
             let row = params.row
-            let isWorking = row.exectime === null && row.completetime === null
+            let isWorking = row.execTime === null && row.completeTime === null
             let color = !isWorking ? 'primary' : 'error'
             let text = !isWorking ? '正常' : '超时'
 
