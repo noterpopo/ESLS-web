@@ -7,10 +7,21 @@ export const getDispms = (id) => {
   })
 }
 
-export const getStyle = (id) => {
+export const getStyleDisp = (id) => {
   return axios.request({
     url: '/style/dispms/' + id,
     method: 'get'
+  })
+}
+
+export const getStyle = (styleNumber, isPromote) => {
+  return axios.request({
+    url: '/style/promote',
+    method: 'get',
+    params: {
+      styleNumber: styleNumber,
+      isPromote: isPromote
+    }
   })
 }
 
@@ -67,13 +78,12 @@ export const changeStyle = (data) => {
   })
 }
 
-export const newStyle = (styleType, isPromote) => {
+export const newStyle = (styleType) => {
   return axios.request({
     url: '/style',
     method: 'get',
     params: {
-      styleType: styleType,
-      isPromote: isPromote
+      styleType: styleType
     }
   })
 }

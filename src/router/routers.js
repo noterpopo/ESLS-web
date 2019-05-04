@@ -258,6 +258,26 @@ export default [
     ]
   },
   {
+    path: '/license',
+    name: 'license',
+    meta: {
+      icon: 'ios-albums',
+      title: '证书管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'license',
+        name: 'license',
+        meta: {
+          icon: 'ios-albums',
+          title: '证书管理'
+        },
+        component: () => import('@/view/license/license.vue')
+      }
+    ]
+  },
+  {
     path: '/401',
     name: 'error_401',
     meta: {

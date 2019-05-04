@@ -65,7 +65,7 @@
 import e_label from '@/components/e-label/e-lable.vue'
 import super_table from '@/components/table/supertable.vue'
 import modal_style_designer from '@/components/modal/modal-style-designer.vue'
-import { getStyle, getAllStyle, deleteStyle, updateStyle, newStyle } from '@/api/style'
+import { getStyle, getStyleDisp, getAllStyle, deleteStyle, updateStyle, newStyle } from '@/api/style'
 import FileSaver from 'file-saver'
 import store from '@/store'
 export default {
@@ -190,11 +190,8 @@ export default {
                   'click': (event) => {
                     event.stopPropagation()
                     let temp = this.styleData.find(function (item) { return item.styleNumber === params.row.styleNumber })
-                    if (params.row.isPromote === 0) {
-                      this.editStyle(temp.id, temp.styleType, temp.width, temp.height)
-                    } else {
-                      this.editStyle(temp.id + 1, temp.styleType, temp.width, temp.height)
-                    }
+                    this.currentStyleID = temp.id
+                    this.editStyle(temp.styleNumber, params.row.isPromote, temp.styleType, temp.width, temp.height)
                   }
                 }
               }, '修改'),
@@ -211,7 +208,7 @@ export default {
                   'click': (event) => {
                     event.stopPropagation()
                     let temp = this.styleData.find(function (item) { return item.styleNumber === params.row.styleNumber })
-                    this.exportStyle(temp.id, temp.styleType)
+                    this.exportStyle(temp.styleNumber, temp.styleType)
                   }
                 }
               }, '导出'),
@@ -280,70 +277,72 @@ export default {
           delete styleDisp[i].id
         }
         // TODO
-        newStyle(styledes, 0).then(res => {
-          const newId = res.data.data.id
+        newStyle(styledes).then(res => {
+          let newId = res.data.data[0].id
+          let newPromoteId = res.data.data[1].id
           updateStyle(newId, styleDisp, 0, 0).then(res => {
-          })
-        })
-        newStyle(styledes, 1).then(res => {
-          const newId = res.data.data.id
-          updateStyle(newId, styleDisp, 0, 0).then(res => {
-            that.$Message.info('导入样式成功')
-            that.reload()
+            updateStyle(newPromoteId, styleDisp, 0, 0).then(r => {
+              that.$emit('reloadTable')
+              that.$Message.info('新建样式成功')
+            })
           })
         })
       })
       reader.readAsText(data)
       return false
     },
-    exportStyle (id, name) {
-      getStyle(id).then(res => {
-        let str = JSON.stringify(res.data.data)
-        FileSaver.saveAs(new Blob([str], { type: 'text/plain;charset=utf-8' }), name + '.json')
+    exportStyle (sN, name) {
+      getStyle(sN).then(res => {
+        getStyleDisp(res.data.data.id).then(res => {
+          let str = JSON.stringify(res.data.data)
+          FileSaver.saveAs(new Blob([str], { type: 'text/plain;charset=utf-8' }), name + '.json')
+        })
       })
     },
-    getLabelData (id, w, h) {
+    getLabelData (sN, isPromote, w, h) {
       var that = this
       that.isLabelLoading = true
-      getStyle(id).then(res => {
-        const dispData = res.data.data
-        var len = dispData.length // 循环变量
-        for (var i = 0; i < len; ++i) {
-          if (dispData[i].sourceColumn === 'name') {
-            that.item.itemName = dispData[i].text
-          } else if (dispData[i].sourceColumn === 'price') {
-            that.item.itemPrice = dispData[i].text
-          } else if (dispData[i].sourceColumn === 'promotePrice') {
-            that.item.itemOnSalePrice = dispData[i].text
-          } else if (dispData[i].sourceColumn === 'spec') {
-            that.item.itemNorm = dispData[i].text
-          } else if (dispData[i].sourceColumn === 'class') {
-            that.item.itemCategory = dispData[i].text
-          } else if (dispData[i].sourceColumn === 'unit') {
-            that.item.itemUnit = dispData[i].text
-          } else if (dispData[i].sourceColumn === 'origin') {
-            that.item.itemOrigin = dispData[i].text
-          } else if (dispData[i].sourceColumn === 'shelfNumber') {
-            that.item.itemNo = dispData[i].text
-          } else if (dispData[i].sourceColumn === 'qrCode') {
-            that.item.itemQRCode = dispData[i].text
-          } else if (dispData[i].sourceColumn === 'barCode') {
-            that.item.itemBarCode = dispData[i].text
-          } else if (dispData[i].sourceColumn === 'stock') {
-            that.item.itemStock = dispData[i].text
-          } else {
+      getStyle(sN, isPromote).then(res => {
+        getStyleDisp(res.data.data.id).then(res => {
+          const dispData = res.data.data
+          var len = dispData.length // 循环变量
+          for (var i = 0; i < len; ++i) {
+            if (dispData[i].sourceColumn === 'name') {
+              that.item.itemName = dispData[i].text
+            } else if (dispData[i].sourceColumn === 'price') {
+              that.item.itemPrice = dispData[i].text
+            } else if (dispData[i].sourceColumn === 'promotePrice') {
+              that.item.itemOnSalePrice = dispData[i].text
+            } else if (dispData[i].sourceColumn === 'spec') {
+              that.item.itemNorm = dispData[i].text
+            } else if (dispData[i].sourceColumn === 'class') {
+              that.item.itemCategory = dispData[i].text
+            } else if (dispData[i].sourceColumn === 'unit') {
+              that.item.itemUnit = dispData[i].text
+            } else if (dispData[i].sourceColumn === 'origin') {
+              that.item.itemOrigin = dispData[i].text
+            } else if (dispData[i].sourceColumn === 'shelfNumber') {
+              that.item.itemNo = dispData[i].text
+            } else if (dispData[i].sourceColumn === 'qrCode') {
+              that.item.itemQRCode = dispData[i].text
+            } else if (dispData[i].sourceColumn === 'barCode') {
+              that.item.itemBarCode = dispData[i].text
+            } else if (dispData[i].sourceColumn === 'stock') {
+              that.item.itemStock = dispData[i].text
+            } else {
 
+            }
           }
-        }
-        that.isLabelLoading = false
-        that.$refs.label_canvas.initData(dispData, w, h, null)
+          that.isLabelLoading = false
+          that.$refs.label_canvas.initData(dispData, w, h, null)
+        })
       })
     },
     getStyleTableData (page, count) {
       var that = this
       that.isTableLoading = true
       getAllStyle(page, count).then(res => {
-        const data = res.data.data.filter((item) => {
+        let data = res.data.data.filter((item) => {
           return item.id % 2 === 0
         })
         that.dataNum = res.data.code
@@ -365,11 +364,7 @@ export default {
       this.getStyleTableData({ queryId: key[0], queryString: value })
     },
     onTableClick (currentRow) {
-      if (currentRow.isPromote === 0) {
-        this.getLabelData(currentRow.id, currentRow.width, currentRow.height)
-      } else {
-        this.getLabelData(currentRow.id + 1, currentRow.width, currentRow.height)
-      }
+      this.getLabelData(currentRow.styleNumber, currentRow.isPromote, currentRow.width, currentRow.height)
     },
     remove (id) {
       var that = this
@@ -386,11 +381,9 @@ export default {
         }
       })
     },
-    editStyle (styleid, styletype, w, h) {
-      console.log(styleid)
-      this.currentStyleID = styleid
+    editStyle (styleid, isPromote, styletype, w, h) {
       this.isModal = true
-      this.$refs.designer.getStyleData(styleid, styletype, w, h)
+      this.$refs.designer.getStyleData(styleid, isPromote, styletype, w, h)
     },
     onUpdate () {
       this.$refs.designer.update(this.currentStyleID)

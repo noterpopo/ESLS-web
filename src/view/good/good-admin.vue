@@ -197,7 +197,7 @@ import super_table from '@/components/table/supertable.vue'
 import { getAllGood, updateGood, deleteGood, getBindedTags, getGood, cronUpdate } from '@/api/good'
 import { getAllTag, getTag, lightTag, flushTag, removeTag, scanTag, statusTag, bindStyleWithoutUpdate } from '@/api/tag'
 import e_label from '@/components/e-label/e-lable.vue'
-import { getStyle } from '@/api/style'
+import { getStyleDisp } from '@/api/style'
 import store from '@/store'
 import { VueContext } from 'vue-context'
 import goodTagExpand from '@/components/table/good-tag-expand.vue'
@@ -969,8 +969,8 @@ export default {
         return
       }
       getTag(tid).then(res => {
-        const tempTag = res.data.data
-        getStyle(tempTag[0].styleId).then(res => {
+        let tempTag = res.data.data
+        getStyleDisp(tempTag[0].styleId).then(res => {
           const dispData = res.data.data
           that.$refs.label_canvas.initData(dispData, tempTag[0].resolutionWidth, tempTag[0].resolutionHeight, that.item)
         })

@@ -170,7 +170,7 @@
 </template>
 <script>
 // https://github.com/mauricius/vue-draggable-resizable
-import { getStyle, updateStyle, newStyle, deleteDispm } from '@/api/style'
+import { getStyle, getStyleDisp, updateStyle, newStyle, deleteDispm } from '@/api/style'
 import { coppyArray } from '@/libs/util'
 import VueDraggableResizable from 'vue-draggable-resizable'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
@@ -606,11 +606,11 @@ export default {
       console.log(e)
       console.log(val)
     },
-    getStyleData (id, type, w, h, mode) {
+    getStyleData (sN, isPromote, type, w, h, mode) {
       this.mode = mode
       this.dispmsData = []
       this.currentDispmsData = []
-      this.styleid = id
+      this.styleid = sN
       this.styleWidth = w
       this.styleHeight = h
       this.styleType = type
@@ -623,30 +623,32 @@ export default {
       } else {
         this.isLoading = true
         var that = this
-        getStyle(id).then(res => {
-          const data = res.data.data
-          // 重新渲染editorarea
-          this.reRenderFlag = false
-          this.$nextTick(() => {
-            this.reRenderFlag = true
-          })
-          var len = data.length // 循环变量
-          for (var i = 0; i < len; ++i) {
-            data[i].fontColor = data[i].fontColor + ''
-            data[i].backgroundColor = data[i].backgroundColor + ''
-            if (data[i].sourceColumn === 'barCode') {
-              that.item.itemBarCode = data[i].text
-            } else if (data[i].sourceColumn === 'qrCode') {
-              that.item.itemQRCode = data[i].text
-            } else if (data[i].sourceColumn === 'price') {
-              this.decFontSizePrice = parseInt(data[i].backup.split('/')[1])
-            } else if (data[i].sourceColumn === 'promotePrice') {
-              this.decFontSizePromotePrice = parseInt(data[i].backup.split('/')[1])
+        getStyle(sN, isPromote).then(res => {
+          getStyleDisp(res.data.data.id).then(res => {
+            const data = res.data.data
+            // 重新渲染editorarea
+            this.reRenderFlag = false
+            this.$nextTick(() => {
+              this.reRenderFlag = true
+            })
+            var len = data.length // 循环变量
+            for (var i = 0; i < len; ++i) {
+              data[i].fontColor = data[i].fontColor + ''
+              data[i].backgroundColor = data[i].backgroundColor + ''
+              if (data[i].sourceColumn === 'barCode') {
+                that.item.itemBarCode = data[i].text
+              } else if (data[i].sourceColumn === 'qrCode') {
+                that.item.itemQRCode = data[i].text
+              } else if (data[i].sourceColumn === 'price') {
+                this.decFontSizePrice = parseInt(data[i].backup.split('/')[1])
+              } else if (data[i].sourceColumn === 'promotePrice') {
+                this.decFontSizePromotePrice = parseInt(data[i].backup.split('/')[1])
+              }
             }
-          }
-          that.isLoading = false
-          that.currentDispmsData = data
-          that.dispmsData = coppyArray(data)
+            that.isLoading = false
+            that.currentDispmsData = data
+            that.dispmsData = coppyArray(data)
+          })
         })
       }
     },
@@ -770,20 +772,13 @@ export default {
         }
         var that = this
         let styledes = this.styleType
-        newStyle(styledes, 0).then(res => {
-          const newId = res.data.data.id
+        newStyle(styledes).then(res => {
+          let newId = res.data.data[0].id
+          let newPromoteId = res.data.data[1].id
           updateStyle(newId, that.currentDispmsData, 0, 0).then(res => {
-            if (styledes.indexOf('非促销') !== -1) {
-              styledes = styledes.replace('非促销', '促销')
-            } else {
-              styledes = styledes + '-促销'
-            }
-            newStyle(styledes, 1).then(res => {
-              const newId = res.data.data.id
-              updateStyle(newId, that.currentDispmsData, 0, 0).then(res => {
-                that.$emit('reloadTable')
-                that.$Message.info('新建样式成功')
-              })
+            updateStyle(newPromoteId, that.currentDispmsData, 0, 0).then(r => {
+              that.$emit('reloadTable')
+              that.$Message.info('新建样式成功')
             })
           })
         })
@@ -823,20 +818,13 @@ export default {
         onOk: () => {
           var that = this
           let styledes = this.styleType + '-' + this.newStyleName
-          newStyle(styledes, 0).then(res => {
-            const newIdfcx = res.data.data.id
-            updateStyle(newIdfcx, that.currentDispmsData, 0, 0).then(res => {
-              if (styledes.indexOf('非促销') !== -1) {
-                styledes = styledes.replace('非促销', '促销')
-              } else {
-                styledes = styledes + '-促销'
-              }
-              newStyle(styledes, 1).then(res => {
-                const newIdcx = res.data.data.id
-                updateStyle(newIdcx, that.currentDispmsData, 0, 0).then(res => {
-                  that.$emit('reloadTable')
-                  that.$Message.info('另存为样式成功')
-                })
+          newStyle(styledes).then(res => {
+            let newId = res.data.data[0].id
+            let newPromoteId = res.data.data[1].id
+            updateStyle(newId, that.currentDispmsData, 0, 0).then(res => {
+              updateStyle(newPromoteId, that.currentDispmsData, 0, 0).then(r => {
+                that.$emit('reloadTable')
+                that.$Message.info('另存为样式成功')
               })
             })
           })
