@@ -555,7 +555,8 @@ export default {
         shelfNumber: '货号',
         stock: '库存',
         custom: '自定义字段',
-        provider: '供应商'
+        provider: '供应商',
+        line: '线段'
       }
     }
   },

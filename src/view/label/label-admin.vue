@@ -224,8 +224,7 @@ export default {
                 on: {
                   'click': (event) => {
                     event.stopPropagation()
-                    let temp = this.styleData.find(function (item) { return item.styleNumber === params.row.styleNumber })
-                    this.remove(temp.id)
+                    this.remove(params.row.styleNumber)
                   }
                 }
               }, '删除')
@@ -343,7 +342,7 @@ export default {
       that.isTableLoading = true
       getAllStyle(page, count).then(res => {
         let data = res.data.data.filter((item) => {
-          return item.id % 2 === 0
+          return item.isPromote === 0
         })
         that.dataNum = res.data.code
         that.styleData = data
@@ -374,9 +373,7 @@ export default {
         onOk: function () {
           deleteStyle(id)
             .then(() => {
-              deleteStyle(id + 1).then(() => {
-                that.getStyleTableData({ page: that.currentPage - 1, count: that.countPerPage })
-              })
+              that.getStyleTableData({ page: that.currentPage - 1, count: that.countPerPage })
             })
         }
       })

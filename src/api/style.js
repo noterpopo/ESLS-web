@@ -58,7 +58,7 @@ export const updateStyle = (sid, data, mode, update) => {
 }
 export const deleteStyle = (id) => {
   return axios.request({
-    url: '/style/' + id,
+    url: '/style/styleNumber/' + id,
     method: 'delete'
   })
 }
