@@ -1,7 +1,7 @@
 <template>
   <div class="container" ref="container" :style="{flexDirection: 'row',alignItems: 'flex-start'}">
-      <div class="left" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
-        <Card :bordered="false" class="e-lable-table-card card">
+      <div class="left111" >
+        <Card :bordered="false" :style="{width: windowWidth*0.6 + 'px'}" class="e-lable-table-card card">
             <div slot="title">
                 <Row type="flex" justify="center" >
                     <Col span="18"><p>样式信息</p></Col>
@@ -532,7 +532,7 @@ Input{
     align-items: flex-start;
 
 }
-.left{
+.left111{
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;

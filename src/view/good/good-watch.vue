@@ -424,6 +424,8 @@ export default {
       let flag = true
       gjTags().then(() => {
         flag = false
+      }).catch(() => {
+        clearInterval(this.intervalid)
       })
       this.intervalid = setInterval(() => {
         getAllTag({}).then(res => {
