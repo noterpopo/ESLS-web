@@ -219,7 +219,7 @@ export default {
               type: 'post',
               success: (res) => {
                 styleFiltters = res.data.filter((item) => {
-                  return item.id % 2 === 0
+                  return item.isPromote === 0
                 })
               }
             })
