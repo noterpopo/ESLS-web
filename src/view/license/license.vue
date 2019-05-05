@@ -3,7 +3,16 @@
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
             <Tabs :animated="false">
                 <TabPane label="查看证书">
-                    <div>hhh</div>
+                  <Row style="margin-bottom:10px;">
+                      <Col span="8"><p>证书信息</p></Col>
+                      <Col span="8"><p>有效期起始</p></Col>
+                      <Col span="8"><p>有效期结束</p></Col>
+                    </Row>
+                    <Row>
+                      <Col span="8"><p>{{licenseData.info}}</p></Col>
+                      <Col span="8"><p>{{licenseData.notBefore}}</p></Col>
+                      <Col span="8"><p>{{licenseData.notAfter}}</p></Col>
+                    </Row>
                 </TabPane>
                 <TabPane label="导入证书">
                     <Upload style="margin-top:10px;"
@@ -28,7 +37,7 @@
 <script>
 import super_table from '@/components/table/supertable.vue'
 import store from '@/store'
-// import { getLicense } from '@/api/license'
+import { getLicense } from '@/api/license'
 export default {
   components: {
     super_table
@@ -39,7 +48,8 @@ export default {
         ESLS: store.getters.token
       },
       uploadName: '',
-      windowWidth: 0
+      windowWidth: 0,
+      licenseData: {}
     }
   },
   mounted () {
@@ -50,6 +60,11 @@ export default {
     window.onresize = function () {
       that.windowWidth = that.$refs.container.offsetWidth
     }
+  },
+  created () {
+    getLicense().then(res => {
+      this.licenseData = res.data.data
+    })
   },
   computed: {
 

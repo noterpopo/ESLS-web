@@ -10,8 +10,8 @@
               </Row>
             </div>
             <super_table :pageSize="countPerPageGood" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
-            <Button v-if="hasFileAccess" type="primary" @click="isUploadShow=true">上传文件</Button>
-            <Button type="primary" style="margin-left:10px;" @click="downloadGoodsData">下载文件</Button>
+            <Button v-if="hasFileAccess" type="primary" @click="isUploadShow=true">导入文件</Button>
+            <Button type="primary" style="margin-left:10px;" @click="downloadGoodsData">导出文件</Button>
             <Modal v-model="isUploadShow" title="上传商品信息文件">
               <div>
                 <Select v-model="uploadMode">
