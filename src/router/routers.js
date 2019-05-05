@@ -267,8 +267,8 @@ export default [
     component: Main,
     children: [
       {
-        path: 'license',
-        name: 'license',
+        path: 'licenseAdmin',
+        name: 'licenseAdmin',
         meta: {
           icon: 'ios-albums',
           title: '证书管理'
