@@ -77,6 +77,7 @@ export default {
   data () {
     return {
       windowWidth: 0,
+      currentSelected: {},
       item: {
         itemName: '测试商品名称1',
         itemUnit: '罐',
@@ -190,7 +191,7 @@ export default {
                   'click': (event) => {
                     event.stopPropagation()
                     let temp = this.styleData.find(function (item) { return item.styleNumber === params.row.styleNumber })
-                    this.currentStyleID = temp.id
+                    this.currentSelected = params.row
                     this.editStyle(temp.styleNumber, params.row.isPromote, temp.styleType, temp.width, temp.height)
                   }
                 }
@@ -402,7 +403,9 @@ export default {
       this.$refs.designer.getStyleData(styleid, isPromote, styletype, w, h)
     },
     onUpdate () {
-      this.$refs.designer.update(this.currentStyleID)
+      getStyle(this.currentSelected.styleNumber, this.currentSelected.isPromote).then(res => {
+        this.$refs.designer.update(res.data.data.id)
+      })
     },
     addStyle () {
       this.$Modal.confirm({
