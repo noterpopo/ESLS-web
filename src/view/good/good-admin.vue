@@ -197,7 +197,7 @@ import super_table from '@/components/table/supertable.vue'
 import { getAllGood, updateGood, deleteGood, getBindedTags, getGood, cronUpdate } from '@/api/good'
 import { getAllTag, getTag, lightTag, flushTag, removeTag, scanTag, statusTag, bindStyleWithoutUpdate } from '@/api/tag'
 import e_label from '@/components/e-label/e-lable.vue'
-import { getStyleDisp } from '@/api/style'
+import { getStyleDisp, getStyleInfo, getStyle } from '@/api/style'
 import store from '@/store'
 import { VueContext } from 'vue-context'
 import goodTagExpand from '@/components/table/good-tag-expand.vue'
@@ -308,33 +308,49 @@ export default {
                   updateGood(params.row).then(res => {
                     getBindedTags({ queryId: 'barCode', queryString: params.row.barCode }).then(res => {
                       that.tagData = res.data.data
-                      that.canShowData = that.tagData.filter(function (item) {
+                      that.canShowData = that.tagData.filter(function (item, index) {
                         if (item.styleId === 0) {
                           return false
                         }
                         if (params.row.isPromote === 0) {
-                          if (item.styleId % 2 !== 0) {
-                            item.styleId--
-                          }
+                          getStyleInfo(item.styleId).then(res => {
+                            getStyle(res.data.data[0].styleNumber, 0).then(r => {
+                              item.styleId = r.data.data.id
+                              bindStyleWithoutUpdate(item.id, item.styleId).then(res => {
+                                if (index >= that.canShowData.length - 1) {
+                                  if (that.canShowData.length === 0) {
+                                    that.showId = 0
+                                    this.$refs.label_canvas.initData(null, 0, 0, this.item)
+                                  } else {
+                                    that.showId = that.canShowData[0].id
+                                    that.getLabelData(that.showId)
+                                  }
+                                }
+                              })
+                            })
+                          })
                         } else {
-                          if (item.styleId % 2 === 0) {
-                            item.styleId++
-                          }
+                          getStyleInfo(item.styleId).then(res => {
+                            getStyle(res.data.data[0].styleNumber, 1).then(r => {
+                              item.styleId = r.data.data.id
+                              bindStyleWithoutUpdate(item.id, item.styleId).then(res => {
+                                if (index >= that.canShowData.length - 1) {
+                                  if (that.canShowData.length === 0) {
+                                    that.showId = 0
+                                    this.$refs.label_canvas.initData(null, 0, 0, this.item)
+                                  } else {
+                                    that.showId = that.canShowData[0].id
+                                    that.getLabelData(that.showId)
+                                  }
+                                }
+                              })
+                            })
+                          })
                         }
                         return true
                       })
                       that.canShowData.map((item, index) => {
-                        bindStyleWithoutUpdate(item.id, item.styleId).then(res => {
-                          if (index >= that.canShowData.length - 1) {
-                            if (that.canShowData.length === 0) {
-                              that.showId = 0
-                              this.$refs.label_canvas.initData(null, 0, 0, this.item)
-                            } else {
-                              that.showId = that.canShowData[0].id
-                              that.getLabelData(that.showId)
-                            }
-                          }
-                        })
+
                       })
                     })
                   })

@@ -7,6 +7,13 @@ export const getDispms = (id) => {
   })
 }
 
+export const getStyleInfo = (id) => {
+  return axios.request({
+    url: 'style/' + id,
+    method: 'get'
+  })
+}
+
 export const getStyleDisp = (id) => {
   return axios.request({
     url: '/style/dispms/' + id,
