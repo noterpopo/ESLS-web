@@ -15,9 +15,17 @@
                   <p :style="{fontSize: '16px'}">样式宽度：{{styleWidth}}</p>
                   <p :style="{fontSize: '16px'}">样式高度：{{styleHeight}}</p>
                   <div :style="{marginTop:'4px'}">
-                    <p v-for="(item,index) in currentDispmsData" :key="item.id">
-                      <Checkbox style="margin:2px;" :value="item.status==1" @on-change="onCheckItem($event,item)"></Checkbox>
-                      <span @click.stop="onAreaClick(index)">{{translate[item.sourceColumn]}}</span>
+                    <p>
+                      <Row v-for="(item,index) in currentDispmsData" v-if="index%2==0" :key="item.id">
+                        <Col span="12">
+                          <Checkbox style="margin:2px;" :value="item.status==1" @on-change="onCheckItem($event,item)"></Checkbox>
+                          <span @click.stop="onAreaClick(index)">{{translate[item.sourceColumn]}}</span>
+                        </Col>
+                        <Col span="12" v-if="index+1<currentDispmsData.length">
+                          <Checkbox style="margin:2px;" :value="currentDispmsData[index+1].status==1" @on-change="onCheckItem($event,currentDispmsData[index+1])"></Checkbox>
+                          <span @click.stop="onAreaClick(index+1)">{{translate[currentDispmsData[index+1].sourceColumn]}}</span>
+                        </Col>
+                      </Row>
                     </p>
                   </div>
                   <Button :style="{margin:'10px'}" type="primary" @click="addArea">添加自定义字段</Button>
