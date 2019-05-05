@@ -5,7 +5,7 @@
             <Row type="flex" justify="center" align="middle">
                 <Col span="24"><p>总店信息</p></Col>
             </Row>
-            <Table border @on-row-dblclick="onTableClick" :columns="tableColumns" :data="centerShopData"></Table>
+            <Table border @on-row-dblclick="onTableClick" :columns="zdtableColumns" :data="centerShopData"></Table>
           </div>
       </Card>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
@@ -177,6 +177,61 @@ export default {
                 }
               }, '删除')
             ])
+          }
+        }
+      ],
+      zdtableColumns: [
+        {
+          type: 'index',
+          width: 60,
+          align: 'center',
+          indexMethod: (row) => {
+            return row._index + 1 + (this.currentPage - 1) * this.countPerPage
+          }
+        },
+        {
+          title: '店铺编码',
+          key: 'number',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '名称',
+          key: 'name',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '管理员',
+          key: 'manager',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '地址',
+          key: 'address',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '电话',
+          key: 'phone',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '路由器',
+          render: (h, params) => {
+            let currentRoute = []
+            for (let i = 0; i < params.row.routers.length; ++i) {
+              currentRoute.push(params.row.routers[i].barCode)
+            }
+            return h('div', currentRoute.join(','))
           }
         }
       ],

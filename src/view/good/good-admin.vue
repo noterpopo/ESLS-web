@@ -308,6 +308,7 @@ export default {
                   updateGood(params.row).then(res => {
                     getBindedTags({ queryId: 'barCode', queryString: params.row.barCode }).then(res => {
                       that.tagData = res.data.data
+                      that.canShowData = null
                       that.canShowData = that.tagData.filter(function (item, index) {
                         if (item.styleId === 0) {
                           return false
@@ -317,14 +318,12 @@ export default {
                             getStyle(res.data.data[0].styleNumber, 0).then(r => {
                               item.styleId = r.data.data.id
                               bindStyleWithoutUpdate(item.id, item.styleId).then(res => {
-                                if (index >= that.canShowData.length - 1) {
-                                  if (that.canShowData.length === 0) {
-                                    that.showId = 0
-                                    this.$refs.label_canvas.initData(null, 0, 0, this.item)
-                                  } else {
-                                    that.showId = that.canShowData[0].id
-                                    that.getLabelData(that.showId)
-                                  }
+                                if (that.canShowData.length === 0) {
+                                  that.showId = 0
+                                  this.$refs.label_canvas.initData(null, 0, 0, this.item)
+                                } else {
+                                  that.showId = that.canShowData[0].id
+                                  that.getLabelData(that.showId)
                                 }
                               })
                             })
@@ -334,14 +333,12 @@ export default {
                             getStyle(res.data.data[0].styleNumber, 1).then(r => {
                               item.styleId = r.data.data.id
                               bindStyleWithoutUpdate(item.id, item.styleId).then(res => {
-                                if (index >= that.canShowData.length - 1) {
-                                  if (that.canShowData.length === 0) {
-                                    that.showId = 0
-                                    this.$refs.label_canvas.initData(null, 0, 0, this.item)
-                                  } else {
-                                    that.showId = that.canShowData[0].id
-                                    that.getLabelData(that.showId)
-                                  }
+                                if (that.canShowData.length === 0) {
+                                  that.showId = 0
+                                  this.$refs.label_canvas.initData(null, 0, 0, this.item)
+                                } else {
+                                  that.showId = that.canShowData[0].id
+                                  that.getLabelData(that.showId)
                                 }
                               })
                             })
