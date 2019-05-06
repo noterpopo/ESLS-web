@@ -189,3 +189,15 @@ export const getOvertimeTag = () => {
     method: 'get'
   })
 }
+
+export const testInkScreen = (data, mode, type) => {
+  return axios.request({
+    url: 'tag/testInkScreen',
+    method: 'put',
+    data: data,
+    params: {
+      mode: mode,
+      type: type
+    }
+  })
+}

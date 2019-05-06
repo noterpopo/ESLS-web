@@ -36,7 +36,7 @@
 import { getAllRoute, changeRoute, scanRoute, scanAll, settingRoute, updateRouter } from '@/api/route'
 import super_table from '@/components/table/supertable.vue'
 import routerExpand from '@/components/table/router-expand.vue'
-import { flushTag, scanTag, lightTag } from '@/api/tag'
+import { flushTag, scanTag, lightTag, testInkScreen } from '@/api/tag'
 import store from '@/store'
 import { getAllShop } from '@/api/shop'
 export default {
@@ -309,6 +309,41 @@ export default {
                       }
                     }
                   }, '广播熄灯'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        testInkScreen(data, 1, 1)
+                      }
+                    }
+                  }, '墨水屏测试1'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        testInkScreen(data, 1, 2)
+                      }
+                    }
+                  }, '墨水屏测试2'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        testInkScreen(data, 1, 3)
+                      }
+                    }
+                  }, '墨水屏测试3'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        testInkScreen(data, 1, 4)
+                      }
+                    }
+                  }, '墨水屏测试4'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        testInkScreen(data, 1, 5)
+                      }
+                    }
+                  }, '墨水屏测试5'),
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
