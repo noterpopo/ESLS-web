@@ -88,16 +88,20 @@ export default {
         },
         {
           title: '参数',
-          key: 'args',
-          filter: {
-            type: 'Input'
-          }
+          key: 'args'
+
         },
         {
           title: 'cron表达式',
           key: 'cron',
-          filter: {
-            type: 'Input'
+          render: (h, params) => {
+            let cron = ''
+            if (params.row.mode === 0 || params.row.mode === 1) {
+              cron = params.row.args.split('、')[0]
+            } else {
+              cron = params.row.cron
+            }
+            return h('div', cron)
           }
         },
         {
@@ -260,7 +264,8 @@ export default {
         })
       } else if (currentRow.mode === 0) {
         this.currentCycyleJobData.cron = currentRow.args.split('、')[0]
-        this.shopId = currentRow.args.split('、')[2]
+        this.shopId = currentRow.args.split('、')[2].replace('-', '')
+        this.shopId = parseInt(this.shopId)
         this.$Modal.confirm({
           title: '设置定期任务',
           render: (h, params) => {
@@ -311,7 +316,8 @@ export default {
         })
       } else if (currentRow.mode === 1) {
         this.currentCycyleJobData.cron = currentRow.args.split('、')[0]
-        this.shopId = currentRow.args.split('、')[2]
+        this.shopId = currentRow.args.split('、')[2].replace('-', '')
+        this.shopId = parseInt(this.shopId)
         this.$Modal.confirm({
           title: '设置定期任务',
           render: (h, params) => {

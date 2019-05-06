@@ -216,17 +216,33 @@ export default {
         {
           title: 'AP RSSI',
           key: 'apRssi',
-          width: '65',
-          filter: {
-            type: 'Input'
+          width: '70',
+          render: (h, params) => {
+            let color = '#515a6e'
+            if (params.row.apRssi > -40) {
+              color = 'red'
+            }
+            return h('div', {
+              attrs: {
+                style: 'color: ' + color
+              }
+            }, params.row.apRssi)
           }
         },
         {
           title: 'Tag RSSI',
           key: 'tagRssi',
-          width: '65',
-          filter: {
-            type: 'Input'
+          width: '70',
+          render: (h, params) => {
+            let color = '#515a6e'
+            if (params.row.tagRssi > -40) {
+              color = 'red'
+            }
+            return h('div', {
+              attrs: {
+                style: 'color: ' + color
+              }
+            }, params.row.tagRssi)
           }
         },
         {
@@ -423,6 +439,7 @@ export default {
 
       let flag = true
       gjTags().then(() => {
+        this.$Meaasge.info('变价完成')
         flag = false
       }).catch(() => {
         clearInterval(this.intervalid)
