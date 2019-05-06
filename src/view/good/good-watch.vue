@@ -4,7 +4,7 @@
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                 <Col span="22"><p>变价监控信息</p></Col>
-                <Col span="2"><Button type="primary" @click="exportCsv">导出csv</Button></Col>
+                <Col span="2"><Button type="primary" @click="exportCsv">导出变价超时数据</Button></Col>
             </Row>
           </div>
           <div>
