@@ -218,14 +218,28 @@ export default {
               },
               type: 'post',
               success: (res) => {
-                styleFiltters = res.data.filter((item) => {
-                  return item.isPromote === 0
-                })
+                if (params.row.goodId === 0) {
+                  styleFiltters = res.data.filter((item) => {
+                    return item.isPromote === 0
+                  })
+                } else {
+                  $.ajax({
+                    url: 'http://39.108.106.167:8086/goods/' + params.row.goodId,
+                    async: false,
+                    headers: {
+                      ESLS: store.getters.token
+                    },
+                    type: 'get',
+                    success: (r) => {
+                      let isPromote = r.data[0].isPromote
+                      styleFiltters = res.data.filter((item) => {
+                        return item.isPromote === isPromote
+                      })
+                    }
+                  })
+                }
               }
             })
-            if (params.row.styleId % 2 !== 0) {
-              params.row.styleId--
-            }
             return h('Select', {
               props: {
                 value: params.row.styleId,

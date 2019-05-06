@@ -36,7 +36,7 @@
 import { getAllRoute, changeRoute, scanRoute, scanAll, settingRoute, updateRouter } from '@/api/route'
 import super_table from '@/components/table/supertable.vue'
 import routerExpand from '@/components/table/router-expand.vue'
-import { flushTag, scanTag } from '@/api/tag'
+import { flushTag, scanTag, lightTag } from '@/api/tag'
 import store from '@/store'
 import { getAllShop } from '@/api/shop'
 export default {
@@ -295,6 +295,20 @@ export default {
                       }
                     }
                   }, '读取AP信息'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        lightTag(data, 1, 1)
+                      }
+                    }
+                  }, '广播闪灯'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        lightTag(data, 0, 1)
+                      }
+                    }
+                  }, '广播熄灯'),
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {

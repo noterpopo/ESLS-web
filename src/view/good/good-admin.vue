@@ -308,7 +308,6 @@ export default {
                   updateGood(params.row).then(res => {
                     getBindedTags({ queryId: 'barCode', queryString: params.row.barCode }).then(res => {
                       that.tagData = res.data.data
-                      that.canShowData = null
                       that.canShowData = that.tagData.filter(function (item, index) {
                         if (item.styleId === 0) {
                           return false
@@ -345,9 +344,6 @@ export default {
                           })
                         }
                         return true
-                      })
-                      that.canShowData.map((item, index) => {
-
                       })
                     })
                   })
