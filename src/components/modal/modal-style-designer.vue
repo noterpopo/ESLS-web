@@ -240,7 +240,7 @@ export default {
           fontFamily: '楷体',
           fontColor: '0',
           fontSize: 14,
-          status: 1,
+          status: 0,
           imageUrl: '',
           backup: '0'
         },
@@ -261,7 +261,7 @@ export default {
           fontFamily: '',
           fontColor: '0',
           fontSize: 14,
-          status: 1,
+          status: 0,
           imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
           backup: null
         },
@@ -282,7 +282,7 @@ export default {
           fontFamily: '微软雅黑',
           fontColor: '0',
           fontSize: 14,
-          status: 1,
+          status: 0,
           imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
           backup: null
         },
@@ -303,7 +303,7 @@ export default {
           fontFamily: '微软雅黑',
           fontColor: '0',
           fontSize: 14,
-          status: 1,
+          status: 0,
           imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
           backup: '1/20/45'
         },
@@ -324,7 +324,7 @@ export default {
           fontFamily: '微软雅黑',
           fontColor: '0',
           fontSize: 14,
-          status: 1,
+          status: 0,
           imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
           backup: null
         },
@@ -345,7 +345,7 @@ export default {
           fontFamily: '微软雅黑',
           fontColor: '0',
           fontSize: 14,
-          status: 1,
+          status: 0,
           imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
           backup: '0/60/123'
         },
@@ -366,7 +366,7 @@ export default {
           fontFamily: '宋体',
           fontColor: '0',
           fontSize: 14,
-          status: 1,
+          status: 0,
           imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
           backup: null
         },
@@ -387,7 +387,7 @@ export default {
           fontFamily: '宋体',
           fontColor: '0',
           fontSize: 14,
-          status: 1,
+          status: 0,
           imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
           backup: null
 
@@ -409,7 +409,7 @@ export default {
           fontFamily: '宋体',
           fontColor: '0',
           fontSize: 14,
-          status: 1,
+          status: 0,
           imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
           backup: null
 
@@ -431,7 +431,7 @@ export default {
           fontFamily: '宋体',
           fontColor: '0',
           fontSize: 14,
-          status: 1,
+          status: 0,
           imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
           backup: null
 
@@ -453,7 +453,7 @@ export default {
           fontFamily: '宋体',
           fontColor: '0',
           fontSize: 14,
-          status: 1,
+          status: 0,
           imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
           backup: null
 
@@ -475,7 +475,7 @@ export default {
           fontFamily: '',
           fontColor: '0',
           fontSize: 14,
-          status: 1,
+          status: 0,
           imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
           backup: null
 
@@ -497,7 +497,7 @@ export default {
           fontFamily: '',
           fontColor: '0',
           fontSize: 14,
-          status: 1,
+          status: 0,
           imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
           backup: null
 
@@ -519,7 +519,7 @@ export default {
           fontFamily: '宋体',
           fontColor: '0',
           fontSize: 14,
-          status: 1,
+          status: 0,
           imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
           backup: null
 
