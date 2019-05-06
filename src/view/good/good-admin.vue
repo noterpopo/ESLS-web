@@ -79,22 +79,6 @@
                     <Col span="2"><p>图片链接：</p></Col>
                     <Col span="22"><Input type="text" v-model="currentSelectedRow.imageUrl" /></Col>
                 </Row>
-                <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>自定义字段1：</p></Col>
-                    <Col span="21"><Input type="text" v-model="currentSelectedRow.rfu01" /></Col>
-                </Row>
-                <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>自定义字段2：</p></Col>
-                    <Col span="21"><Input type="text" v-model="currentSelectedRow.rfu02" /></Col>
-                </Row>
-                <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>自定义字段3：</p></Col>
-                    <Col span="21"><Input type="text" v-model="currentSelectedRow.rfus01" /></Col>
-                </Row>
-                <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>自定义字段4：</p></Col>
-                    <Col span="21"><Input type="text" v-model="currentSelectedRow.rfus02" /></Col>
-                </Row>
               </div>
             </Modal>
             <Modal :width="1040" v-model="addModal" title="添加商品" :loading="addOkLoading" @on-ok="asyncAddOK">
@@ -142,22 +126,6 @@
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>图片链接：</p></Col>
                     <Col span="22"><Input type="text" v-model="addGooddata.imageUrl" /></Col>
-                </Row>
-                <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>自定义字段1：</p></Col>
-                    <Col span="21"><Input type="text" v-model="addGooddata.rfu01" /></Col>
-                </Row>
-                <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>自定义字段2：</p></Col>
-                    <Col span="21"><Input type="text" v-model="addGooddata.rfu02" /></Col>
-                </Row>
-                <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>自定义字段3：</p></Col>
-                    <Col span="21"><Input type="text" v-model="addGooddata.rfus01" /></Col>
-                </Row>
-                <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="3"><p>自定义字段4：</p></Col>
-                    <Col span="21"><Input type="text" v-model="addGooddata.rfus02" /></Col>
                 </Row>
               </div>
             </Modal>
