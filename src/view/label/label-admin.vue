@@ -8,7 +8,7 @@
                     <Col span="2" v-if="hasEditAccess"><Button type="primary" @click="addStyle">新建样式</Button></Col>
                     <Col span="2" v-if="hasEditAccess">
                       <Upload style="margin-left:4px" :show-upload-list="false" action="" :before-upload="inputStyle">
-                        <Button icon="ios-cloud-upload-outline">上传样式</Button>
+                        <Button icon="ios-cloud-upload-outline">导入样式</Button>
                     </Upload>
                   </Col>
                 </Row>
