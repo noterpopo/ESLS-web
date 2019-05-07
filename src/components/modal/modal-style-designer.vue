@@ -781,6 +781,7 @@ export default {
         }
         var that = this
         let styledes = this.styleType
+        console.log('usdhgu')
         newStyle(styledes).then(res => {
           let newId = res.data.data[0].id
           let newPromoteId = res.data.data[1].id

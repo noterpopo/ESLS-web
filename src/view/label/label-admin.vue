@@ -403,9 +403,13 @@ export default {
       this.$refs.designer.getStyleData(styleid, isPromote, styletype, w, h)
     },
     onUpdate () {
-      getStyle(this.currentSelected.styleNumber, this.currentSelected.isPromote).then(res => {
-        this.$refs.designer.update(res.data.data.id)
-      })
+      if (this.currentSelected.styleNumber) {
+        getStyle(this.currentSelected.styleNumber, this.currentSelected.isPromote).then(res => {
+          this.$refs.designer.update(res.data.data.id)
+        })
+      } else {
+        this.$refs.designer.update(0)
+      }
     },
     addStyle () {
       this.$Modal.confirm({
@@ -510,7 +514,7 @@ export default {
             h = 128
           }
           this.isModal = true
-          this.$refs.designer.getStyleData(styleid, styleType, w, h, 'new')
+          this.$refs.designer.getStyleData(styleid, 0, styleType, w, h, 'new')
         }
 
       })
