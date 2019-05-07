@@ -2,7 +2,7 @@ import axios from '@/libs/api.request'
 
 export const getAllLog = ({ page, count, queryId, queryString }) => {
   return axios.request({
-    url: 'logs/',
+    url: 'operationLogs/',
     method: 'get',
     params: {
       query: queryId,

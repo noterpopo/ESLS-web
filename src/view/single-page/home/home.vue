@@ -63,11 +63,11 @@ export default {
         },
         {
           title: '用户名',
-          key: 'username'
+          key: 'userName'
         },
         {
           title: '操作',
-          key: 'operation'
+          key: 'logDescription'
         },
         {
           title: 'IP',
@@ -75,7 +75,10 @@ export default {
         },
         {
           title: '执行时间',
-          key: 'createDate'
+          key: 'createTime',
+          render: (h, params) => {
+            return h('div', new Date(parseInt(params.row.createTime)).toLocaleString())
+          }
         }
       ],
       isShow: true,

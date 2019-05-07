@@ -763,7 +763,7 @@ export default {
   methods: {
     downloadGoodsData () {
       let xhr = new XMLHttpRequest()
-      xhr.open('GET', 'http://39.108.106.167:8086/common/database/exportCsvDataFile?tableName=goods')
+      xhr.open('GET', 'http://39.108.106.167:8086/excel/excelExport?tableNames=goods')
       xhr.onload = function (a, b) {
         let blob = this.response
         let reader = new FileReader()

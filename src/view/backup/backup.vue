@@ -13,7 +13,7 @@
                         :show-upload-list="false"
                         :headers="headers"
                         type="drag"
-                        :action="'http://39.108.106.167:8086/common/database/importExcelDataFile?mode=1'">
+                        :action="'http://39.108.106.167:8086/excel/excelImport?update=1'">
                         <div style="padding: 20px 0;">
                             <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                             <p>点击上传或者拖拽文件上传</p>
@@ -61,7 +61,7 @@ export default {
   methods: {
     download () {
       let xhr = new XMLHttpRequest()
-      xhr.open('GET', 'http://39.108.106.167:8086/common/database/exportExcelDataFile?mode=1')
+      xhr.open('GET', 'http://39.108.106.167:8086/excel/excelExport')
       xhr.onload = function (a, b) {
         let blob = this.response
         let reader = new FileReader()
@@ -70,7 +70,7 @@ export default {
           var date = new Date()
           let timestamp = date.toLocaleString()
           let a = document.createElement('a')
-          a.download = timestamp + '.xlsx'
+          a.download = timestamp + '数据库备份.xlsx'
           a.href = e.target.result
           a.click()
         }
