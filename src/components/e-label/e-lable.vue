@@ -151,6 +151,15 @@ export default {
       var len = data.length
       // 循环变量
       for (var i = 0; i < len; ++i) {
+        if (data[i].text === null) {
+          data[i].text = ''
+        }
+        if (data[i].startText === null) {
+          data[i].startText = ''
+        }
+        if (data[i].endText === null) {
+          data[i].endText = ''
+        }
         data[i].fontColor = data[i].fontColor + ''
         data[i].backgroundColor = data[i].backgroundColor + ''
         if (item !== null) {
