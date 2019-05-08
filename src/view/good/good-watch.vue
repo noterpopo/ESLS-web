@@ -441,6 +441,23 @@ export default {
       gjTags().then(() => {
         this.$Meaasge.info('变价完成')
         flag = false
+        getAllTag({}).then(res => {
+          this.currentTimeTagData = res.data.data
+          this.tagData = this.currentTimeTagData.filter((item) => {
+            for (let i = 0; i < temp.length; ++i) {
+              if (temp[i].id === item.id) {
+                return true
+              }
+            }
+            return false
+          })
+          this.changePage(1)
+        })
+        let currentTemp = this.tagData.filter((item) => {
+          return item.waitUpdate === 0
+        })
+        let cNum = currentTemp.length
+        this.successRate = (submitNum - cNum) / submitNum * 100
       }).catch(() => {
         clearInterval(this.intervalid)
       })

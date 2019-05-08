@@ -30,7 +30,7 @@
           </div >
           <div style="display:flex; align-items:center;margin-top:10px;">
             <span>价签定期刷新：</span>
-            <Select v-model="shopId" style="width: 300px">
+            <Select v-model="shopId" style="width: 300px" :transfer="true">
               <Option v-for="(item) in shopData" :key="item.id" :value="item.id">{{item.name}}</Option>
             </Select>
             <Input  v-model="tagFlushCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
@@ -40,7 +40,7 @@
           </div >
           <div style="display:flex; align-items:center;margin-top:10px;">
             <span>价签定期巡检：</span>
-            <Select v-model="shopId" style="width: 300px">
+            <Select v-model="shopId" style="width: 300px" :transfer="true">>
               <Option v-for="(item) in shopData" :key="item.id" :value="item.id">{{item.name}}</Option>
             </Select>
             <Input  v-model="tagScanCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
