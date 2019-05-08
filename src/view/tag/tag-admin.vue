@@ -295,7 +295,7 @@ export default {
         {
           title: '通讯状态',
           key: 'isWorking',
-          width: '140',
+          width: '100',
           render: (h, params) => {
             let row = params.row
             let isWorking = row.execTime === null && row.completeTime === null
@@ -312,7 +312,7 @@ export default {
         {
           title: '使用状态',
           key: 'forbidState',
-          width: '120',
+          width: '100',
           render: (h, params) => {
             const row = params.row
             const color = row.forbidState === 1 ? 'primary' : 'error'
@@ -329,7 +329,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: '80',
+          width: '110',
           align: 'center',
           render: (h, params) => {
             let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
