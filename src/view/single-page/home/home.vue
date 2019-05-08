@@ -48,7 +48,7 @@ export default {
   data () {
     return {
       isTableLoading: false,
-      countPerPage: 4,
+      countPerPage: 10,
       currentPage: 1,
       logDataCount: 0,
       logData: [],
