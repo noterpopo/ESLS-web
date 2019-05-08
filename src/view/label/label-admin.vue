@@ -269,6 +269,7 @@ export default {
         let styleData = str.split('this is magic')
         let styleDisp1 = JSON.parse(styleData[0])
         let styleDisp2 = JSON.parse(styleData[1])
+        let sN = styleData[2]
         let index = 1
         for (let i = 0; i < styleDisp1.length; ++i) {
           if (styleDisp1[i].status === 1) {
@@ -289,16 +290,32 @@ export default {
         }
         console.log(styleDisp1)
         console.log(styleDisp2)
+        console.log(sN)
         // TODO
-        newStyle(styledes).then(res => {
-          let newId = res.data.data[0].id
-          let newPromoteId = res.data.data[1].id
-          updateStyle(newId, styleDisp1, 0, 0).then(res => {
-            updateStyle(newPromoteId, styleDisp2, 0, 0).then(r => {
-              that.$emit('reloadTable')
-              that.$Message.info('新建样式成功')
+        getStyle(sN, 0).then(r => {
+          if (r.data.data === null) {
+            newStyle(styledes).then(res => {
+              let newId = res.data.data[0].id
+              let newPromoteId = res.data.data[1].id
+              updateStyle(newId, styleDisp1, 0, 0).then(res => {
+                updateStyle(newPromoteId, styleDisp2, 0, 0).then(r => {
+                  that.$emit('reloadTable')
+                  that.$Message.info('新建样式成功')
+                })
+              })
             })
-          })
+          } else {
+            updateStyle(r.data.data.id, styleDisp1, 0, 0).then(res => {
+              getStyle(sN, 1).then(r2 => {
+                updateStyle(r2.data.data.id, styleDisp2, 0, 0).then(r => {
+                  that.$emit('reloadTable')
+                  that.$Message.info('更新样式成功')
+                })
+              })
+            })
+          }
+        }).catch(d => {
+
         })
       })
       reader.readAsText(data)
@@ -312,6 +329,7 @@ export default {
           getStyle(sN, 1).then(res => {
             getStyleDisp(res.data.data.id).then(res => {
               str = str + 'this is magic' + JSON.stringify(res.data.data)
+              str = str + 'this is magic' + sN
               FileSaver.saveAs(new Blob([str], { type: 'text/plain;charset=utf-8' }), name + '.json')
             })
           })
