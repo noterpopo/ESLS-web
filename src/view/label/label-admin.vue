@@ -281,7 +281,6 @@ export default {
           } else {
             that.$set(styleDisp1[i], 'regionId', 0)
           }
-          delete styleDisp1[i].id
         }
         index = 1
         for (let i = 0; i < styleDisp2.length; ++i) {
@@ -290,14 +289,19 @@ export default {
           } else {
             that.$set(styleDisp2[i], 'regionId', 0)
           }
-          delete styleDisp2[i].id
         }
-        console.log(styleDisp1)
-        console.log(styleDisp2)
-        console.log(sN)
         // TODO
         getStyle(sN, 0).then(r => {
           if (r.data.data === null) {
+            for (let i = 0; i < styleDisp1.length; ++i) {
+              delete styleDisp1[i].id
+            }
+            for (let i = 0; i < styleDisp2.length; ++i) {
+              delete styleDisp2[i].id
+            }
+            console.log(styleDisp1)
+            console.log(styleDisp2)
+            console.log(sN)
             newStyle(styledes).then(res => {
               let newId = res.data.data[0].id
               let newPromoteId = res.data.data[1].id
@@ -309,9 +313,12 @@ export default {
               })
             })
           } else {
-            updateStyle(r.data.data.id, styleDisp1, 0, 0).then(res => {
+            console.log(styleDisp1)
+            console.log(styleDisp2)
+            console.log(sN)
+            updateStyle(r.data.data.id, styleDisp1, 1, 0).then(res => {
               getStyle(sN, 1).then(r2 => {
-                updateStyle(r2.data.data.id, styleDisp2, 0, 0).then(r => {
+                updateStyle(r2.data.data.id, styleDisp2, 1, 0).then(r => {
                   that.$emit('reloadTable')
                   that.$Message.info('更新样式成功')
                 })

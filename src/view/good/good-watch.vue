@@ -219,7 +219,7 @@ export default {
           width: '70',
           render: (h, params) => {
             let color = '#515a6e'
-            if (params.row.apRssi < -40) {
+            if (params.row.apRssi < -70) {
               color = 'red'
             }
             return h('div', {
@@ -235,7 +235,7 @@ export default {
           width: '70',
           render: (h, params) => {
             let color = '#515a6e'
-            if (params.row.tagRssi < -40) {
+            if (params.row.tagRssi < -70) {
               color = 'red'
             }
             return h('div', {
