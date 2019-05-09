@@ -177,6 +177,10 @@ export default {
             let isAccess = store.getters.access.indexOf(2) === -1
             let DeleteAccess = store.getters.access.indexOf(10) === -1
             let EditAccess = store.getters.access.indexOf(18) === -1
+            let isDeletable = true
+            if (params.row.styleNumber.indexOf('01') !== -1 || params.row.styleNumber.indexOf('02') !== -1) {
+              isDeletable = false
+            }
             return h('div', [
               h('Button', {
                 props: {
@@ -220,7 +224,7 @@ export default {
                 },
                 style: {
                   margin: '2px',
-                  display: DeleteAccess || EditAccess ? 'none' : 'inline-block'
+                  display: DeleteAccess || EditAccess || !isDeletable ? 'none' : 'inline-block'
                 },
                 on: {
                   'click': (event) => {
