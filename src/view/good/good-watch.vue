@@ -219,7 +219,7 @@ export default {
           width: '70',
           render: (h, params) => {
             let color = '#515a6e'
-            if (params.row.apRssi > -40) {
+            if (params.row.apRssi < -40) {
               color = 'red'
             }
             return h('div', {
@@ -235,7 +235,7 @@ export default {
           width: '70',
           render: (h, params) => {
             let color = '#515a6e'
-            if (params.row.tagRssi > -40) {
+            if (params.row.tagRssi < -40) {
               color = 'red'
             }
             return h('div', {
@@ -439,7 +439,10 @@ export default {
 
       let flag = true
       gjTags().then(() => {
-        this.$Meaasge.info('变价完成')
+        this.$Modal.info({
+          title: '消息',
+          content: '变价完成'
+        })
         flag = false
         getAllTag({}).then(res => {
           this.currentTimeTagData = res.data.data

@@ -554,7 +554,7 @@ export default {
         qrCode: '二维码',
         0: '自定义字段',
         price: '价格',
-        imageUrl: '',
+        imageUrl: '图片',
         barCode: '条形码',
         unit: '单位',
         spec: '规格',
