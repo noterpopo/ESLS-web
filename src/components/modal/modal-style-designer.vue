@@ -19,11 +19,11 @@
                       <Row v-for="(item,index) in currentDispmsData" v-if="index%2==0" :key="item.id">
                         <Col span="12">
                           <Checkbox style="margin:2px;" :value="item.status==1" @on-change="onCheckItem($event,item)"></Checkbox>
-                          <span @click.stop="onAreaClick(index)">{{currentDispmsData[index+1].sourceColumn=='0'?translate[item.sourceColumn]+(currentDispmsData.length-index):translate[item.sourceColumn]}}</span>
+                          <span @click.stop="onAreaClick(index)">{{translate[item.sourceColumn]}}</span>
                         </Col>
                         <Col span="12" v-if="index+1<currentDispmsData.length">
                           <Checkbox style="margin:2px;" :value="currentDispmsData[index+1].status==1" @on-change="onCheckItem($event,currentDispmsData[index+1])"></Checkbox>
-                          <span @click.stop="onAreaClick(index+1)">{{currentDispmsData[index+1].sourceColumn=='0'?translate[currentDispmsData[index+1].sourceColumn]+(currentDispmsData.length-(index+1)):translate[currentDispmsData[index+1].sourceColumn]}}</span>
+                          <span @click.stop="onAreaClick(index+1)">{{translate[currentDispmsData[index+1].sourceColumn]}}</span>
                         </Col>
                       </Row>
                     </p>
