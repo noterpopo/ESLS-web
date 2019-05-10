@@ -93,7 +93,7 @@ export default {
   data () {
     return {
       windowWidth: 0,
-      intervalid: 0,
+      intervalid: null,
       successRate: 0,
       isTableLoading: false,
       tagData: [],
@@ -351,7 +351,10 @@ export default {
     this.getTagTableData(this.pageNum, this.countPerPage, 3)
   },
   destroyed () {
-    clearInterval(this.intervalid)
+    if (this.intervalid !== null) {
+      clearInterval(this.intervalid)
+      this.intervalid = null
+    }
   },
   computed: {
     hasSubmitAccess: () => {
@@ -462,7 +465,10 @@ export default {
         let cNum = currentTemp.length
         this.successRate = (submitNum - cNum) / submitNum * 100
       }).catch(() => {
-        clearInterval(this.intervalid)
+        if (this.intervalid !== null) {
+          clearInterval(this.intervalid)
+          this.intervalid = null
+        }
       })
       this.intervalid = setInterval(() => {
         getAllTag({}).then(res => {
@@ -483,7 +489,10 @@ export default {
         let cNum = currentTemp.length
         this.successRate = (submitNum - cNum) / submitNum * 100
         if (!flag) {
-          clearInterval(this.intervalid)
+          if (this.intervalid !== null) {
+            clearInterval(this.intervalid)
+            this.intervalid = null
+          }
         }
       }, 2000)
     },

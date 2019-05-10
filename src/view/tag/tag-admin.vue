@@ -469,7 +469,7 @@ export default {
           }
         },
         {
-          title: '价格',
+          title: '原价',
           key: 'price',
           render: (h, params) => {
             let t = params.row.price.toString()
@@ -484,7 +484,7 @@ export default {
           }
         },
         {
-          title: '促销价',
+          title: '价格',
           key: 'promotePrice',
           render: (h, params) => {
             let t = params.row.promotePrice.toString()
@@ -564,7 +564,7 @@ export default {
           }
         },
         {
-          title: '价格',
+          title: '原价',
           key: 'price',
           width: '100',
           filter: {
@@ -572,7 +572,7 @@ export default {
           }
         },
         {
-          title: '促销价',
+          title: '价格',
           key: 'promotePrice',
           width: '100',
           filter: {

@@ -60,9 +60,9 @@
                     <Col span="11"><Input type="text" v-model="currentSelectedRow.shelfNumber" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="2"><p>促销价：</p></Col>
+                    <Col span="2"><p>价格</p></Col>
                     <Col span="10"><Input type="text" v-model="currentSelectedRow.promotePrice" /></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">价格：</p></Col>
+                    <Col span="1"><p style="position:relative;left:10px;">原价：</p></Col>
                     <Col span="11"><Input type="text" v-model="currentSelectedRow.price" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
@@ -108,9 +108,9 @@
                     <Col span="11"><Input type="text" v-model="addGooddata.shelfNumber" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="2"><p>促销价：</p></Col>
+                    <Col span="2"><p>价格：</p></Col>
                     <Col span="10"><Input type="text" v-model="addGooddata.promotePrice" /></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">价格：</p></Col>
+                    <Col span="1"><p style="position:relative;left:10px;">原价：</p></Col>
                     <Col span="11"><Input type="text" v-model="addGooddata.price" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
@@ -224,7 +224,7 @@ export default {
           }
         },
         {
-          title: '价格',
+          title: '原价',
           key: 'price',
           width: '80',
           render: (h, params) => {
@@ -240,7 +240,7 @@ export default {
           }
         },
         {
-          title: '促销价',
+          title: '价格',
           width: '80',
           key: 'promotePrice',
           render: (h, params) => {
