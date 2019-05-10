@@ -262,7 +262,7 @@ export default {
           fontColor: '0',
           fontSize: 14,
           status: 0,
-          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          imageUrl: '',
           backup: null
         },
         {
@@ -283,7 +283,7 @@ export default {
           fontColor: '0',
           fontSize: 14,
           status: 0,
-          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          imageUrl: '',
           backup: null
         },
         {
@@ -304,7 +304,7 @@ export default {
           fontColor: '0',
           fontSize: 14,
           status: 0,
-          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          imageUrl: '',
           backup: '1/20/45'
         },
         {
@@ -325,7 +325,7 @@ export default {
           fontColor: '0',
           fontSize: 14,
           status: 0,
-          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          imageUrl: '',
           backup: null
         },
         {
@@ -346,7 +346,7 @@ export default {
           fontColor: '0',
           fontSize: 14,
           status: 0,
-          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          imageUrl: '',
           backup: '0/60/123'
         },
         {
@@ -367,7 +367,7 @@ export default {
           fontColor: '0',
           fontSize: 14,
           status: 0,
-          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          imageUrl: '',
           backup: null
         },
         {
@@ -388,7 +388,7 @@ export default {
           fontColor: '0',
           fontSize: 14,
           status: 0,
-          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          imageUrl: '',
           backup: null
 
         },
@@ -410,7 +410,7 @@ export default {
           fontColor: '0',
           fontSize: 14,
           status: 0,
-          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          imageUrl: '',
           backup: null
 
         },
@@ -424,7 +424,7 @@ export default {
           sourceColumn: 'origin',
           columnType: '字符串',
           backgroundColor: '1',
-          text: '111',
+          text: '深圳',
           startText: '产地：',
           endText: '',
           fontType: 'normal',
@@ -432,7 +432,7 @@ export default {
           fontColor: '0',
           fontSize: 14,
           status: 0,
-          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          imageUrl: '',
           backup: null
 
         },
@@ -446,7 +446,7 @@ export default {
           sourceColumn: 'stock',
           columnType: '字符串',
           backgroundColor: '1',
-          text: '111',
+          text: '30',
           startText: '库存：',
           endText: '',
           fontType: 'normal',
@@ -454,7 +454,7 @@ export default {
           fontColor: '0',
           fontSize: 14,
           status: 0,
-          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          imageUrl: '',
           backup: null
 
         },
@@ -468,7 +468,7 @@ export default {
           sourceColumn: 'qrCode',
           columnType: '二维码',
           backgroundColor: '1',
-          text: '强力粘钩',
+          text: '默认二维码',
           startText: '',
           endText: '',
           fontType: '',
@@ -476,7 +476,7 @@ export default {
           fontColor: '0',
           fontSize: 14,
           status: 0,
-          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          imageUrl: '',
           backup: null
 
         },
@@ -498,7 +498,7 @@ export default {
           fontColor: '0',
           fontSize: 14,
           status: 0,
-          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          imageUrl: '',
           backup: null
 
         },
@@ -512,7 +512,7 @@ export default {
           sourceColumn: 'shelfNumber',
           columnType: '字符串',
           backgroundColor: '1',
-          text: '10g',
+          text: '10010',
           startText: '货号：',
           endText: '',
           fontType: 'normal',
@@ -520,7 +520,7 @@ export default {
           fontColor: '0',
           fontSize: 14,
           status: 0,
-          imageUrl: 'https://mybucket1-1257353650.cos.ap-guangzhou.myqcloud.com/dismps_image/dispm_0.bmp',
+          imageUrl: '',
           backup: null
 
         }
