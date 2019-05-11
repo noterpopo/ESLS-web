@@ -251,7 +251,7 @@ export default {
           y: 0,
           width: 8,
           height: 8,
-          sourceColumn: '0',
+          sourceColumn: 'line',
           columnType: '线段',
           backgroundColor: '1',
           text: '',

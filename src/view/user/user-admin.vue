@@ -311,7 +311,7 @@ export default {
       getAllPermissions().then(res => {
         const data = res.data.data
         for (let i = 0; i < data.length; ++i) {
-          data[i].id = data[i].id + ''
+          data[i].id = data[i].id + 1 + ''
           Object.assign(data[i], { key: data[i].id })
         }
         this.allPerData = data
@@ -352,6 +352,7 @@ export default {
     },
     getRolePerKey (index) {
       let res = []
+      console.log(this.roleData[index].permissions)
       this.roleData[index].permissions.map((item) => {
         res.push(item.id + '')
       })

@@ -134,7 +134,7 @@ export default {
           width: '200',
           render: (h, params) => {
             let result = null
-            if (params.row.goodId === 0) {
+            if (params.row.goodId === 0 || params.row.goodId === null) {
               return h('p', '')
             }
             $.ajax({
