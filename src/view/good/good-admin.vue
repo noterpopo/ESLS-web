@@ -163,7 +163,7 @@
 // TODO: tag表格搜索
 import super_table from '@/components/table/supertable.vue'
 import { getAllGood, updateGood, deleteGood, getBindedTags, getGood, cronUpdate } from '@/api/good'
-import { getAllTag, getTag, lightTag, flushTag, removeTag, scanTag, statusTag, bindStyleWithoutUpdate } from '@/api/tag'
+import { getAllTag, getTag, lightTag, flushTag, removeTag, scanTag, statusTag } from '@/api/tag'
 import e_label from '@/components/e-label/e-lable.vue'
 import { getStyleDisp, getStyleInfo, getStyle } from '@/api/style'
 import store from '@/store'
@@ -284,30 +284,26 @@ export default {
                           getStyleInfo(item.styleId).then(res => {
                             getStyle(res.data.data[0].styleNumber, 0).then(r => {
                               item.styleId = r.data.data.id
-                              bindStyleWithoutUpdate(item.id, item.styleId).then(res => {
-                                if (that.canShowData.length === 0) {
-                                  that.showId = 0
-                                  this.$refs.label_canvas.initData(null, 0, 0, this.item)
-                                } else {
-                                  that.showId = that.canShowData[0].id
-                                  that.getLabelData(that.showId)
-                                }
-                              })
+                              if (that.canShowData.length === 0) {
+                                that.showId = 0
+                                this.$refs.label_canvas.initData(null, 0, 0, this.item)
+                              } else {
+                                that.showId = that.canShowData[0].id
+                                that.getLabelData(that.showId)
+                              }
                             })
                           })
                         } else {
                           getStyleInfo(item.styleId).then(res => {
                             getStyle(res.data.data[0].styleNumber, 1).then(r => {
                               item.styleId = r.data.data.id
-                              bindStyleWithoutUpdate(item.id, item.styleId).then(res => {
-                                if (that.canShowData.length === 0) {
-                                  that.showId = 0
-                                  this.$refs.label_canvas.initData(null, 0, 0, this.item)
-                                } else {
-                                  that.showId = that.canShowData[0].id
-                                  that.getLabelData(that.showId)
-                                }
-                              })
+                              if (that.canShowData.length === 0) {
+                                that.showId = 0
+                                this.$refs.label_canvas.initData(null, 0, 0, this.item)
+                              } else {
+                                that.showId = that.canShowData[0].id
+                                that.getLabelData(that.showId)
+                              }
                             })
                           })
                         }
