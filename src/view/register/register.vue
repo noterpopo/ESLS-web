@@ -17,6 +17,9 @@
                 <FormItem label="部门" prop="department">
                     <Input v-model="formValidate.department" placeholder="请输入部门"></Input>
                 </FormItem>
+                <FormItem label="邮箱" prop="department">
+                    <Input v-model="formValidate.mail" placeholder="请输入邮箱"></Input>
+                </FormItem>
                 <FormItem label="电话" prop="telephone">
                     <Input v-model="formValidate.telephone" placeholder="请输入电话"></Input>
                 </FormItem>
@@ -64,6 +67,7 @@ export default {
         name: '',
         address: '',
         department: '',
+        mail: '',
         gender: '',
         telephone: '',
         passwd: '',
@@ -78,6 +82,9 @@ export default {
         ],
         department: [
           { required: true, message: '部门栏不能为空', trigger: 'blur' }
+        ],
+        mail: [
+          { required: true, message: '邮箱栏不能为空', trigger: 'blur' }
         ],
         gender: [
           { required: true, message: '性别栏不能为空', trigger: 'change' }
@@ -110,7 +117,7 @@ export default {
           this.$delete(this.formValidate, 'passwdCheck', this.formValidate.passwdCheck)
           console.log(this.formValidate)
           registryUser(this.formValidate).then(res => {
-            this.$Message.success('注册成功!')
+            this.$Message.success('注册成功!请到邮箱点击激活链接')
           })
         } else {
           this.$Message.error('注册失败!')

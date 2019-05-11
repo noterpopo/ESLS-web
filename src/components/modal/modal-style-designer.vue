@@ -284,7 +284,7 @@ export default {
           fontSize: 14,
           status: 0,
           imageUrl: '',
-          backup: '1/45/20'
+          backup: '1/20/45'
         },
         {
           id: 11,
@@ -305,7 +305,7 @@ export default {
           fontSize: 14,
           status: 0,
           imageUrl: '',
-          backup: '0/60/123'
+          backup: '0/123/60'
         },
         {
           id: 11,
