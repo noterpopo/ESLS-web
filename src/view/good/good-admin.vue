@@ -778,6 +778,7 @@ export default {
     onUploadSucess () {
       this.isUploadShow = false
       this.$Message.info('上传成功')
+      this.goodReload()
     },
     onUploadFail () {
       this.isUploadShow = false
