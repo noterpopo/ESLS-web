@@ -120,7 +120,7 @@ export default {
       let noWorkingTagCount = 0
       let disableTagCount = 0
       for (let i = 0; i < data.length; ++i) {
-        if (data[i].isWorking === 0) {
+        if (data[i].completeTime === null && data[i].execTime === null) {
           noWorkingTagCount = noWorkingTagCount + 1
         }
         if (data[i].goodId === 0) {
@@ -129,7 +129,7 @@ export default {
         if (data[i].forbidState === 0) {
           disableTagCount = disableTagCount + 1
         }
-        if (data[i].isWorking !== 0 && data[i].goodId !== 0 && data[i].forbidState !== 0) {
+        if (data[i].completeTime !== null && data[i].execTime !== null && data[i].goodId !== 0 && data[i].forbidState !== 0) {
           goodTagCount = goodTagCount + 1
         }
       }
