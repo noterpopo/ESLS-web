@@ -802,10 +802,10 @@ export default {
       this.canShowData = []
       this.showId = 0
       this.$refs.label_canvas.initData(null, 0, 0, this.item)
-      this.getGoodTableData({ page: 0, count: this.countPerPageGood })
+      this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood })
     },
     tagReload () {
-      this.getTagTableData({ page: 0, count: this.countPerPageTag })
+      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag })
     },
     getTagTableData (page, count) {
       var that = this
