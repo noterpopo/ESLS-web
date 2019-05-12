@@ -224,8 +224,6 @@ export default {
   },
   methods: {
     onUpdateRole (row, val, curlength) {
-      console.log(val)
-      console.log(curlength)
       if (curlength < val.length) {
         addUserRole(row.id, val).then(res => {
           this.getUserTableData({ page: this.currentPage - 1, count: this.countPerPage })
@@ -311,9 +309,10 @@ export default {
       getAllPermissions().then(res => {
         const data = res.data.data
         for (let i = 0; i < data.length; ++i) {
-          data[i].id = data[i].id + 1 + ''
+          data[i].id = data[i].id + ''
           Object.assign(data[i], { key: data[i].id })
         }
+        console.log(data)
         this.allPerData = data
       })
     },
@@ -352,10 +351,10 @@ export default {
     },
     getRolePerKey (index) {
       let res = []
-      console.log(this.roleData[index].permissions)
       this.roleData[index].permissions.map((item) => {
         res.push(item.id + '')
       })
+      console.log(res)
       return res
     },
     renderPermission (item) {
