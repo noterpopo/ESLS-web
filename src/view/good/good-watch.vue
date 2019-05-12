@@ -442,6 +442,9 @@ export default {
 
       let flag = true
       gjTags().then(() => {
+        getOvertimeTag().then(r => {
+          this.overTimeTags = r.data.data
+        })
         this.$Modal.info({
           title: '消息',
           content: '变价完成'
