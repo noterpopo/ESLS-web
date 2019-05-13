@@ -28,7 +28,7 @@
             <Row style="margin-top:10px" type="flex" justify="center" align="middle">
                 <Col span="8">
                   <span>等待变价: </span>
-                  <span style="width:30px;display:inline-block">{{currentTimeTagData.filter((item)=>{return item.waitUpdate===0}).length}}</span>
+                  <span style="width:30px;display:inline-block">{{hasChangeNum+'/'+submitNum}}</span>
                   <Button style="margin-left:10px" type="primary" size="small" @click="getTagTableData(pageNum, countPerPage,3)">查看</Button>
                 </Col>
                 <Col span="8">
@@ -99,6 +99,7 @@ export default {
       tagData: [],
       tagDataPage: [],
       currentTimeTagData: [],
+      hasChangeNum: 0,
       tableColumns: [
         {
           type: 'expand',
@@ -327,6 +328,7 @@ export default {
       overTimeTags: [],
       updateSum: 1,
       currentUpdate: 0,
+      submitNum: 0,
       updateStatus: 'active',
       selectid: [],
       pageNum: 0,
@@ -410,6 +412,8 @@ export default {
           this.tagData = this.currentTimeTagData.filter((item) => {
             return item.waitUpdate === 0
           })
+          this.hasChangeNum = 0
+          this.submitNum = this.tagData.length
           this.changePage(1)
         } else if (mode === 4) {
           getOvertimeTag().then(r => {
@@ -438,7 +442,7 @@ export default {
       let temp = this.currentTimeTagData.filter((item) => {
         return item.waitUpdate === 0
       })
-      let submitNum = temp.length
+      this.submitNum = temp.length
 
       let flag = true
       gjTags().then(() => {
@@ -490,7 +494,8 @@ export default {
           return item.waitUpdate === 0
         })
         let cNum = currentTemp.length
-        this.successRate = (submitNum - cNum) / submitNum * 100
+        this.hasChangeNum = this.submitNum - cNum
+        this.successRate = this.hasChangeNum / this.submitNum * 100
         if (!flag) {
           if (this.intervalid !== null) {
             clearInterval(this.intervalid)
