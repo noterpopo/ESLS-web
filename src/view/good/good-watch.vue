@@ -446,6 +446,9 @@ export default {
           title: '消息',
           content: '变价完成'
         })
+        getOvertimeTag().then(r => {
+          this.overTimeTags = r.data.data
+        })
         flag = false
         getAllTag({}).then(res => {
           this.currentTimeTagData = res.data.data
