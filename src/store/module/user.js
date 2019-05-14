@@ -105,10 +105,11 @@ export default {
     },
     // 获取用户相关信息
     getUserInfo ({ state, commit }) {
+      console.log('gUI')
       return new Promise((resolve, reject) => {
         try {
           getUserInfo(state.userId).then(res => {
-            const data = res.data.data[0]
+            const data = res.data.data
             commit('setUserName', data.name)
             let per = new Set()
             getRoleInfo(state.userId).then(pers => {
@@ -126,6 +127,7 @@ export default {
             // commit('setAccess', data.access)
             resolve(res.data)
           }).catch(err => {
+            console.log(err)
             reject(err)
           })
         } catch (error) {
