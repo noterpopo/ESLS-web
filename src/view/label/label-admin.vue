@@ -119,6 +119,7 @@ export default {
         },
         {
           title: '样式id',
+          width: 80,
           key: 'styleNumber',
           filter: {
             type: 'Input'
@@ -134,12 +135,14 @@ export default {
         {
           title: '宽度',
           key: 'width',
+          width: 80,
           filter: {
             type: 'Input'
           }
         },
         {
           title: '高度',
+          width: 80,
           key: 'height',
           filter: {
             type: 'Input'
@@ -171,7 +174,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: '200',
+          width: 120,
           align: 'center',
           render: (h, params) => {
             let isAccess = store.getters.access.indexOf(2) === -1

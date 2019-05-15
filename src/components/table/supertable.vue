@@ -150,7 +150,10 @@ tr.ivu-table-row-hover td{
   background-color: rgb(220, 241, 255)!important;
 }
 .ivu-table-cell{
-  padding: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 2px;
+  padding-bottom: 2px;
   text-align:center;
 }
 .ivu-table-header th{
