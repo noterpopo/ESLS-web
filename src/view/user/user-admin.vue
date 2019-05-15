@@ -260,7 +260,8 @@ export default {
             }),
             h('Select', {
               props: {
-                value: this.addRoleType
+                value: this.addRoleType,
+                transfer: true
               },
               attrs: {
                 style: 'margin-top:10px'

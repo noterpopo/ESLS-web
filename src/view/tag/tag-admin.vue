@@ -961,7 +961,7 @@ export default {
         return
       }
       let temp = that.tagData.filter((item) => { return item.id === that.bindTagId })
-      if (temp[0].goodId !== 0) {
+      if (temp[0].goodId !== 0 && temp[0].goodId !== null) {
         mode = '2'
       }
       bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId, mode).then(res => {
