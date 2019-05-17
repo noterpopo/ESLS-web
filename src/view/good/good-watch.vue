@@ -347,7 +347,7 @@ export default {
   },
   created () {
     getOvertimeTag().then(r => {
-      if (r.date.date === '不存在变价超时的标签信息') {
+      if (r.data.data === '不存在变价超时的标签信息') {
         this.tagData = []
         this.overTimeTags = []
         this.changePage(1)
@@ -423,7 +423,7 @@ export default {
           this.changePage(1)
         } else if (mode === 4) {
           getOvertimeTag().then(r => {
-            if (r.date.date === '不存在变价超时的标签信息') {
+            if (r.data.data === '不存在变价超时的标签信息') {
               this.tagData = []
               this.overTimeTags = []
               this.changePage(1)
@@ -467,6 +467,10 @@ export default {
           content: '变价完成'
         })
         getOvertimeTag().then(r => {
+          if (r.data.data === '不存在变价超时的标签信息') {
+            this.overTimeTags = []
+            return
+          }
           this.overTimeTags = r.data.data
         })
         flag = false
@@ -486,7 +490,8 @@ export default {
           return item.waitUpdate === 0
         })
         let cNum = currentTemp.length
-        this.successRate = (submitNum - cNum) / submitNum * 100
+        this.hasChangeNum = this.submitNum - cNum
+        this.successRate = (this.hasChangeNum / this.submitNum * 100).toFixed(2)
       }).catch(() => {
         if (this.intervalid !== null) {
           clearInterval(this.intervalid)

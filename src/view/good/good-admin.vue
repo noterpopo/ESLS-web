@@ -941,6 +941,9 @@ export default {
     getLabelData (tid) {
       var that = this
       let goodInfo = that.goodData.filter(function (item) { return item.barCode === that.currentSelectedRow.barCode })
+      if (goodInfo.length === 0) {
+        return
+      }
       that.item.itemName = goodInfo[0].name
       that.item.itemUnit = goodInfo[0].unit
       that.item.itemNorm = goodInfo[0].spec
