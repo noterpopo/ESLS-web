@@ -195,9 +195,6 @@ export default {
       getAllLog({ page: page, count: count, query: query, queryString: queryString }).then(res => {
         that.logDataCount = res.data.code
         that.logData = res.data.data
-        console.log(that.logData)
-        that.logData.reverse()
-        console.log(that.logData)
         that.isTableLoading = false
       })
     }
