@@ -545,7 +545,21 @@ export default {
         custom: '自定义字段',
         provider: '供应商',
         line: '线段'
-      }
+      },
+      sortRule: [
+        'name',
+        'line',
+        'price',
+        'promotePrice',
+        'shelfNumber',
+        'stock',
+        'origin',
+        'category',
+        'unit',
+        'spec',
+        'barCode',
+        'qrCode'
+      ]
     }
   },
   updated () {
@@ -614,7 +628,7 @@ export default {
         var that = this
         getStyle(sN, isPromote).then(res => {
           getStyleDisp(res.data.data.id).then(res => {
-            const data = res.data.data
+            const data = that.sortDispm(res.data.data)
             // 重新渲染editorarea
             this.reRenderFlag = false
             this.$nextTick(() => {
@@ -836,6 +850,28 @@ export default {
       } else {
         item.status = 0
       }
+    },
+    sortDispm (disp) {
+      var sorted = []
+      for (let i = 0; i < disp.length; ++i) {
+        for (let j = 0; j < disp.length; ++j) {
+          if (i < this.sortRule.length) {
+            if (disp[j].sourceColumn === this.sortRule[i]) {
+              sorted.push(disp[j])
+            }
+          } else {
+
+          }
+        }
+      }
+      console.log(sorted)
+      for (let k = 0; k < disp.length; ++k) {
+        if (disp[k].sourceColumn === '0') {
+          sorted.push(disp[k])
+        }
+      }
+      console.log(sorted)
+      return sorted
     }
 
   }
