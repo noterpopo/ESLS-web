@@ -240,7 +240,7 @@ export default {
                   })
                 } else {
                   $.ajax({
-                    url: 'http://39.108.106.167:8086/goods/' + params.row.goodId,
+                    url: 'http://39.108.106.167:8086/style/' + params.row.styleId,
                     async: false,
                     headers: {
                       ESLS: store.getters.token

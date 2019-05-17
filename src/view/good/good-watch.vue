@@ -27,7 +27,7 @@
             </Row>
             <Row style="margin-top:10px" type="flex" justify="center" align="middle">
                 <Col span="8">
-                  <span>等待变价: </span>
+                  <span>已经变价/变价总数: </span>
                   <span style="width:30px;display:inline-block">{{hasChangeNum+'/'+submitNum}}</span>
                   <Button style="margin-left:10px" type="primary" size="small" @click="getTagTableData(pageNum, countPerPage,3)">查看</Button>
                 </Col>
