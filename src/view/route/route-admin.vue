@@ -12,23 +12,11 @@
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px',marginTop:'10px'}">
           <div slot="title">
                 <Row type="flex" justify="center" align="middle">
-                    <Col span="24"><p>路由器设置</p></Col>
+                    <Col span="24"><p>路由下价签</p></Col>
+
                 </Row>
           </div>
-          <div v-if="hasChangeAccess" style="display:flex; align-items:center;">
-            <span>指定属性更换路由器</span>
-            <Input style="margin-left:8px;width: 300px" type="text" v-model="tagQueryString"  placeholder="筛选条件" >
-                  <Select v-model="tagQuery" slot="prepend" style="width: 100px">
-                      <Option value="barCode">源条码</Option>
-                  </Select>
-            </Input>
-            <Input type="text" style="margin-left:8px;width: 300px" v-model="routeQueryString"  placeholder="目的条件" >
-                  <Select v-model="routeQuery" slot="prepend" style="width: 100px">
-                      <Option value="barCode">目的条码</Option>
-                  </Select>
-            </Input>
-            <Button style="margin-left:10px;" type="primary" @click="changeRoute">确定</Button>
-          </div>
+
         </Card>
     </div>
 </template>
@@ -202,6 +190,7 @@ export default {
           width: '80',
           align: 'center',
           render: (h, params) => {
+            let newID = ''
             let temp = this.routeData.find(function (item) { return item.barCode === params.row.barCode })
             let data = {}
             let tparams = {}
@@ -357,7 +346,32 @@ export default {
                         flushTag(data, 1)
                       }
                     }
-                  }, '标签刷屏')
+                  }, '标签刷屏'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        this.$Modal.confirm({
+                          title: '新路由条码',
+                          render: (h, params) => {
+                            return h('Input', {
+                              props: {
+                                placeholder: '输入条码',
+                                value: newID
+                              },
+                              on: {
+                                'on-change': (event) => {
+                                  newID = event.target.value
+                                }
+                              }
+                            })
+                          },
+                          onOk: () => {
+                            this.changeRoute(params.row.barCode, newID)
+                          }
+                        })
+                      }
+                    }
+                  }, '交换AP')
                 ])
               ])
             ])
@@ -438,10 +452,9 @@ export default {
       var value = search[key[0]]
       this.getRouteTableData({ queryId: key[0], queryString: value })
     },
-    changeRoute () {
-      var that = this
-      changeRoute(this.tagQuery, this.tagQueryString, this.routeQuery, this.routeQueryString).then(r => {
-        let temp = this.routeData.find(function (item) { return item.barCode === that.tagQueryString })
+    changeRoute (sorId, tarID) {
+      changeRoute(this.tagQuery, sorId, this.routeQuery, tarID).then(r => {
+        let temp = this.routeData.find(function (item) { return item.barCode === sorId })
         temp.state = 0
         updateRouter(temp).then(res => {
           this.$Message.info('交换完成')
