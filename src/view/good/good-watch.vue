@@ -347,6 +347,12 @@ export default {
   },
   created () {
     getOvertimeTag().then(r => {
+      if (r.date.date === '不存在变价超时的标签信息') {
+        this.tagData = []
+        this.overTimeTags = []
+        this.changePage(1)
+        return
+      }
       this.overTimeTags = r.data.data
       this.changePage(1)
     })
@@ -417,8 +423,18 @@ export default {
           this.changePage(1)
         } else if (mode === 4) {
           getOvertimeTag().then(r => {
+            if (r.date.date === '不存在变价超时的标签信息') {
+              this.tagData = []
+              this.overTimeTags = []
+              this.changePage(1)
+              return
+            }
             this.tagData = r.data.data
             this.overTimeTags = r.data.data
+            this.changePage(1)
+          }).catch(e => {
+            this.tagData = []
+            this.overTimeTags = []
             this.changePage(1)
           })
         }
