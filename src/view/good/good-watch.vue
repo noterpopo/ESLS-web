@@ -511,7 +511,7 @@ export default {
         })
         let cNum = currentTemp.length
         this.hasChangeNum = this.submitNum - cNum
-        this.successRate = this.hasChangeNum / this.submitNum * 100
+        this.successRate = (this.hasChangeNum / this.submitNum * 100).toFixed(2)
         if (!flag) {
           if (this.intervalid !== null) {
             clearInterval(this.intervalid)
