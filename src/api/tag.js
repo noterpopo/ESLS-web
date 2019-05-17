@@ -114,6 +114,7 @@ export const bindGood = (q1, qs1, q2, qs2, mode) => {
     params: {
       sourceArgs1: q1,
       ArgsString1: qs1,
+      isNeedWaiting: 1,
       sourceArgs2: q2,
       ArgsString2: qs2,
       mode: mode
@@ -128,6 +129,7 @@ export const unBindGood = (q1, qs1, q2, qs2) => {
     params: {
       sourceArgs1: q1,
       ArgsString1: qs1,
+      isNeedWaiting: 1,
       sourceArgs2: q2,
       ArgsString2: qs2,
       mode: '0'
