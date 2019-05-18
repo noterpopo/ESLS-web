@@ -43,7 +43,7 @@
                           <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.text.split('.')[0] +'.'}}</span>
                           <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ verticalAlign:'top',color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :(item.sourceColumn==='promotePrice'?decFontSizePromotePrice:decFontSizePrice)+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{ item.text.split('.')[1]}}</span>
                         </span>
-                        <hr :style="{height:item.backup+'px',background : '#000'}" v-else-if="item.columnType === '线段'&&item.width>item.height">
+                        <hr :style="{height:item.backup+'px',background : '#000',fontSize:'14px',border:'0px'}" v-else-if="item.columnType === '线段'&&item.width>item.height">
                         <hr :style="{width:item.backup+'px',background : '#000'}" v-else-if="item.columnType === '线段'&&item.width<item.height">
                         <img v-else-if="item.columnType === '二维码'" id="qrCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
                         <img v-else-if="item.columnType === '条形码'" id="barCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
@@ -284,7 +284,7 @@ export default {
           fontSize: 14,
           status: 0,
           imageUrl: '',
-          backup: '1/20/45'
+          backup: '1/10/45'
         },
         {
           id: 11,
@@ -305,7 +305,7 @@ export default {
           fontSize: 14,
           status: 0,
           imageUrl: '',
-          backup: '0/123/60'
+          backup: '0/10/60'
         },
         {
           id: 11,

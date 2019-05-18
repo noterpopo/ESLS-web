@@ -32,7 +32,7 @@
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px',marginTop:'10px'}">
           <div slot="title">
                 <Row type="flex" justify="center" align="middle">
-                    <Col span="24"><p>路由下价签</p></Col>
+                    <Col span="24"><p>价签信息</p></Col>
                 </Row>
           </div>
           <super_table :pageSize="countPerPageTag" :current.sync="currentTagPage" :data="tagData" :columns="tagTableColumns" :isLoading="isTagTableLoading" :dataNum="tagDataNum"></super_table>
@@ -46,6 +46,7 @@ import routerExpand from '@/components/table/router-expand.vue'
 import { flushTag, scanTag, lightTag, testInkScreen, searchTag } from '@/api/tag'
 import store from '@/store'
 import { getAllShop } from '@/api/shop'
+import goodTagExpand from '@/components/table/good-tag-expand.vue'
 export default {
   components: {
     routerExpand,
@@ -614,7 +615,7 @@ export default {
                         })
                       }
                     }
-                  }, '交换AP')
+                  }, '更换AP')
                 ])
               ])
             ])
