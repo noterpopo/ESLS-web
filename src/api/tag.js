@@ -203,3 +203,16 @@ export const testInkScreen = (data, mode, type) => {
     }
   })
 }
+
+export const searchTag = (data, connec, count, page) => {
+  return axios.request({
+    url: 'tag/search',
+    method: 'post',
+    data: data,
+    params: {
+      connection: connec,
+      count: count,
+      page: page
+    }
+  })
+}

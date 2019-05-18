@@ -8,15 +8,34 @@
               </Row>
           </div>
           <super_table @onSelectionChange="handleSelectionChange" @onClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="routeData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="routeDataCount"></super_table>
+          <Button type="primary" @click="isUploadShow=true">上传路由器升级文件</Button>
+          <Modal v-model="isUploadShow" title="上传路由器升级文件">
+            <div>
+              <p>待升级路由器ID</p>
+              <Input v-model="uploadID"></Input>
+              <Upload style="margin-top:10px;"
+                  multiple
+                  :on-success="onUploadSucess"
+                  :on-error="onUploadFail"
+                  :show-upload-list="false"
+                  :headers="headers"
+                  type="drag"
+                  :action="upLaodUrl">
+                  <div style="padding: 20px 0;">
+                      <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                      <p>点击上传或者拖拽文件上传</p>
+                  </div>
+              </Upload>
+              </div>
+            </Modal>
         </Card>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px',marginTop:'10px'}">
           <div slot="title">
                 <Row type="flex" justify="center" align="middle">
                     <Col span="24"><p>路由下价签</p></Col>
-
                 </Row>
           </div>
-
+          <super_table :pageSize="countPerPageTag" :current.sync="currentTagPage" :data="tagData" :columns="tagTableColumns" :isLoading="isTagTableLoading" :dataNum="tagDataNum"></super_table>
         </Card>
     </div>
 </template>
@@ -24,7 +43,7 @@
 import { getAllRoute, changeRoute, scanRoute, scanAll, settingRoute, updateRouter } from '@/api/route'
 import super_table from '@/components/table/supertable.vue'
 import routerExpand from '@/components/table/router-expand.vue'
-import { flushTag, scanTag, lightTag, testInkScreen } from '@/api/tag'
+import { flushTag, scanTag, lightTag, testInkScreen, searchTag } from '@/api/tag'
 import store from '@/store'
 import { getAllShop } from '@/api/shop'
 export default {
@@ -34,6 +53,230 @@ export default {
   },
   data () {
     return {
+      headers: {
+        ESLS: store.getters.token
+      },
+      uploadID: '',
+      isUploadShow: false,
+      currentTagPage: 1,
+      countPerPageTag: 8,
+      tagData: [],
+      tagTableColumns: [
+        {
+          type: 'expand',
+          width: 30,
+          render: (h, params) => {
+            return h(goodTagExpand, {
+              props: {
+                row: params.row
+              }
+            })
+          }
+        },
+        {
+          title: '价签条码',
+          key: 'barCode',
+          width: '120',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '价签类型',
+          width: '110',
+          render: (h, params) => {
+            let size = ''
+            let type = ''
+            if (params.row.resolutionWidth === '212' || params.row.resolutionWidth === '250') {
+              size = '2.13寸'
+            } else if (params.row.resolutionWidth === '400') {
+              size = '4.2寸'
+            } else if (params.row.resolutionWidth === '296') {
+              size = '2.9寸'
+            }
+            if (params.row.screenType.indexOf('三色') !== -1) {
+              type = '三色'
+            } else {
+              type = '黑白'
+            }
+            return h('p', size + type + '屏')
+          }
+        },
+        {
+          title: '店铺',
+          render: (h, params) => {
+            let result = null
+            $.ajax({
+              url: 'http://39.108.106.167:8086/router/' + params.row.routerId,
+              async: false,
+              headers: {
+                ESLS: store.getters.token
+              },
+              type: 'get',
+              success: (res) => {
+                result = res.data[0].name
+              }
+            })
+            return h('p', result)
+          }
+        },
+        {
+          title: '电量',
+          key: 'power',
+          width: '70'
+        },
+        {
+          title: 'AP RSSI',
+          key: 'apRssi',
+          width: '70',
+          render: (h, params) => {
+            let color = '#515a6e'
+            if (params.row.apRssi < -70) {
+              color = 'red'
+            }
+            return h('div', {
+              attrs: {
+                style: 'color: ' + color
+              }
+            }, params.row.apRssi)
+          }
+        },
+        {
+          title: 'Tag RSSI',
+          key: 'tagRssi',
+          width: '70',
+          render: (h, params) => {
+            let color = '#515a6e'
+            if (params.row.tagRssi < -70) {
+              color = 'red'
+            }
+            return h('div', {
+              attrs: {
+                style: 'color: ' + color
+              }
+            }, params.row.tagRssi)
+          }
+        },
+        {
+          title: '通讯状态',
+          width: '116',
+          key: 'isWorking',
+          render: (h, params) => {
+            let row = params.row
+            let isWorking = row.execTime === null && row.completeTime === null
+            let color = !isWorking ? 'primary' : 'error'
+            let text = !isWorking ? '正常' : '超时'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          }
+        },
+        {
+          title: '使用状态',
+          key: 'forbidState',
+          width: '116',
+          render: (h, params) => {
+            const row = params.row
+            const color = row.forbidState === 1 ? 'primary' : 'error'
+            const text = row.forbidState === 1 ? '启用' : '禁用'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          }
+        },
+        {
+          title: '等待变价',
+          key: 'waitUpdate',
+          width: '140',
+          render: (h, params) => {
+            const row = params.row
+            const color = row.waitUpdate === 1 ? 'primary' : 'error'
+            const text = row.waitUpdate === 1 ? '已经更新' : '等待更新'
+
+            return h('Tag', {
+              props: {
+                type: 'dot',
+                color: color
+              }
+            }, text)
+          }
+        },
+        {
+          title: '操作',
+          key: 'action',
+          width: '70',
+          align: 'center',
+          render: (h, params) => {
+            let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
+            let data = {}
+            let tparams = {}
+            let items = []
+            tparams = {}
+            this.$set(tparams, 'query', 'id')
+            this.$set(tparams, 'queryString', temp.id)
+            items.push(tparams)
+            this.$set(data, 'items', items)
+            // let hasBindGoodAccess = store.getters.access.indexOf(3) === -1
+            return h('div', [
+              h('Dropdown', {
+                props: {
+                  trigger: 'click',
+                  transfer: true
+                }
+              }, [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  }
+                }, '操作'),
+                h('DropdownMenu', {
+                  slot: 'list'
+                }, [
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        lightTag(data, 1, 0)
+                      }
+                    }
+                  }, '闪灯'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        lightTag(data, 0, 0)
+                      }
+                    }
+                  }, '熄灯'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        flushTag(data, 0)
+                      }
+                    }
+                  }, '刷屏'),
+                  h('DropdownItem', {
+                    nativeOn: {
+                      click: (name) => {
+                        scanTag(data, 0)
+                      }
+                    }
+                  }, '巡检')
+                ])
+              ])
+            ])
+          }
+        }
+      ],
+      isTagTableLoading: false,
+      tagDataNum: 0,
       channel: '',
       ip: '',
       windowWidth: 0,
@@ -406,6 +649,9 @@ export default {
     }
   },
   computed: {
+    upLaodUrl: function () {
+      return 'http://39.108.106.167:8086/router/upload?routerId=' + this.uploadID
+    },
     hasEditAccess: () => {
       return store.getters.access.indexOf(2) !== -1
     },
@@ -423,6 +669,31 @@ export default {
     }
   },
   methods: {
+    onUploadSucess () {
+      this.isUploadShow = false
+      this.$Message.info('上传成功')
+      this.goodReload()
+    },
+    onUploadFail () {
+      this.isUploadShow = false
+      this.$Message.error('上传失败')
+    },
+    getTagTableData ({ page, count, queryId, queryString }) {
+      this.isTagTableLoading = true
+      let data = {}
+      let items = []
+      let tparams = {}
+      this.$set(tparams, 'query', queryId)
+      this.$set(tparams, 'queryString', queryString)
+      items.push(tparams)
+      this.$set(data, 'items', items)
+
+      searchTag(data, '=', count, page).then(res => {
+        this.tagData = res.data.data
+        this.tagDataNum = res.data.code
+        this.isTagTableLoading = false
+      })
+    },
     onUpdateShop (row, shopId) {
       row.shopId = shopId
       updateRouter(row).then(res => {
@@ -431,6 +702,7 @@ export default {
     },
     onTableClick (currentRow) {
       this.currentSelectRow = currentRow
+      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag, queryId: 'routerId', queryString: currentRow.id })
     },
     getRouteTableData ({ page, count, queryId, queryString }) {
       var that = this
