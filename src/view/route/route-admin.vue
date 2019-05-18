@@ -11,8 +11,6 @@
           <Button type="primary" @click="isUploadShow=true">上传路由器升级文件</Button>
           <Modal v-model="isUploadShow" title="上传路由器升级文件">
             <div>
-              <p>待升级路由器ID</p>
-              <Input v-model="uploadID"></Input>
               <Upload style="margin-top:10px;"
                   multiple
                   :on-success="onUploadSucess"
@@ -651,7 +649,7 @@ export default {
   },
   computed: {
     upLaodUrl: function () {
-      return 'http://39.108.106.167:8086/router/upload?routerId=' + this.uploadID
+      return 'http://39.108.106.167:8086/router/upload'
     },
     hasEditAccess: () => {
       return store.getters.access.indexOf(2) !== -1

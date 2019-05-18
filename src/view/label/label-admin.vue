@@ -174,7 +174,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 120,
+          width: 140,
           align: 'center',
           render: (h, params) => {
             let isAccess = store.getters.access.indexOf(2) === -1
