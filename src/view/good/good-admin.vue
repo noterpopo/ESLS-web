@@ -607,6 +607,7 @@ export default {
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
+                        this.$Message.info('发送闪灯命令')
                         lightTag(data, 1, 0)
                       }
                     }
@@ -614,6 +615,7 @@ export default {
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
+                        this.$Message.info('发送熄灯命令')
                         lightTag(data, 0, 0)
                       }
                     }
@@ -621,6 +623,7 @@ export default {
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
+                        this.$Message.info('发送刷屏命令')
                         flushTag(data, 0)
                       }
                     }
@@ -628,6 +631,7 @@ export default {
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
+                        this.$Message.info('发送巡检命令')
                         scanTag(data, 0)
                       }
                     }
@@ -635,6 +639,7 @@ export default {
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
+                        this.$Message.info('发送禁用命令')
                         statusTag(data, 0)
                       }
                     }
@@ -642,6 +647,7 @@ export default {
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
+                        this.$Message.info('发送启用命令')
                         statusTag(data, 1)
                       }
                     }
