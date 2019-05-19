@@ -26,7 +26,7 @@
                     :target-keys="getRolePerKey(index)"
                     :render-format="renderPermission"
                     @on-change="onTransferChange(index,arguments)"></Transfer>
-                    <Button type="primary" v-if="hasDeleteAccess" style="margin-top:10px;" @click="delRole">删除角色</Button>
+                    <Button type="primary" style="margin-top:10px;" @click="delRole">删除角色</Button>
                 </div>
             </Panel>
           </Collapse>
@@ -38,7 +38,6 @@ import { getAllUser, switchUserUsable, deleteUser, addUserRole, delUserRole } fr
 import { getAllRole, addPerm, delPerm, addRole, delRole } from '@/api/role'
 import { getAllPermissions } from '@/api/permission'
 import super_table from '@/components/table/supertable.vue'
-import store from '@/store'
 export default {
   components: {
     super_table
@@ -86,15 +85,13 @@ export default {
           width: '200',
           render: (h, params) => {
             let currentRole = []
-            let EditAccess = store.getters.access.indexOf(2) === -1
             for (let i = 0; i < params.row.roleList.split(' ').length; ++i) {
               currentRole.push(parseInt(params.row.roleList.split(' ')[i]))
             }
             return h('Select', {
               props: {
                 multiple: true,
-                value: currentRole,
-                disabled: EditAccess
+                value: currentRole
               },
               attrs: {
                 style: 'padding-left:10px;padding-right:10px;text-align:left;'
@@ -128,12 +125,10 @@ export default {
           render: (h, params) => {
             const row = params.row
             const isUsable = row.status === 1
-            let StatusAccess = store.getters.access.indexOf(12) === -1
             return h('i-switch', {
               props: {
                 value: isUsable,
-                size: 'large',
-                disabled: StatusAccess
+                size: 'large'
               },
               on: {
                 'on-change': (val) => {
@@ -162,7 +157,6 @@ export default {
           align: 'center',
           width: '150',
           render: (h, params) => {
-            let DeleteAccess = store.getters.access.indexOf(10) === -1
             return h('div', [
               h('Button', {
                 props: {
@@ -170,8 +164,7 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px',
-                  display: DeleteAccess ? 'none' : 'inline-block'
+                  margin: '2px'
                 },
                 on: {
                   'click': (event) => {
@@ -215,12 +208,6 @@ export default {
     }
   },
   computed: {
-    hasEditAccess: () => {
-      return store.getters.access.indexOf(2) !== -1
-    },
-    hasDeleteAccess: () => {
-      return store.getters.access.indexOf(10) !== -1
-    }
   },
   methods: {
     onUpdateRole (row, val, curlength) {

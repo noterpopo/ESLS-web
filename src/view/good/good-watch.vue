@@ -48,7 +48,7 @@
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                 <Col span="22"><p>等待变价列表</p></Col>
-                <Col span="2"><Button v-if="hasSubmitAccess" type="primary" @click="submitUpdate">一键改价</Button></Col>
+                <Col span="2"><Button type="primary" @click="submitUpdate">一键改价</Button></Col>
             </Row>
           </div>
           <Table border :loading='isTableLoading' :columns="tableColumns" :data="tagDataPage">
@@ -365,9 +365,6 @@ export default {
     }
   },
   computed: {
-    hasSubmitAccess: () => {
-      return store.getters.access.indexOf(20) !== -1
-    }
   },
   methods: {
     exportCsv () {

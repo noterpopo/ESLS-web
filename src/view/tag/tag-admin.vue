@@ -214,7 +214,6 @@ export default {
           width: '180',
           render: (h, params) => {
             let styleFiltters = []
-            let isDiable = (store.getters.access.indexOf(2) === -1) || (store.getters.access.indexOf(13) === -1)
             let data = {
               items: [
                 {
@@ -259,7 +258,6 @@ export default {
             return h('Select', {
               props: {
                 value: params.row.styleId,
-                disabled: isDiable,
                 transfer: true
               },
               attrs: {
@@ -341,8 +339,6 @@ export default {
             this.$set(tparams, 'queryString', temp.id)
             items.push(tparams)
             this.$set(data, 'items', items)
-            // let hasBindGoodAccess = store.getters.access.indexOf(3) === -1
-            let DeleteAccess = store.getters.access.indexOf(10) === -1
             return h('div', [
               h('Dropdown', {
                 props: {
@@ -444,8 +440,7 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px',
-                  display: DeleteAccess ? 'none' : 'inline-block'
+                  margin: '2px'
                 },
                 on: {
                   'click': (event) => {
@@ -733,9 +728,6 @@ export default {
     }
   },
   computed: {
-    hasEditAccess: () => {
-      return store.getters.access.indexOf(2) !== -1
-    }
   },
   methods: {
     onClickAction (id) {

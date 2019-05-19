@@ -223,7 +223,6 @@ export default {
             this.$set(tparams, 'queryString', temp.id)
             items.push(tparams)
             this.$set(data, 'items', items)
-            // let hasBindGoodAccess = store.getters.access.indexOf(3) === -1
             return h('div', [
               h('Dropdown', {
                 props: {
@@ -350,7 +349,6 @@ export default {
           title: '店铺',
           width: '200',
           render: (h, params) => {
-            let isDisable = store.getters.access.indexOf(2) === -1
             return h('Select', {
               props: {
                 value: params.row.shopId,
@@ -396,14 +394,12 @@ export default {
           title: '是否启用',
           key: 'state',
           render: (h, params) => {
-            let StatusAccess = store.getters.access.indexOf(12) === -1
             const row = params.row
             const isUsable = row.state === 1
             return h('i-switch', {
               props: {
                 value: isUsable,
-                size: 'large',
-                disabled: StatusAccess
+                size: 'large'
               },
               on: {
                 'on-change': (val) => {
@@ -442,7 +438,6 @@ export default {
             this.$set(tparams, 'queryString', temp.id)
             items.push(tparams)
             this.$set(data, 'items', items)
-            // let hasBindGoodAccess = store.getters.access.indexOf(3) === -1
             return h('div', [
               h('Dropdown', {
                 props: {
@@ -650,21 +645,6 @@ export default {
   computed: {
     upLaodUrl: function () {
       return 'http://39.108.106.167:8086/router/upload'
-    },
-    hasEditAccess: () => {
-      return store.getters.access.indexOf(2) !== -1
-    },
-    hasSettingAccess: () => {
-      return store.getters.access.indexOf(25) !== -1
-    },
-    hasChangeAccess: () => {
-      return store.getters.access.indexOf(26) !== -1
-    },
-    hasScanAccess: () => {
-      return store.getters.access.indexOf(27) !== -1
-    },
-    hasRemoveAccess: () => {
-      return store.getters.access.indexOf(37) !== -1
     }
   },
   methods: {

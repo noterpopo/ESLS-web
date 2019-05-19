@@ -90,6 +90,7 @@ export const bindStyle = (tid, sid) => {
     params: {
       tagId: tid,
       styleId: sid,
+      isNeedWaiting: 1,
       mode: 1
     }
   })
@@ -101,6 +102,7 @@ export const bindStyleWithoutUpdate = (tid, sid) => {
     method: 'put',
     params: {
       tagId: tid,
+      isNeedWaiting: 1,
       styleId: sid,
       mode: 0
     }

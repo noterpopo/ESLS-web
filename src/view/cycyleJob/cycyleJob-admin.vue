@@ -64,7 +64,6 @@ import { scanAll } from '@/api/tag'
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import { getAllShop } from '@/api/shop'
-import store from '@/store'
 export default {
   components: {
     super_table,
@@ -110,7 +109,6 @@ export default {
           align: 'center',
           width: '150',
           render: (h, params) => {
-            let DeleteAccess = store.getters.access.indexOf(10) === -1
             return h('div', [
               h('Button', {
                 props: {
@@ -118,8 +116,7 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px',
-                  display: DeleteAccess ? 'none' : 'inline-block'
+                  margin: '2px'
                 },
                 on: {
                   'click': (event) => {
@@ -167,9 +164,6 @@ export default {
     }
   },
   computed: {
-    hasEditAccess: () => {
-      return store.getters.access.indexOf(2) !== -1
-    }
   },
   methods: {
     onScanAll () {
@@ -217,9 +211,6 @@ export default {
     },
     onTableClick (currentRow) {
       var that = this
-      if (store.getters.access.indexOf(2) === -1) {
-        return
-      }
       this.currentCycyleJobData = currentRow
       if (currentRow.mode === -1 || currentRow.mode === -2) {
         this.$Modal.confirm({
