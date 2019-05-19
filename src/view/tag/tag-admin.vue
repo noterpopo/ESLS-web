@@ -374,7 +374,9 @@ export default {
                     nativeOn: {
                       click: (name) => {
                         this.$Message.info('发送闪灯命令')
-                        lightTag(data, 1, 0)
+                        lightTag(data, 1, 0).then(res => {
+                          this.tagReload()
+                        })
                       }
                     }
                   }, '闪灯'),
@@ -382,7 +384,9 @@ export default {
                     nativeOn: {
                       click: (name) => {
                         this.$Message.info('发送熄灯命令')
-                        lightTag(data, 0, 0)
+                        lightTag(data, 0, 0).then(res => {
+                          this.tagReload()
+                        })
                       }
                     }
                   }, '熄灯'),
@@ -390,7 +394,9 @@ export default {
                     nativeOn: {
                       click: (name) => {
                         this.$Message.info('发送刷屏命令')
-                        flushTag(data, 0)
+                        flushTag(data, 0).then(res => {
+                          this.tagReload()
+                        })
                       }
                     }
                   }, '刷屏'),
@@ -398,7 +404,9 @@ export default {
                     nativeOn: {
                       click: (name) => {
                         this.$Message.info('发送巡检命令')
-                        scanTag(data, 0)
+                        scanTag(data, 0).then(res => {
+                          this.tagReload()
+                        })
                       }
                     }
                   }, '巡检'),
@@ -406,7 +414,9 @@ export default {
                     nativeOn: {
                       click: (name) => {
                         this.$Message.info('发送禁用命令')
-                        statusTag(data, 0)
+                        statusTag(data, 0).then(res => {
+                          this.tagReload()
+                        })
                       }
                     }
                   }, '禁用'),
@@ -414,7 +424,9 @@ export default {
                     nativeOn: {
                       click: (name) => {
                         this.$Message.info('发送启用命令')
-                        statusTag(data, 1)
+                        statusTag(data, 1).then(res => {
+                          this.tagReload()
+                        })
                       }
                     }
                   }, '启用'),
