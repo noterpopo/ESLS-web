@@ -351,8 +351,7 @@ export default {
           render: (h, params) => {
             return h('Select', {
               props: {
-                value: params.row.shopId,
-                disabled: isDisable
+                value: params.row.shopId
               },
               attrs: {
                 style: 'padding-left:10px;padding-right:10px;text-align:left;'
