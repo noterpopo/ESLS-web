@@ -2,10 +2,10 @@
     <div ref="container" style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;">
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
             <Tabs :animated="false">
-                <TabPane v-if="hasExportAccess" label="导出数据表">
+                <TabPane label="导出数据表">
                     <Button type="primary" @click="download">备份数据库</Button>
                 </TabPane>
-                <TabPane v-if="hasImportAccess" label="导入数据表">
+                <TabPane label="导入数据表">
                     <Upload style="margin-top:10px;"
                         multiple
                         :on-success="onUploadSucess"
@@ -51,12 +51,6 @@ export default {
     }
   },
   computed: {
-    hasImportAccess: () => {
-      return store.getters.access.indexOf(6) !== -1
-    },
-    hasExportAccess: () => {
-      return store.getters.access.indexOf(7) !== -1
-    }
   },
   methods: {
     download () {

@@ -5,8 +5,8 @@
             <div slot="title">
                 <Row type="flex" justify="center" >
                     <Col span="18"><p>样式信息</p></Col>
-                    <Col span="2" v-if="hasEditAccess"><Button type="primary" @click="addStyle">新建样式</Button></Col>
-                    <Col span="2" v-if="hasEditAccess">
+                    <Col span="2" ><Button type="primary" @click="addStyle">新建样式</Button></Col>
+                    <Col span="2" >
                       <Upload style="margin-left:4px" :show-upload-list="false" action="" :before-upload="inputStyle">
                         <Button icon="ios-cloud-upload-outline">导入样式</Button>
                     </Upload>
@@ -67,7 +67,6 @@ import super_table from '@/components/table/supertable.vue'
 import modal_style_designer from '@/components/modal/modal-style-designer.vue'
 import { getStyle, getStyleDisp, getAllStyle, deleteStyle, updateStyle, newStyle } from '@/api/style'
 import FileSaver from 'file-saver'
-import store from '@/store'
 export default {
   components: {
     e_label,
@@ -118,7 +117,8 @@ export default {
           }
         },
         {
-          title: '样式id',
+          title: '样式ID',
+          width: 80,
           key: 'styleNumber',
           filter: {
             type: 'Input'
@@ -134,12 +134,14 @@ export default {
         {
           title: '宽度',
           key: 'width',
+          width: 100,
           filter: {
             type: 'Input'
           }
         },
         {
           title: '高度',
+          width: 100,
           key: 'height',
           filter: {
             type: 'Input'
@@ -147,7 +149,7 @@ export default {
         },
         {
           title: '促销',
-          width: '80',
+          width: '100',
           render: (h, params) => {
             let temp = this.styleData.find(function (item) { return item.styleNumber === params.row.styleNumber })
             return h('i-switch', {
@@ -171,12 +173,9 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: '200',
+          width: 160,
           align: 'center',
           render: (h, params) => {
-            let isAccess = store.getters.access.indexOf(2) === -1
-            let DeleteAccess = store.getters.access.indexOf(10) === -1
-            let EditAccess = store.getters.access.indexOf(18) === -1
             let isDeletable = true
             if (params.row.styleNumber.indexOf('01') !== -1 || params.row.styleNumber.indexOf('02') !== -1) {
               isDeletable = false
@@ -188,8 +187,7 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px',
-                  display: isAccess ? 'none' : 'inline-block'
+                  margin: '2px'
                 },
                 on: {
                   'click': (event) => {
@@ -206,8 +204,7 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px',
-                  display: isAccess ? 'none' : 'inline-block'
+                  margin: '2px'
                 },
                 on: {
                   'click': (event) => {
@@ -224,7 +221,7 @@ export default {
                 },
                 style: {
                   margin: '2px',
-                  display: DeleteAccess || EditAccess || !isDeletable ? 'none' : 'inline-block'
+                  display: !isDeletable ? 'none' : 'inline-block'
                 },
                 on: {
                   'click': (event) => {
@@ -249,9 +246,6 @@ export default {
     }
   },
   computed: {
-    hasEditAccess: () => {
-      return store.getters.access.indexOf(2) !== -1
-    }
   },
   mounted () {
     var that = this

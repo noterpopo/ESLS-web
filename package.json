@@ -38,6 +38,7 @@
     "vuedraggable": "^2.16.0",
     "vuex": "^3.0.1",
     "wangeditor": "^3.1.1",
+    "webpack-dev-server": "^2.9.1",
     "xlsx": "^0.13.3"
   },
   "devDependencies": {

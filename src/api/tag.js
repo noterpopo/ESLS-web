@@ -90,6 +90,7 @@ export const bindStyle = (tid, sid) => {
     params: {
       tagId: tid,
       styleId: sid,
+      isNeedWaiting: 1,
       mode: 1
     }
   })
@@ -101,6 +102,7 @@ export const bindStyleWithoutUpdate = (tid, sid) => {
     method: 'put',
     params: {
       tagId: tid,
+      isNeedWaiting: 1,
       styleId: sid,
       mode: 0
     }
@@ -114,6 +116,7 @@ export const bindGood = (q1, qs1, q2, qs2, mode) => {
     params: {
       sourceArgs1: q1,
       ArgsString1: qs1,
+      isNeedWaiting: 1,
       sourceArgs2: q2,
       ArgsString2: qs2,
       mode: mode
@@ -128,6 +131,7 @@ export const unBindGood = (q1, qs1, q2, qs2) => {
     params: {
       sourceArgs1: q1,
       ArgsString1: qs1,
+      isNeedWaiting: 1,
       sourceArgs2: q2,
       ArgsString2: qs2,
       mode: '0'
@@ -198,6 +202,19 @@ export const testInkScreen = (data, mode, type) => {
     params: {
       mode: mode,
       type: type
+    }
+  })
+}
+
+export const searchTag = (data, connec, count, page) => {
+  return axios.request({
+    url: 'tags/search',
+    method: 'post',
+    data: data,
+    params: {
+      connection: connec,
+      count: count,
+      page: page
     }
   })
 }

@@ -3,7 +3,7 @@ import store from '@/store'
 import vm from '@/main'
 // import { Spin } from 'iview'
 const printError = errorMsg => {
-  vm.$Message.error('网络错误：' + errorMsg)
+  vm.$Message.error('错误：' + errorMsg)
 }
 
 class HttpRequest {
@@ -57,7 +57,7 @@ class HttpRequest {
           request: { responseURL: config.url }
         }
       }
-      printError(errorInfo.data.msg)
+      printError(errorInfo.data.data)
       return Promise.reject(error)
     })
   }

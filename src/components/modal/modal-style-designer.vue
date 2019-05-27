@@ -37,14 +37,13 @@
           <div class="right">
               <div class="editorarea" v-if="reRenderFlag" :style="{ zIndex:'9999',border:'1px solid black', width:styleWidth+'px',height:styleHeight+'px'}">
                 <Poptip v-for="(item,index) in currentDispmsData" :key="index" trigger="click" title="编辑框" class="poptipWarp" :style="{ position: 'absolute',left: item.x+'px',top: item.y+'px'}">
-                    <vue-draggable-resizable :id="'poptip'+index" v-show="item.status===1" :style="{ backgroundColor:item.backgroundColor==='0'?'black':item.backgroundColor==='1'?'white':'red',position: 'relative',left: 0+'px',top: 0+'px'}" :x="item.x" :y="item.y" :w="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
+                    <vue-draggable-resizable :id="'poptip'+index"  v-show="item.status===1" :style="{fontSize:'14px', backgroundColor:item.backgroundColor==='0'?'black':item.backgroundColor==='1'?'white':'red',position: 'relative',left: 0+'px',top: item.columnType !== '线段'?0:-item.height+2+'px'}" :x="item.x" :y="item.y" :w="item.width" :h="item.height" class-name-active="draggerItem-active-class" class-name="draggerItem-class" @activated="onActivated(index)" @dragging="onDrag(arguments,index)" @resizing="onResize(arguments,index)" parent=".editorarea">
                         <span v-if="item.columnType === '字符串'" :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', verticalAlign:'top', fontSize :item.fontSize+'px', fontWeight:item.fontType, lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
                         <span v-else-if="item.columnType === '数字'" :style="{lineHeight:item.height+'px'}" >
                           <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.text.split('.')[0] +'.'}}</span>
                           <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ verticalAlign:'top',color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :(item.sourceColumn==='promotePrice'?decFontSizePromotePrice:decFontSizePrice)+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{ item.text.split('.')[1]}}</span>
                         </span>
-                        <hr :style="{height:item.backup+'px',background : '#000'}" v-else-if="item.columnType === '线段'&&item.width>item.height">
-                        <hr :style="{width:item.backup+'px',background : '#000'}" v-else-if="item.columnType === '线段'&&item.width<item.height">
+                        <div :style="{textAlign:'left',position: 'absolute',top:'0px',width:item.width+'px',height:item.backup+'px',background : '#000',overflow:'hidden',border:'0px'}" v-else-if="item.columnType === '线段'&&item.width>item.height"></div>
                         <img v-else-if="item.columnType === '二维码'" id="qrCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
                         <img v-else-if="item.columnType === '条形码'" id="barCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
                         <img v-else-if="item.columnType === '图片'" id="img" :style="{ width:item.width+'px', height:item.height+'px'}"/>
@@ -284,7 +283,7 @@ export default {
           fontSize: 14,
           status: 0,
           imageUrl: '',
-          backup: '1/20/45'
+          backup: '1/10/45'
         },
         {
           id: 11,
@@ -305,7 +304,7 @@ export default {
           fontSize: 14,
           status: 0,
           imageUrl: '',
-          backup: '0/123/60'
+          backup: '0/10/60'
         },
         {
           id: 11,
@@ -545,7 +544,22 @@ export default {
         custom: '自定义字段',
         provider: '供应商',
         line: '线段'
-      }
+      },
+      sortRule: [
+        'name',
+        'line',
+        'price',
+        'promotePrice',
+        'shelfNumber',
+        'stock',
+        'origin',
+        'category',
+        'provider',
+        'unit',
+        'spec',
+        'barCode',
+        'qrCode'
+      ]
     }
   },
   updated () {
@@ -614,7 +628,7 @@ export default {
         var that = this
         getStyle(sN, isPromote).then(res => {
           getStyleDisp(res.data.data.id).then(res => {
-            const data = res.data.data
+            const data = that.sortDispm(res.data.data)
             // 重新渲染editorarea
             this.reRenderFlag = false
             this.$nextTick(() => {
@@ -816,7 +830,7 @@ export default {
         },
         onOk: () => {
           var that = this
-          let styledes = this.styleType + '-' + this.newStyleName
+          let styledes = this.styleType.split('-')[0] + '-' + this.newStyleName + '-' + this.styleType.split('-')[2]
           newStyle(styledes).then(res => {
             let newId = res.data.data[0].id
             let newPromoteId = res.data.data[1].id
@@ -836,6 +850,28 @@ export default {
       } else {
         item.status = 0
       }
+    },
+    sortDispm (disp) {
+      var sorted = []
+      for (let i = 0; i < disp.length; ++i) {
+        for (let j = 0; j < disp.length; ++j) {
+          if (i < this.sortRule.length) {
+            if (disp[j].sourceColumn === this.sortRule[i]) {
+              sorted.push(disp[j])
+            }
+          } else {
+
+          }
+        }
+      }
+      console.log(sorted)
+      for (let k = 0; k < disp.length; ++k) {
+        if (disp[k].sourceColumn === '0') {
+          sorted.push(disp[k])
+        }
+      }
+      console.log(sorted)
+      return sorted
     }
 
   }

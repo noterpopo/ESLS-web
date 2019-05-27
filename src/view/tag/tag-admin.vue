@@ -214,7 +214,6 @@ export default {
           width: '180',
           render: (h, params) => {
             let styleFiltters = []
-            let isDiable = (store.getters.access.indexOf(2) === -1) || (store.getters.access.indexOf(13) === -1)
             let data = {
               items: [
                 {
@@ -240,7 +239,7 @@ export default {
                   })
                 } else {
                   $.ajax({
-                    url: 'http://39.108.106.167:8086/goods/' + params.row.goodId,
+                    url: 'http://39.108.106.167:8086/style/' + params.row.styleId,
                     async: false,
                     headers: {
                       ESLS: store.getters.token
@@ -259,7 +258,6 @@ export default {
             return h('Select', {
               props: {
                 value: params.row.styleId,
-                disabled: isDiable,
                 transfer: true
               },
               attrs: {
@@ -341,8 +339,6 @@ export default {
             this.$set(tparams, 'queryString', temp.id)
             items.push(tparams)
             this.$set(data, 'items', items)
-            // let hasBindGoodAccess = store.getters.access.indexOf(3) === -1
-            let DeleteAccess = store.getters.access.indexOf(10) === -1
             return h('div', [
               h('Dropdown', {
                 props: {
@@ -369,6 +365,7 @@ export default {
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
+                        this.$Message.info('发送解绑命令')
                         this.onUnBind(temp)
                       }
                     }
@@ -376,42 +373,60 @@ export default {
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
-                        lightTag(data, 1, 0)
+                        this.$Message.info('发送闪灯命令')
+                        lightTag(data, 1, 0).then(res => {
+                          this.tagReload()
+                        })
                       }
                     }
                   }, '闪灯'),
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
-                        lightTag(data, 0, 0)
+                        this.$Message.info('发送熄灯命令')
+                        lightTag(data, 0, 0).then(res => {
+                          this.tagReload()
+                        })
                       }
                     }
                   }, '熄灯'),
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
-                        flushTag(data, 0)
+                        this.$Message.info('发送刷屏命令')
+                        flushTag(data, 0).then(res => {
+                          this.tagReload()
+                        })
                       }
                     }
                   }, '刷屏'),
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
-                        scanTag(data, 0)
+                        this.$Message.info('发送巡检命令')
+                        scanTag(data, 0).then(res => {
+                          this.tagReload()
+                        })
                       }
                     }
                   }, '巡检'),
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
-                        statusTag(data, 0)
+                        this.$Message.info('发送禁用命令')
+                        statusTag(data, 0).then(res => {
+                          this.tagReload()
+                        })
                       }
                     }
                   }, '禁用'),
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
-                        statusTag(data, 1)
+                        this.$Message.info('发送启用命令')
+                        statusTag(data, 1).then(res => {
+                          this.tagReload()
+                        })
                       }
                     }
                   }, '启用'),
@@ -437,8 +452,7 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  margin: '2px',
-                  display: DeleteAccess ? 'none' : 'inline-block'
+                  margin: '2px'
                 },
                 on: {
                   'click': (event) => {
@@ -726,9 +740,6 @@ export default {
     }
   },
   computed: {
-    hasEditAccess: () => {
-      return store.getters.access.indexOf(2) !== -1
-    }
   },
   methods: {
     onClickAction (id) {
@@ -961,9 +972,10 @@ export default {
         return
       }
       let temp = that.tagData.filter((item) => { return item.id === that.bindTagId })
-      if (temp[0].goodId !== 0) {
+      if (temp[0].goodId !== 0 && temp[0].goodId !== null) {
         mode = '2'
       }
+      this.$Message.info('发送绑定命令')
       bindGood('id', that.bindGoodSelectId, 'id', that.bindTagId, mode).then(res => {
         that.tagReload()
         that.$Modal.success({
