@@ -3,7 +3,8 @@
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
-                <Col span="24"><p>用户列表</p></Col>
+                <Col span="22"><p>用户列表</p></Col>
+                <Col span="2"><Button type="primary" @click="addUser">添加用户</Button></Col>
             </Row>
           </div>
           <super_table @onClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="userData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="userDataCount"></super_table>
@@ -386,6 +387,11 @@ export default {
               that.getUserTableData({ page: that.currentPage - 1, count: that.countPerPage })
             })
         }
+      })
+    },
+    addUser () {
+      this.$router.push({
+        name: 'register'
       })
     }
   }

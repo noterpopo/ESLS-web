@@ -109,6 +109,9 @@ export default {
     window.onresize = function () {
       that.windowWidth = that.$refs.container.offsetWidth
     }
+    this.$Message.config({
+      duration: 3
+    })
   },
   methods: {
     handleSubmit (name) {
