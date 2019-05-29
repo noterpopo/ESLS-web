@@ -49,6 +49,8 @@ export default {
   },
   data () {
     return {
+      searchState: 0,
+      searchData,
       currentActionId: '',
       isActionModalShow: false,
       windowWidth: 0,
@@ -754,6 +756,7 @@ export default {
         that.tagDataCount = res.data.code
         that.tagData = data
         that.isTableLoading = false
+        this.searchState = 0
       })
     },
     remove (id) {
@@ -769,9 +772,11 @@ export default {
       })
     },
     onTableSearch (search) {
+      this.searchData = search
       var key = Object.keys(search)
       if (key.length === 0) {
         this.getTagTableData({ page: 0, count: this.countPerPage })
+        this.searchState = 1
         this.currentTagPage = 1
         return
       }
@@ -915,7 +920,11 @@ export default {
       this.getRightGoodTableData({ page: this.currentGoodPage - 1, count: this.countPerPage })
     },
     tagReload () {
-      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
+      if (this.searchState === 0) {
+        this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
+      } else {
+        this.onTableSearch(this.searchData)
+      }
     },
     onTagTableClick (currentRow) {
       var that = this
