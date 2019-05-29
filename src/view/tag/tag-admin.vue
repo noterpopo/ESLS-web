@@ -50,7 +50,7 @@ export default {
   data () {
     return {
       searchState: 0,
-      searchData,
+      searchData: {},
       currentActionId: '',
       isActionModalShow: false,
       windowWidth: 0,
@@ -749,6 +749,7 @@ export default {
       this.currentActionId = id
     },
     getTagTableData (page, count) {
+      this.searchState = 0
       var that = this
       that.isTableLoading = true
       getAllTag(page, count).then(res => {
@@ -756,7 +757,6 @@ export default {
         that.tagDataCount = res.data.code
         that.tagData = data
         that.isTableLoading = false
-        this.searchState = 0
       })
     },
     remove (id) {
@@ -775,13 +775,14 @@ export default {
       this.searchData = search
       var key = Object.keys(search)
       if (key.length === 0) {
+        this.searchState = 0
         this.getTagTableData({ page: 0, count: this.countPerPage })
-        this.searchState = 1
         this.currentTagPage = 1
         return
       }
       var value = search[key[0]]
       this.getTagTableData({ queryId: key[0], queryString: value })
+      this.searchState = 1
     },
     onRightGoodTableSearch (search) {
       var key = Object.keys(search)
@@ -920,6 +921,7 @@ export default {
       this.getRightGoodTableData({ page: this.currentGoodPage - 1, count: this.countPerPage })
     },
     tagReload () {
+      console.log(this.searchState)
       if (this.searchState === 0) {
         this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
       } else {
