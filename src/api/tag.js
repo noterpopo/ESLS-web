@@ -60,7 +60,8 @@ export const scanTag = (data, mode) => {
     method: 'put',
     data: data,
     params: {
-      mode: mode
+      mode: mode,
+      isNeedWaiting: 1
     }
   })
 }
