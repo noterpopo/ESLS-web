@@ -11,6 +11,22 @@ export const login = ({ userName, password }) => {
   })
 }
 
+export const SMSlogin = (data) => {
+  return axios.request({
+    url: 'smsVerify/identifyCode',
+    data: data,
+    method: 'post'
+  })
+}
+
+export const getVerCode = (data) => {
+  return axios.request({
+    url: 'smsVerify/sendIdentifyCode',
+    data: data,
+    method: 'post'
+  })
+}
+
 export const switchUserUsable = (id) => {
   return axios.request({
     url: '/user/status/' + id,

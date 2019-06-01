@@ -39,6 +39,7 @@ import { getAllUser, switchUserUsable, deleteUser, addUserRole, delUserRole } fr
 import { getAllRole, addPerm, delPerm, addRole, delRole } from '@/api/role'
 import { getAllPermissions } from '@/api/permission'
 import super_table from '@/components/table/supertable.vue'
+import store from '@/store'
 export default {
   components: {
     super_table
@@ -116,8 +117,21 @@ export default {
         {
           title: '商店',
           key: 'shop',
-          filter: {
-            type: 'Input'
+          render: (h, params) => {
+            let result = null
+            $.ajax({
+              url: 'http://39.108.106.167:8086/shop/' + params.row.shopId,
+              async: false,
+              headers: {
+                ESLS: store.getters.token
+              },
+              type: 'get',
+              success: (res) => {
+                console.log(res)
+                result = res.data[0].name
+              }
+            })
+            return h('p', result)
           }
         },
         {

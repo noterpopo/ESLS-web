@@ -1,7 +1,8 @@
 import {
   login,
   getUserInfo,
-  getRoleInfo
+  getRoleInfo,
+  SMSlogin
 } from '@/api/user'
 import { setToken, getToken } from '@/libs/util'
 
@@ -66,33 +67,63 @@ export default {
   },
   actions: {
     // 登录
-    handleLogin ({ commit }, { userName, password }) {
-      userName = userName.trim()
-      return new Promise((resolve, reject) => {
-        login({
-          userName,
-          password
-        }).then(res => {
-          let per = new Set()
-          getRoleInfo(res.data.data.id).then(pers => {
-            const data = pers.data.data
-            for (let i = 0; i < data.length; ++i) {
-              data[i].permissions.map((item) => {
-                per.add(item.id)
-              })
-            }
-            commit('setAccess', Array.from(per))
+    handleLogin ({ commit }, { userName, password, type }) {
+      if (type === 1) {
+        userName = userName.trim()
+        return new Promise((resolve, reject) => {
+          login({
+            userName,
+            password
+          }).then(res => {
+            let per = new Set()
+            getRoleInfo(res.data.data.id).then(pers => {
+              const data = pers.data.data
+              for (let i = 0; i < data.length; ++i) {
+                data[i].permissions.map((item) => {
+                  per.add(item.id)
+                })
+              }
+              commit('setAccess', Array.from(per))
+            })
+            // 获取TOKEN
+            commit('setToken', res.headers.esls)
+            commit('setUserId', res.data.data.id)
+            localStorage.setItem('user_id', res.data.data.id)
+            commit('setUserName', res.data.data.name)
+            resolve()
+          }).catch(err => {
+            reject(err)
           })
-          // 获取TOKEN
-          commit('setToken', res.headers.esls)
-          commit('setUserId', res.data.data.id)
-          localStorage.setItem('user_id', res.data.data.id)
-          commit('setUserName', res.data.data.name)
-          resolve()
-        }).catch(err => {
-          reject(err)
         })
-      })
+      } else if (type === 2) {
+        return new Promise((resolve, reject) => {
+          let data = { phoneNumber: userName, userCode: password, smsType: 'AUTH' }
+          console.log(data)
+          SMSlogin(data).then(res => {
+            console.log(res)
+            let per = new Set()
+            getRoleInfo(res.data.data.id).then(pers => {
+              const data = pers.data.data
+              for (let i = 0; i < data.length; ++i) {
+                data[i].permissions.map((item) => {
+                  per.add(item.id)
+                })
+              }
+              commit('setAccess', Array.from(per))
+            })
+            // 获取TOKEN
+            commit('setToken', res.headers.esls)
+            commit('setUserId', res.data.data.id)
+            localStorage.setItem('user_id', res.data.data.id)
+            commit('setUserName', res.data.data.name)
+            resolve()
+          }).catch(err => {
+            reject(err)
+          })
+        })
+      } else {
+
+      }
     },
     // 退出登录
     handleLogOut ({ state, commit }) {

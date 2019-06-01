@@ -1,44 +1,48 @@
 <template>
   <Form ref="loginForm" :model="form" :rules="rules" @keydown.enter.native="handleSubmit">
-    <FormItem prop="userName">
-      <Input v-model="form.userName" placeholder="请输入用户名">
+    <FormItem prop="phoneNumber">
+      <Input v-model="form.phone" placeholder="请输入手机号码">
         <span slot="prepend">
           <Icon :size="16" type="ios-person"></Icon>
         </span>
       </Input>
     </FormItem>
-    <FormItem prop="password">
-      <Input type="password" v-model="form.password" placeholder="请输入密码">
+    <FormItem prop="verCode">
+      <Input v-model="form.vercode" placeholder="请输入验证码">
         <span slot="prepend">
           <Icon :size="14" type="md-lock"></Icon>
         </span>
       </Input>
     </FormItem>
     <FormItem>
+      <Button @click="getVercode" type="primary" long>获取验证码</Button>
+    </FormItem>
+    <FormItem>
       <Button @click="handleSubmit" type="primary" long>登录</Button>
     </FormItem>
     <FormItem>
-      <Button @click="toSMSLogin" type="primary" long>短信登陆</Button>
+      <Button @click="toPswLogin" type="primary" long>密码登陆</Button>
     </FormItem>
   </Form>
 </template>
 <script>
+import { getVerCode } from '@/api/user'
 export default {
-  name: 'LoginForm',
+  name: 'LoginFormSMS',
   props: {
-    userNameRules: {
+    phoneRules: {
       type: Array,
       default: () => {
         return [
-          { required: true, message: '账号不能为空', trigger: 'blur' }
+          { required: true, message: '手机号不能为空', trigger: 'blur' }
         ]
       }
     },
-    passwordRules: {
+    vercodeRules: {
       type: Array,
       default: () => {
         return [
-          { required: true, message: '密码不能为空', trigger: 'blur' }
+          { required: true, message: '验证码不能为空', trigger: 'blur' }
         ]
       }
     }
@@ -46,16 +50,16 @@ export default {
   data () {
     return {
       form: {
-        userName: '',
-        password: ''
+        phone: '',
+        vercode: ''
       }
     }
   },
   computed: {
     rules () {
       return {
-        userName: this.userNameRules,
-        password: this.passwordRules
+        phone: this.phoneRules,
+        vercode: this.vercodeRules
       }
     }
   },
@@ -64,14 +68,18 @@ export default {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.$emit('on-success-valid', {
-            userName: this.form.userName,
-            password: this.form.password
+            phone: this.form.phone,
+            vercode: this.form.vercode
           })
         }
       })
     },
-    toSMSLogin () {
-      this.$emit('toSMSLogin')
+    getVercode () {
+      let data = { phoneNumber: this.form.phone, smsType: 'AUTH' }
+      getVerCode(data)
+    },
+    toPswLogin () {
+      this.$emit('toPswLogin')
     }
   }
 }
