@@ -92,3 +92,11 @@ export const registryUser = (userInfo) => {
     data: userInfo
   })
 }
+
+export const updateUser = (userInfo) => {
+  return axios.request({
+    url: '/user',
+    method: 'post',
+    data: userInfo
+  })
+}

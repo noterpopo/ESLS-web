@@ -7,7 +7,7 @@
                 <Col span="2"><Button type="primary" @click="addUser">添加用户</Button></Col>
             </Row>
           </div>
-          <super_table @onClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="userData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="userDataCount"></super_table>
+          <super_table @onClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onDoubleClick="onTableDoubleClick" @onSearch="onTableSearch" :data="userData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="userDataCount"></super_table>
         </Card>
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' ,marginTop:'10px'}">
           <div slot="title">
@@ -32,26 +32,47 @@
             </Panel>
           </Collapse>
         </Card>
+        <Modal :width="1040" v-model="editModal" title="修改用户信息" @on-ok="asyncEditOK">
+          <Row type="flex" justify="center" align="middle" class="Row">
+                    <Col span="1"><p>名字：</p></Col>
+                    <Col span="11"><Input type="text" v-model="currentSelectedRow.name"/></Col>
+                    <Col span="1"><p style="position:relative;left:10px;">部门</p></Col>
+                    <Col span="11"><Input type="text" v-model="currentSelectedRow.department" /></Col>
+                </Row>
+                <Row type="flex" justify="center" align="middle" class="Row">
+                    <Col span="1"><p>电话：</p></Col>
+                    <Col span="11"><Input type="text" v-model="currentSelectedRow.telephone" /></Col>
+                    <Col span="1"><p style="position:relative;left:10px;">邮件：</p></Col>
+                    <Col span="11"><Input type="text" v-model="currentSelectedRow.mail" /></Col>
+                </Row>
+                <Row type="flex" justify="center" align="middle" class="Row">
+                    <Col span="1"><p>地址：</p></Col>
+                    <Col span="23"><Input type="text" v-model="currentSelectedRow.address" /></Col>
+                </Row>
+        </Modal>
     </div>
 </template>
 <script>
-import { getAllUser, switchUserUsable, deleteUser, addUserRole, delUserRole } from '@/api/user'
+import { getAllUser, switchUserUsable, deleteUser, addUserRole, delUserRole, updateUser } from '@/api/user'
 import { getAllRole, addPerm, delPerm, addRole, delRole } from '@/api/role'
 import { getAllPermissions } from '@/api/permission'
+import { getAllShop } from '@/api/shop'
 import super_table from '@/components/table/supertable.vue'
-import store from '@/store'
 export default {
   components: {
     super_table
   },
   data () {
     return {
+      currentSelectedRow: {},
+      editModal: false,
       windowWidth: 0,
       isTableLoading: false,
       countPerPage: 10,
       currentPage: 1,
       userDataCount: 0,
       userData: [],
+      shopData: [],
       tableColumns: [
         {
           title: '名字',
@@ -118,20 +139,28 @@ export default {
           title: '商店',
           key: 'shop',
           render: (h, params) => {
-            let result = null
-            $.ajax({
-              url: 'http://39.108.106.167:8086/shop/' + params.row.shopId,
-              async: false,
-              headers: {
-                ESLS: store.getters.token
+            return h('Select', {
+              props: {
+                value: params.row.shopId,
+                transfer: true
               },
-              type: 'get',
-              success: (res) => {
-                console.log(res)
-                result = res.data[0].name
+              attrs: {
+                style: 'padding-left:10px;padding-right:10px;text-align:left;'
+              },
+              on: {
+                'on-change': (val) => {
+                  this.onUpdateShop(params.row, val)
+                }
               }
+            }, this.shopData.map((item) => {
+              return h('Option', {
+                props: {
+                  value: item.id,
+                  label: item.name
+                }
+              })
             })
-            return h('p', result)
+            )
           }
         },
         {
@@ -207,6 +236,9 @@ export default {
     this.getUserTableData({ page: 0, count: this.countPerPage })
     this.getRoleList()
     this.getPermissionData()
+    getAllShop({ page: 0, count: 100 }).then(res => {
+      this.shopData = res.data.data
+    })
   },
   mounted () {
     var that = this
@@ -225,6 +257,26 @@ export default {
   computed: {
   },
   methods: {
+    asyncEditOK () {
+      this.editModal = false
+      updateUser(this.currentSelectedRow).then(res => {
+        this.getUserTableData({ page: 0, count: this.countPerPage })
+        this.$Message.info('修改成功')
+      })
+    },
+    onTableDoubleClick (currentRow) {
+      this.currentSelectedRow = currentRow
+      this.editModal = true
+    },
+    onUpdateShop (userdata, newshopId) {
+      userdata.shopId = newshopId
+      delete userdata.createTime
+      delete userdata.roleList
+      delete userdata.lastLoginTime
+      delete userdata.salt
+      console.log(userdata)
+      updateUser(userdata)
+    },
     onUpdateRole (row, val, curlength) {
       if (curlength < val.length) {
         addUserRole(row.id, val).then(res => {
@@ -412,3 +464,9 @@ export default {
 
 }
 </script>
+
+<style scoped>
+.Row{
+  margin-bottom: 6px;
+}
+</style>
