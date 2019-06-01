@@ -388,6 +388,8 @@ export default {
                         this.$Message.info('发送熄灯命令')
                         lightTag(data, 0, 0).then(res => {
                           this.tagReload()
+                        }).catch(e => {
+                          this.tagReload()
                         })
                       }
                     }
@@ -397,6 +399,8 @@ export default {
                       click: (name) => {
                         this.$Message.info('发送刷屏命令')
                         flushTag(data, 0).then(res => {
+                          this.tagReload()
+                        }).catch(e => {
                           this.tagReload()
                         })
                       }
@@ -408,6 +412,8 @@ export default {
                         this.$Message.info('发送巡检命令')
                         scanTag(data, 0).then(res => {
                           this.tagReload()
+                        }).catch(e => {
+                          this.tagReload()
                         })
                       }
                     }
@@ -418,6 +424,8 @@ export default {
                         this.$Message.info('发送禁用命令')
                         statusTag(data, 0).then(res => {
                           this.tagReload()
+                        }).catch(e => {
+                          this.tagReload()
                         })
                       }
                     }
@@ -427,6 +435,8 @@ export default {
                       click: (name) => {
                         this.$Message.info('发送启用命令')
                         statusTag(data, 1).then(res => {
+                          this.tagReload()
+                        }).catch(e => {
                           this.tagReload()
                         })
                       }
@@ -440,7 +450,7 @@ export default {
                           title: '警告',
                           content: '确定移除该价签吗？',
                           onOk: function () {
-                            removeTag(data, 0).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) })
+                            removeTag(data, 0).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) }).catch(e => { this.tagReload() })
                           }
                         })
                       }
@@ -767,7 +777,7 @@ export default {
         title: '警告',
         content: '该操作会导致价签数据永远从数据库移除，确定删除该价签吗？（非专业人员和维护人员请勿执行此操作）',
         onOk: function () {
-          deleteTag(dId).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) })
+          deleteTag(dId).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) }).catch(e => { that.tagReload() })
         }
       })
     },
@@ -1002,6 +1012,9 @@ export default {
           that.$refs.goodST.clearHighlight()
           that.bindGoodSelectId = 0
         })
+      }).catch(e => {
+        console.log('errpr')
+        that.tagReload()
       })
     },
     isStyleContain (data, arr) {
@@ -1020,6 +1033,8 @@ export default {
       bindGood('id', data.goodId, 'id', data.id, '0').then(res => {
         this.$Message.info('解绑成功')
         this.goodRightData = []
+        this.tagReload()
+      }).catch(e => {
         this.tagReload()
       })
     }

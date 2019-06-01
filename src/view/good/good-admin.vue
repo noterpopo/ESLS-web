@@ -607,6 +607,8 @@ export default {
                         this.$Message.info('发送闪灯命令')
                         lightTag(data, 1, 0).then(res => {
                           this.tagReload()
+                        }).catch(e => {
+                          this.tagReload()
                         })
                       }
                     }
@@ -616,6 +618,8 @@ export default {
                       click: (name) => {
                         this.$Message.info('发送熄灯命令')
                         lightTag(data, 0, 0).then(res => {
+                          this.tagReload()
+                        }).catch(e => {
                           this.tagReload()
                         })
                       }
@@ -627,6 +631,8 @@ export default {
                         this.$Message.info('发送刷屏命令')
                         flushTag(data, 0).then(res => {
                           this.tagReload()
+                        }).catch(e => {
+                          this.tagReload()
                         })
                       }
                     }
@@ -636,6 +642,8 @@ export default {
                       click: (name) => {
                         this.$Message.info('发送巡检命令')
                         scanTag(data, 0).then(res => {
+                          this.tagReload()
+                        }).catch(e => {
                           this.tagReload()
                         })
                       }
@@ -647,6 +655,8 @@ export default {
                         this.$Message.info('发送禁用命令')
                         statusTag(data, 0).then(res => {
                           this.tagReload()
+                        }).catch(e => {
+                          this.tagReload()
                         })
                       }
                     }
@@ -656,6 +666,8 @@ export default {
                       click: (name) => {
                         this.$Message.info('发送启用命令')
                         statusTag(data, 1).then(res => {
+                          this.tagReload()
+                        }).catch(e => {
                           this.tagReload()
                         })
                       }
@@ -669,7 +681,7 @@ export default {
                           title: '警告',
                           content: '确定移除该价签吗？',
                           onOk: function () {
-                            removeTag(data, 0).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) })
+                            removeTag(data, 0).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) }).catch(e => { that.tagReload() })
                           }
                         })
                       }
