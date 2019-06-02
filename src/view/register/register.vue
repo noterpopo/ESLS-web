@@ -23,6 +23,11 @@
                 <FormItem label="电话" prop="telephone">
                     <Input v-model="formValidate.telephone" placeholder="请输入电话"></Input>
                 </FormItem>
+                <FormItem label="店铺" prop="shop">
+                    <Select v-model="formValidate.shopId">
+                      <Option v-for="item in shoplist" :key="item.id" :value="item.id">{{item.name}}</Option>
+                    </Select>
+                </FormItem>
                 <FormItem label="密码" prop="passwd">
                     <Input type="password" v-model="formValidate.passwd"></Input>
                 </FormItem>
@@ -39,11 +44,12 @@
 </template>
 <script>
 import { registryUser } from '@/api/user'
+import { getAllShop } from '@/api/shop'
 export default {
   data () {
     const validatePass = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('Please enter your password'))
+        callback(new Error('请输入密码'))
       } else {
         if (this.formValidate.passwdCheck !== '') {
           // 对第二个密码框单独验证
@@ -63,7 +69,9 @@ export default {
     }
     return {
       windowWidth: 0,
+      shoplist: [],
       formValidate: {
+        shopId: -1,
         name: '',
         address: '',
         department: '',
@@ -112,6 +120,9 @@ export default {
     this.$Message.config({
       duration: 3
     })
+    getAllShop({ page: 0, count: 100 }).then(res => {
+      this.shoplist = res.data.data
+    })
   },
   methods: {
     handleSubmit (name) {
@@ -120,7 +131,10 @@ export default {
           this.$delete(this.formValidate, 'passwdCheck', this.formValidate.passwdCheck)
           console.log(this.formValidate)
           registryUser(this.formValidate).then(res => {
-            this.$Message.success('注册成功!请到邮箱点击激活链接')
+            this.$Message.success('注册成功!')
+            this.$router.push({
+              name: 'user_admin'
+            })
           })
         } else {
           this.$Message.error('注册失败!')
