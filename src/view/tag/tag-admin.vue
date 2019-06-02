@@ -764,6 +764,12 @@ export default {
       that.isTableLoading = true
       getAllTag(page, count).then(res => {
         const data = res.data.data
+        if (data.length === 0 && that.currentTagPage > 1) {
+          console.log('hhh')
+          that.currentTagPage = that.currentTagPage - 1
+          that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage })
+          return
+        }
         that.tagDataCount = res.data.code
         that.tagData = data
         that.isTableLoading = false
@@ -778,12 +784,7 @@ export default {
         content: '该操作会导致价签数据永远从数据库移除，确定删除该价签吗？（非专业人员和维护人员请勿执行此操作）',
         onOk: function () {
           deleteTag(dId).then(res => {
-            that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }).then(r => {
-              if (r.data.data.length === 0 && that.currentTagPage > 1) {
-                that.currentTagPage = that.currentTagPage - 1
-                that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage })
-              }
-            })
+            that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage })
           })
         }
       })
