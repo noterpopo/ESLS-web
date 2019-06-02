@@ -50,7 +50,7 @@ export default {
   data () {
     return {
       searchState: 0,
-      searchData,
+      searchData: {},
       currentActionId: '',
       isActionModalShow: false,
       windowWidth: 0,
@@ -388,6 +388,8 @@ export default {
                         this.$Message.info('发送熄灯命令')
                         lightTag(data, 0, 0).then(res => {
                           this.tagReload()
+                        }).catch(e => {
+                          this.tagReload()
                         })
                       }
                     }
@@ -397,6 +399,8 @@ export default {
                       click: (name) => {
                         this.$Message.info('发送刷屏命令')
                         flushTag(data, 0).then(res => {
+                          this.tagReload()
+                        }).catch(e => {
                           this.tagReload()
                         })
                       }
@@ -408,6 +412,8 @@ export default {
                         this.$Message.info('发送巡检命令')
                         scanTag(data, 0).then(res => {
                           this.tagReload()
+                        }).catch(e => {
+                          this.tagReload()
                         })
                       }
                     }
@@ -418,6 +424,8 @@ export default {
                         this.$Message.info('发送禁用命令')
                         statusTag(data, 0).then(res => {
                           this.tagReload()
+                        }).catch(e => {
+                          this.tagReload()
                         })
                       }
                     }
@@ -427,6 +435,8 @@ export default {
                       click: (name) => {
                         this.$Message.info('发送启用命令')
                         statusTag(data, 1).then(res => {
+                          this.tagReload()
+                        }).catch(e => {
                           this.tagReload()
                         })
                       }
@@ -440,7 +450,7 @@ export default {
                           title: '警告',
                           content: '确定移除该价签吗？',
                           onOk: function () {
-                            removeTag(data, 0).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) })
+                            removeTag(data, 0).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) }).catch(e => { this.tagReload() })
                           }
                         })
                       }
@@ -749,6 +759,7 @@ export default {
       this.currentActionId = id
     },
     getTagTableData (page, count) {
+      this.searchState = 0
       var that = this
       that.isTableLoading = true
       getAllTag(page, count).then(res => {
@@ -756,7 +767,6 @@ export default {
         that.tagDataCount = res.data.code
         that.tagData = data
         that.isTableLoading = false
-        this.searchState = 0
       })
     },
     remove (id) {
@@ -782,13 +792,14 @@ export default {
       this.searchData = search
       var key = Object.keys(search)
       if (key.length === 0) {
+        this.searchState = 0
         this.getTagTableData({ page: 0, count: this.countPerPage })
-        this.searchState = 1
         this.currentTagPage = 1
         return
       }
       var value = search[key[0]]
       this.getTagTableData({ queryId: key[0], queryString: value })
+      this.searchState = 1
     },
     onRightGoodTableSearch (search) {
       var key = Object.keys(search)
@@ -927,6 +938,7 @@ export default {
       this.getRightGoodTableData({ page: this.currentGoodPage - 1, count: this.countPerPage })
     },
     tagReload () {
+      console.log(this.searchState)
       if (this.searchState === 0) {
         this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
       } else {
@@ -1007,6 +1019,9 @@ export default {
           that.$refs.goodST.clearHighlight()
           that.bindGoodSelectId = 0
         })
+      }).catch(e => {
+        console.log('errpr')
+        that.tagReload()
       })
     },
     isStyleContain (data, arr) {
@@ -1025,6 +1040,8 @@ export default {
       bindGood('id', data.goodId, 'id', data.id, '0').then(res => {
         this.$Message.info('解绑成功')
         this.goodRightData = []
+        this.tagReload()
+      }).catch(e => {
         this.tagReload()
       })
     }
