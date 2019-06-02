@@ -886,7 +886,14 @@ export default {
         title: '警告',
         content: '确定删除该商品吗？',
         onOk: function () {
-          deleteGood(dId).then(res => { that.getGoodTableData({ page: that.currentPage - 1, count: that.countPerPageGood }) })
+          deleteGood(dId).then(res => {
+            that.getGoodTableData({ page: that.currentPage - 1, count: that.countPerPageGood }).then(res => {
+              if (res.data.data.length === 0 && that.currentPage > 1) {
+                that.currentPage = that.currentPage - 1
+                that.getGoodTableData({ page: that.currentPage - 1, count: that.countPerPageGood })
+              }
+            })
+          })
         }
       })
     },
