@@ -6,12 +6,12 @@
               <Row type="flex" justify="start" align="middle">
                   <Col span="21"><p>商品信息</p></Col>
                   <Col span="1"><Button type="primary" @click="goodReload">刷新</Button></Col>
-                  <Col span="2"><Button type="primary" @click="addGood">添加商品</Button></Col>
+                  <Col span="2"><Button v-if="hasGoodAccess" type="primary" @click="addGood">添加商品</Button></Col>
               </Row>
             </div>
             <super_table :pageSize="countPerPageGood" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
-            <Button type="primary" @click="isUploadShow=true">导入文件</Button>
-            <Button type="primary" style="margin-left:10px;" @click="downloadGoodsData">导出文件</Button>
+            <Button v-if="hasGoodAccess" type="primary" @click="isUploadShow=true">导入文件</Button>
+            <Button v-if="hasGjAccess" type="primary" style="margin-left:10px;" @click="downloadGoodsData">导出文件</Button>
             <Modal v-model="isUploadShow" title="上传商品信息文件">
               <div>
                 <Select v-model="uploadMode">
@@ -263,7 +263,8 @@ export default {
             var that = this
             return h('i-switch', {
               props: {
-                value: params.row.isPromote === 1
+                value: params.row.isPromote === 1,
+                disabled: !this.hasGoodAccess
               },
               on: {
                 'on-change': (val, $event) => {
@@ -386,7 +387,8 @@ export default {
               h('Button', {
                 props: {
                   type: 'error',
-                  size: 'small'
+                  size: 'small',
+                  disabled: !this.hasGoodAccess
                 },
                 style: {
                   margin: '2px'
@@ -585,6 +587,104 @@ export default {
             this.$set(tparams, 'queryString', temp.id)
             items.push(tparams)
             this.$set(data, 'items', items)
+            let listitem = [
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送闪灯命令')
+                    lightTag(data, 1, 0).then(res => {
+                      this.tagReload()
+                    }).catch(e => {
+                      this.tagReload()
+                    })
+                  }
+                }
+              }, '闪灯'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送熄灯命令')
+                    lightTag(data, 0, 0).then(res => {
+                      this.tagReload()
+                    }).catch(e => {
+                      this.tagReload()
+                    })
+                  }
+                }
+              }, '熄灯'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送刷屏命令')
+                    flushTag(data, 0).then(res => {
+                      this.tagReload()
+                    }).catch(e => {
+                      this.tagReload()
+                    })
+                  }
+                }
+              }, '刷屏'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送巡检命令')
+                    scanTag(data, 0).then(res => {
+                      this.tagReload()
+                    }).catch(e => {
+                      this.tagReload()
+                    })
+                  }
+                }
+              }, '巡检'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送禁用命令')
+                    statusTag(data, 0).then(res => {
+                      this.tagReload()
+                    }).catch(e => {
+                      this.tagReload()
+                    })
+                  }
+                }
+              }, '禁用'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送启用命令')
+                    statusTag(data, 1).then(res => {
+                      this.tagReload()
+                    }).catch(e => {
+                      this.tagReload()
+                    })
+                  }
+                }
+              }, '启用'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    var that = this
+                    this.$Modal.confirm({
+                      title: '警告',
+                      content: '确定移除该价签吗？',
+                      onOk: function () {
+                        removeTag(data, 0).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) }).catch(e => { that.tagReload() })
+                      }
+                    })
+                  }
+                }
+              }, '移除')
+            ]
+            if (!this.hasBaseTagAccess) {
+              listitem.splice(0, 4)
+              if (!this.hasHighTagAccess) {
+                listitem.splice(0, 3)
+              }
+            } else {
+              if (!this.hasHighTagAccess) {
+                listitem.splice(3, 3)
+              }
+            }
             return h('div', [
               h('Dropdown', {
                 props: {
@@ -595,99 +695,13 @@ export default {
                 h('Button', {
                   props: {
                     type: 'primary',
-                    size: 'small'
+                    size: 'small',
+                    disabled: (listitem.length === 0)
                   }
                 }, '操作'),
                 h('DropdownMenu', {
                   slot: 'list'
-                }, [
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Message.info('发送闪灯命令')
-                        lightTag(data, 1, 0).then(res => {
-                          this.tagReload()
-                        }).catch(e => {
-                          this.tagReload()
-                        })
-                      }
-                    }
-                  }, '闪灯'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Message.info('发送熄灯命令')
-                        lightTag(data, 0, 0).then(res => {
-                          this.tagReload()
-                        }).catch(e => {
-                          this.tagReload()
-                        })
-                      }
-                    }
-                  }, '熄灯'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Message.info('发送刷屏命令')
-                        flushTag(data, 0).then(res => {
-                          this.tagReload()
-                        }).catch(e => {
-                          this.tagReload()
-                        })
-                      }
-                    }
-                  }, '刷屏'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Message.info('发送巡检命令')
-                        scanTag(data, 0).then(res => {
-                          this.tagReload()
-                        }).catch(e => {
-                          this.tagReload()
-                        })
-                      }
-                    }
-                  }, '巡检'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Message.info('发送禁用命令')
-                        statusTag(data, 0).then(res => {
-                          this.tagReload()
-                        }).catch(e => {
-                          this.tagReload()
-                        })
-                      }
-                    }
-                  }, '禁用'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Message.info('发送启用命令')
-                        statusTag(data, 1).then(res => {
-                          this.tagReload()
-                        }).catch(e => {
-                          this.tagReload()
-                        })
-                      }
-                    }
-                  }, '启用'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        var that = this
-                        this.$Modal.confirm({
-                          title: '警告',
-                          content: '确定移除该价签吗？',
-                          onOk: function () {
-                            removeTag(data, 0).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) }).catch(e => { that.tagReload() })
-                          }
-                        })
-                      }
-                    }
-                  }, '移除')
-                ])
+                }, listitem)
               ])
             ])
           }
@@ -761,6 +775,18 @@ export default {
   computed: {
     upLaodUrl: function () {
       return 'http://39.108.106.167:8086/good/upload?mode=' + this.uploadMode
+    },
+    hasBaseTagAccess: () => {
+      return store.getters.access.indexOf(3) !== -1
+    },
+    hasHighTagAccess: () => {
+      return store.getters.access.indexOf(5) !== -1
+    },
+    hasGjAccess: () => {
+      return store.getters.access.indexOf(6) !== -1
+    },
+    hasGoodAccess: () => {
+      return store.getters.access.indexOf(7) !== -1
     }
   },
   watch: {
@@ -854,6 +880,9 @@ export default {
       if (search) { this.getGoodTableData({ queryId: key[0], queryString: value }) }
     },
     onTableClick (currentRow) {
+      if (!this.hasGoodAccess) {
+        return
+      }
       this.currentSelectedRow = this.goodData.find(function (item) { return item.barCode === currentRow.barCode })
       this.editModal = true
     },

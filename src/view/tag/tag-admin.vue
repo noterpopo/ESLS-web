@@ -260,7 +260,8 @@ export default {
             return h('Select', {
               props: {
                 value: params.row.styleId,
-                transfer: true
+                transfer: true,
+                disabled: !this.hasBindTagAccess
               },
               attrs: {
                 style: 'padding-left:10px;padding-right:10px;text-align:left;'
@@ -341,6 +342,135 @@ export default {
             this.$set(tparams, 'queryString', temp.id)
             items.push(tparams)
             this.$set(data, 'items', items)
+            let listitem = [
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.onBind(temp.id)
+                  }
+                }
+              }, '绑定'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送解绑命令')
+                    this.onUnBind(temp)
+                  }
+                }
+              }, '解绑'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送闪灯命令')
+                    lightTag(data, 1, 0).then(res => {
+                      this.tagReload()
+                    })
+                  }
+                }
+              }, '闪灯'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送熄灯命令')
+                    lightTag(data, 0, 0).then(res => {
+                      this.tagReload()
+                    }).catch(e => {
+                      this.tagReload()
+                    })
+                  }
+                }
+              }, '熄灯'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送刷屏命令')
+                    flushTag(data, 0).then(res => {
+                      this.tagReload()
+                    }).catch(e => {
+                      this.tagReload()
+                    })
+                  }
+                }
+              }, '刷屏'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送巡检命令')
+                    scanTag(data, 0).then(res => {
+                      this.tagReload()
+                    }).catch(e => {
+                      this.tagReload()
+                    })
+                  }
+                }
+              }, '巡检'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送禁用命令')
+                    statusTag(data, 0).then(res => {
+                      this.tagReload()
+                    }).catch(e => {
+                      this.tagReload()
+                    })
+                  }
+                }
+              }, '禁用'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送启用命令')
+                    statusTag(data, 1).then(res => {
+                      this.tagReload()
+                    }).catch(e => {
+                      this.tagReload()
+                    })
+                  }
+                }
+              }, '启用'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    var that = this
+                    this.$Modal.confirm({
+                      title: '警告',
+                      content: '确定移除该价签吗？',
+                      onOk: function () {
+                        removeTag(data, 0).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) }).catch(e => { this.tagReload() })
+                      }
+                    })
+                  }
+                }
+              }, '移除')
+            ]
+            if (this.hasBindTagAccess) {
+              if (this.hasBaseTagAccess) {
+                if (this.hasHighTagAccess) {
+                } else {
+                  listitem.splice(6, 3)
+                }
+              } else {
+                listitem.splice(2, 4)
+                if (this.hasHighTagAccess) {
+                } else {
+                  listitem.splice(2, 3)
+                }
+              }
+            } else {
+              listitem.splice(0, 2)
+              if (this.hasBaseTagAccess) {
+                if (this.hasHighTagAccess) {
+                } else {
+                  listitem.splice(3, 3)
+                }
+              } else {
+                listitem.splice(0, 4)
+                if (this.hasHighTagAccess) {
+                } else {
+                  listitem.splice(0, 3)
+                }
+              }
+            }
             return h('div', [
               h('Dropdown', {
                 props: {
@@ -351,117 +481,19 @@ export default {
                 h('Button', {
                   props: {
                     type: 'primary',
-                    size: 'small'
+                    size: 'small',
+                    disabled: listitem.length === 0
                   }
                 }, '操作'),
                 h('DropdownMenu', {
                   slot: 'list'
-                }, [
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.onBind(temp.id)
-                      }
-                    }
-                  }, '绑定'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Message.info('发送解绑命令')
-                        this.onUnBind(temp)
-                      }
-                    }
-                  }, '解绑'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Message.info('发送闪灯命令')
-                        lightTag(data, 1, 0).then(res => {
-                          this.tagReload()
-                        })
-                      }
-                    }
-                  }, '闪灯'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Message.info('发送熄灯命令')
-                        lightTag(data, 0, 0).then(res => {
-                          this.tagReload()
-                        }).catch(e => {
-                          this.tagReload()
-                        })
-                      }
-                    }
-                  }, '熄灯'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Message.info('发送刷屏命令')
-                        flushTag(data, 0).then(res => {
-                          this.tagReload()
-                        }).catch(e => {
-                          this.tagReload()
-                        })
-                      }
-                    }
-                  }, '刷屏'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Message.info('发送巡检命令')
-                        scanTag(data, 0).then(res => {
-                          this.tagReload()
-                        }).catch(e => {
-                          this.tagReload()
-                        })
-                      }
-                    }
-                  }, '巡检'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Message.info('发送禁用命令')
-                        statusTag(data, 0).then(res => {
-                          this.tagReload()
-                        }).catch(e => {
-                          this.tagReload()
-                        })
-                      }
-                    }
-                  }, '禁用'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Message.info('发送启用命令')
-                        statusTag(data, 1).then(res => {
-                          this.tagReload()
-                        }).catch(e => {
-                          this.tagReload()
-                        })
-                      }
-                    }
-                  }, '启用'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        var that = this
-                        this.$Modal.confirm({
-                          title: '警告',
-                          content: '确定移除该价签吗？',
-                          onOk: function () {
-                            removeTag(data, 0).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) }).catch(e => { this.tagReload() })
-                          }
-                        })
-                      }
-                    }
-                  }, '移除')
-                ])
+                }, listitem)
               ]),
               h('Button', {
                 props: {
                   type: 'error',
-                  size: 'small'
+                  size: 'small',
+                  disabled: !this.hasHighTagAccess
                 },
                 style: {
                   margin: '2px'
@@ -752,6 +784,15 @@ export default {
     }
   },
   computed: {
+    hasBaseTagAccess: () => {
+      return store.getters.access.indexOf(3) !== -1
+    },
+    hasBindTagAccess: () => {
+      return store.getters.access.indexOf(4) !== -1
+    },
+    hasHighTagAccess: () => {
+      return store.getters.access.indexOf(5) !== -1
+    }
   },
   methods: {
     onClickAction (id) {

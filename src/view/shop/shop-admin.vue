@@ -12,7 +12,7 @@
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                     <Col span="20"><p>分店信息</p></Col>
-                    <Col span="2"><Button type="primary" @click="addShop">添加店铺</Button></Col>
+                    <Col span="2"><Button v-if="hasShopAccess" type="primary" @click="addShop">添加店铺</Button></Col>
                     <Col span="2"><Button type="primary" @click="shopReload">刷新</Button></Col>
               </Row>
           </div>
@@ -83,6 +83,7 @@
 <script>
 import { getAllShop, updateShop, deleteShop } from '@/api/shop'
 import super_table from '@/components/table/supertable.vue'
+import store from '@/store'
 export default {
   components: {
     super_table
@@ -161,7 +162,8 @@ export default {
               h('Button', {
                 props: {
                   type: 'error',
-                  size: 'small'
+                  size: 'small',
+                  disabled: !this.hasShopAccess
                 },
                 style: {
                   margin: '2px'
@@ -268,6 +270,9 @@ export default {
     }
   },
   computed: {
+    hasShopAccess: () => {
+      return store.getters.access.indexOf(13) !== -1
+    }
   },
   methods: {
     getCenterShop () {
@@ -321,6 +326,9 @@ export default {
       this.getShopTableData({ page: this.currentPage - 1, count: this.countPerPage })
     },
     onTableClick (currentRow) {
+      if (!this.hasShopAccess) {
+        return
+      }
       this.currentShopData = currentRow
       this.editModal = true
     },

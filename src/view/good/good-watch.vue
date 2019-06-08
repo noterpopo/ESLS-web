@@ -4,7 +4,7 @@
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                 <Col span="22"><p>变价监控信息</p></Col>
-                <Col span="2"><Button type="primary" @click="exportCsv">导出变价超时数据</Button></Col>
+                <Col span="2"><Button v-if="hasGjAccess" type="primary" @click="exportCsv">导出变价超时数据</Button></Col>
             </Row>
           </div>
           <div>
@@ -48,7 +48,7 @@
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                 <Col span="22"><p>等待变价列表</p></Col>
-                <Col span="2"><Button type="primary" @click="submitUpdate">一键改价</Button></Col>
+                <Col span="2"><Button v-if="hasGjAccess" type="primary" @click="submitUpdate">一键改价</Button></Col>
             </Row>
           </div>
           <Table border :loading='isTableLoading' :columns="tableColumns" :data="tagDataPage">
@@ -306,7 +306,7 @@ export default {
           render: (h, params) => {
             return h('Button', {
               props: {
-                disabled: params.row.waitUpdate === 1,
+                disabled: params.row.waitUpdate === 1 || !this.hasGjAccess,
                 icon: 'md-refresh',
                 type: 'primary',
                 size: 'small'
@@ -365,6 +365,9 @@ export default {
     }
   },
   computed: {
+    hasGjAccess: () => {
+      return store.getters.access.indexOf(6) !== -1
+    }
   },
   methods: {
     exportCsv () {

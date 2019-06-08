@@ -4,7 +4,7 @@
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                 <Col span="22"><p>用户列表</p></Col>
-                <Col span="2"><Button type="primary" @click="addUser">添加用户</Button></Col>
+                <Col span="2"><Button v-if="hasUserAccess" type="primary" @click="addUser">添加用户</Button></Col>
             </Row>
           </div>
           <super_table @onClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onDoubleClick="onTableDoubleClick" @onSearch="onTableSearch" :data="userData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="userDataCount"></super_table>
@@ -13,7 +13,7 @@
           <div slot="title">
             <Row type="flex" justify="center" align="middle">
                 <Col span="22"><p>角色列表</p></Col>
-                <Col span="2"><Button type="primary" @click="addRole">添加角色</Button></Col>
+                <Col span="2"><Button v-if="hasUserAccess" type="primary" @click="addRole">添加角色</Button></Col>
             </Row>
           </div>
           <Collapse v-model="selectRole" accordion>
@@ -21,13 +21,14 @@
             {{item.name}}
                 <div slot="content">
                   <Transfer
+                  v-if="hasUserAccess"
                     :titles="['未获得权限','角色权限']"
                     :list-style="listStyle"
                     :data="allPerData"
                     :target-keys="getRolePerKey(index)"
                     :render-format="renderPermission"
                     @on-change="onTransferChange(index,arguments)"></Transfer>
-                    <Button type="primary" style="margin-top:10px;" @click="delRole">删除角色</Button>
+                    <Button v-if="hasUserAccess" type="primary" style="margin-top:10px;" @click="delRole">删除角色</Button>
                 </div>
             </Panel>
           </Collapse>
@@ -53,10 +54,11 @@
     </div>
 </template>
 <script>
-import { getAllUser, switchUserUsable, deleteUser, addUserRole, delUserRole, updateUser } from '@/api/user'
+import { getAllUser, switchUserUsable, updateUser } from '@/api/user'
 import { getAllRole, addPerm, delPerm, addRole, delRole } from '@/api/role'
 import { getAllPermissions } from '@/api/permission'
 import { getAllShop } from '@/api/shop'
+import store from '@/store'
 import super_table from '@/components/table/supertable.vue'
 export default {
   components: {
@@ -113,15 +115,16 @@ export default {
             }
             return h('Select', {
               props: {
-                multiple: true,
-                value: currentRole
+                value: currentRole[0],
+                transfer: true,
+                disabled: !this.hasUserAccess
               },
               attrs: {
                 style: 'padding-left:10px;padding-right:10px;text-align:left;'
               },
               on: {
                 'on-change': (val) => {
-                  this.onUpdateRole(params.row, val, params.row.roleList.split(' ').length - 1)
+                  this.onUpdateRole(params.row, val)
                 }
               }
             }, this.roleData.map((item) => {
@@ -142,7 +145,8 @@ export default {
             return h('Select', {
               props: {
                 value: params.row.shopId,
-                transfer: true
+                transfer: true,
+                disabled: !this.hasUserAccess
               },
               attrs: {
                 style: 'padding-left:10px;padding-right:10px;text-align:left;'
@@ -172,7 +176,8 @@ export default {
             return h('i-switch', {
               props: {
                 value: isUsable,
-                size: 'large'
+                size: 'large',
+                disabled: !this.hasUserAccess
               },
               on: {
                 'on-change': (val) => {
@@ -205,7 +210,8 @@ export default {
               h('Button', {
                 props: {
                   type: 'error',
-                  size: 'small'
+                  size: 'small',
+                  disabled: !this.hasUserAccess
                 },
                 style: {
                   margin: '2px'
@@ -255,6 +261,9 @@ export default {
     }
   },
   computed: {
+    hasUserAccess: () => {
+      return store.getters.access.indexOf(1) !== -1
+    }
   },
   methods: {
     asyncEditOK () {
@@ -265,6 +274,9 @@ export default {
       })
     },
     onTableDoubleClick (currentRow) {
+      if (!this.hasUserAccess) {
+        return
+      }
       this.currentSelectedRow = currentRow
       this.editModal = true
     },
@@ -277,23 +289,13 @@ export default {
       console.log(userdata)
       updateUser(userdata)
     },
-    onUpdateRole (row, val, curlength) {
-      if (curlength < val.length) {
-        addUserRole(row.id, val).then(res => {
-          this.getUserTableData({ page: this.currentPage - 1, count: this.countPerPage })
-          this.$Message.info('添加角色成功')
-        })
-      } else if (val.length < curlength) {
-        let rmRole = row.roleList.split(' ').filter((item) => {
-          if (item === '') return false
-          return val.indexOf(parseInt(item)) === -1
-        })
-        rmRole = rmRole.map((item) => { return parseInt(item) })
-        delUserRole(row.id, rmRole).then(res => {
-          this.$Message.info('删除角色成功')
-          this.getUserTableData({ page: this.currentPage - 1, count: this.countPerPage })
-        })
-      }
+    onUpdateRole (row, val) {
+      row.roleList = val + ' '
+      delete row.createTime
+      delete row.salt
+      delete row._index
+      delete row._rowKey
+      updateUser(row)
     },
     addRole () {
       this.$Modal.confirm({

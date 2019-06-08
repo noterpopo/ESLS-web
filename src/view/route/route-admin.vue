@@ -8,7 +8,7 @@
               </Row>
           </div>
           <super_table @onSelectionChange="handleSelectionChange" @onClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="routeData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="routeDataCount"></super_table>
-          <Button type="primary" @click="isUploadShow=true">上传路由器升级文件</Button>
+          <Button v-if="hasProAccess" type="primary" @click="isUploadShow=true">上传路由器升级文件</Button>
           <Modal v-model="isUploadShow" title="上传路由器升级文件">
             <div>
               <Upload style="margin-top:10px;"
@@ -233,7 +233,8 @@ export default {
                 h('Button', {
                   props: {
                     type: 'primary',
-                    size: 'small'
+                    size: 'small',
+                    disabled: !this.hasBaseTagAccess
                   }
                 }, '操作'),
                 h('DropdownMenu', {
@@ -351,7 +352,8 @@ export default {
           render: (h, params) => {
             return h('Select', {
               props: {
-                value: params.row.shopId
+                value: params.row.shopId,
+                disabled: !this.hasHighRouteAccess
               },
               attrs: {
                 style: 'padding-left:10px;padding-right:10px;text-align:left;'
@@ -398,7 +400,8 @@ export default {
             return h('i-switch', {
               props: {
                 value: isUsable,
-                size: 'large'
+                size: 'large',
+                disabled: !this.hasHighRouteAccess
               },
               on: {
                 'on-change': (val) => {
@@ -437,6 +440,175 @@ export default {
             this.$set(tparams, 'queryString', temp.id)
             items.push(tparams)
             this.$set(data, 'items', items)
+            let listitem = [
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Modal.confirm({
+                      title: '设置IP',
+                      render: (h, params) => {
+                        return h('Input', {
+                          props: {
+                            placeholder: '输入IP',
+                            value: temp.outNetIp
+                          },
+                          on: {
+                            'on-change': (event) => {
+                              temp.outNetIp = event.target.value
+                            }
+                          }
+                        })
+                      },
+                      onOk: () => {
+                        updateRouter(temp).then(res => {
+                          settingRoute(data).then(res => {
+                            this.$Message.info('设置成功')
+                          })
+                        })
+                      }
+                    })
+                  }
+                }
+              }, 'IP设置'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Modal.confirm({
+                      title: '设置信道',
+                      render: (h, params) => {
+                        return h('Input', {
+                          props: {
+                            placeholder: '输入信道',
+                            value: temp.channelId
+                          },
+                          on: {
+                            'on-change': (event) => {
+                              temp.channelId = event.target.value
+                            }
+                          }
+                        })
+                      },
+                      onOk: () => {
+                        updateRouter(temp).then(res => {
+                          settingRoute(data).then(res => {
+                            this.$Message.info('设置成功')
+                          })
+                        })
+                      }
+                    })
+                  }
+                }
+              }, '信道设置'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Modal.confirm({
+                      title: '新路由条码',
+                      render: (h, params) => {
+                        return h('Input', {
+                          props: {
+                            placeholder: '输入条码',
+                            value: newID
+                          },
+                          on: {
+                            'on-change': (event) => {
+                              newID = event.target.value
+                            }
+                          }
+                        })
+                      },
+                      onOk: () => {
+                        this.changeRoute(params.row.barCode, newID)
+                      }
+                    })
+                  }
+                }
+              }, '更换AP'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    scanRoute(data, 0).then(res => {
+                      this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+                    })
+                  }
+                }
+              }, '读取AP信息'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    lightTag(data, 1, 1)
+                  }
+                }
+              }, '广播闪灯'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    lightTag(data, 0, 1)
+                  }
+                }
+              }, '广播熄灯'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    scanTag(data, 1)
+                  }
+                }
+              }, '标签巡检'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    flushTag(data, 1)
+                  }
+                }
+              }, '标签刷屏'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    testInkScreen(data, 1, 1)
+                  }
+                }
+              }, '墨水屏测试1'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    testInkScreen(data, 1, 2)
+                  }
+                }
+              }, '墨水屏测试2'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    testInkScreen(data, 1, 3)
+                  }
+                }
+              }, '墨水屏测试3'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    testInkScreen(data, 1, 4)
+                  }
+                }
+              }, '墨水屏测试4'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    testInkScreen(data, 1, 5)
+                  }
+                }
+              }, '墨水屏测试5')
+            ]
+            if (this.hasHighRouteAccess) {
+              if (this.hasBaseRouteAccess) {
+              } else {
+                listitem.splice(3, 5)
+              }
+            } else {
+              listitem.splice(0, 3)
+              if (this.hasBaseRouteAccess) {
+              } else {
+                listitem.splice(0, 5)
+              }
+            }
             return h('div', [
               h('Dropdown', {
                 props: {
@@ -452,163 +624,7 @@ export default {
                 }, '操作'),
                 h('DropdownMenu', {
                   slot: 'list'
-                }, [
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Modal.confirm({
-                          title: '设置IP',
-                          render: (h, params) => {
-                            return h('Input', {
-                              props: {
-                                placeholder: '输入IP',
-                                value: temp.outNetIp
-                              },
-                              on: {
-                                'on-change': (event) => {
-                                  temp.outNetIp = event.target.value
-                                }
-                              }
-                            })
-                          },
-                          onOk: () => {
-                            updateRouter(temp).then(res => {
-                              settingRoute(data).then(res => {
-                                this.$Message.info('设置成功')
-                              })
-                            })
-                          }
-                        })
-                      }
-                    }
-                  }, 'IP设置'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Modal.confirm({
-                          title: '设置信道',
-                          render: (h, params) => {
-                            return h('Input', {
-                              props: {
-                                placeholder: '输入信道',
-                                value: temp.channelId
-                              },
-                              on: {
-                                'on-change': (event) => {
-                                  temp.channelId = event.target.value
-                                }
-                              }
-                            })
-                          },
-                          onOk: () => {
-                            updateRouter(temp).then(res => {
-                              settingRoute(data).then(res => {
-                                this.$Message.info('设置成功')
-                              })
-                            })
-                          }
-                        })
-                      }
-                    }
-                  }, '信道设置'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        scanRoute(data, 0).then(res => {
-                          this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
-                        })
-                      }
-                    }
-                  }, '读取AP信息'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        lightTag(data, 1, 1)
-                      }
-                    }
-                  }, '广播闪灯'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        lightTag(data, 0, 1)
-                      }
-                    }
-                  }, '广播熄灯'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        testInkScreen(data, 1, 1)
-                      }
-                    }
-                  }, '墨水屏测试1'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        testInkScreen(data, 1, 2)
-                      }
-                    }
-                  }, '墨水屏测试2'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        testInkScreen(data, 1, 3)
-                      }
-                    }
-                  }, '墨水屏测试3'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        testInkScreen(data, 1, 4)
-                      }
-                    }
-                  }, '墨水屏测试4'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        testInkScreen(data, 1, 5)
-                      }
-                    }
-                  }, '墨水屏测试5'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        scanTag(data, 1)
-                      }
-                    }
-                  }, '标签巡检'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        flushTag(data, 1)
-                      }
-                    }
-                  }, '标签刷屏'),
-                  h('DropdownItem', {
-                    nativeOn: {
-                      click: (name) => {
-                        this.$Modal.confirm({
-                          title: '新路由条码',
-                          render: (h, params) => {
-                            return h('Input', {
-                              props: {
-                                placeholder: '输入条码',
-                                value: newID
-                              },
-                              on: {
-                                'on-change': (event) => {
-                                  newID = event.target.value
-                                }
-                              }
-                            })
-                          },
-                          onOk: () => {
-                            this.changeRoute(params.row.barCode, newID)
-                          }
-                        })
-                      }
-                    }
-                  }, '更换AP')
-                ])
+                }, listitem)
               ])
             ])
           }
@@ -644,6 +660,18 @@ export default {
   computed: {
     upLaodUrl: function () {
       return 'http://39.108.106.167:8086/router/upload'
+    },
+    hasBaseTagAccess: () => {
+      return store.getters.access.indexOf(3) !== -1
+    },
+    hasBaseRouteAccess: () => {
+      return store.getters.access.indexOf(8) !== -1
+    },
+    hasHighRouteAccess: () => {
+      return store.getters.access.indexOf(9) !== -1
+    },
+    hasProAccess: () => {
+      return store.getters.access.indexOf(15) !== -1
     }
   },
   methods: {

@@ -5,10 +5,10 @@
             <div slot="title">
                 <Row type="flex" justify="center" >
                     <Col span="18"><p>样式信息</p></Col>
-                    <Col span="2" ><Button type="primary" @click="addStyle">新建样式</Button></Col>
+                    <Col span="2" ><Button v-if="hasStyleAccess" type="primary" @click="addStyle">新建样式</Button></Col>
                     <Col span="2" >
                       <Upload style="margin-left:4px" :show-upload-list="false" action="" :before-upload="inputStyle">
-                        <Button icon="ios-cloud-upload-outline">导入样式</Button>
+                        <Button v-if="hasStyleAccess" icon="ios-cloud-upload-outline">导入样式</Button>
                     </Upload>
                   </Col>
                 </Row>
@@ -67,6 +67,7 @@ import super_table from '@/components/table/supertable.vue'
 import modal_style_designer from '@/components/modal/modal-style-designer.vue'
 import { getStyle, getStyleDisp, getAllStyle, deleteStyle, updateStyle, newStyle } from '@/api/style'
 import FileSaver from 'file-saver'
+import store from '@/store'
 export default {
   components: {
     e_label,
@@ -184,7 +185,8 @@ export default {
               h('Button', {
                 props: {
                   type: 'primary',
-                  size: 'small'
+                  size: 'small',
+                  disabled: !this.hasStyleAccess
                 },
                 style: {
                   margin: '2px'
@@ -201,7 +203,8 @@ export default {
               h('Button', {
                 props: {
                   type: 'primary',
-                  size: 'small'
+                  size: 'small',
+                  disabled: !this.hasStyleAccess
                 },
                 style: {
                   margin: '2px'
@@ -217,7 +220,8 @@ export default {
               h('Button', {
                 props: {
                   type: 'error',
-                  size: 'small'
+                  size: 'small',
+                  disabled: !this.hasStyleAccess
                 },
                 style: {
                   margin: '2px',
@@ -246,6 +250,9 @@ export default {
     }
   },
   computed: {
+    hasStyleAccess: () => {
+      return store.getters.access.indexOf(10) !== -1
+    }
   },
   mounted () {
     var that = this

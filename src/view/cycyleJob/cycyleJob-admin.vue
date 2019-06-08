@@ -26,7 +26,7 @@
             <Input  v-model="goodCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
                 <Button slot="append" @click="isGoodCronModalShow=true">选择时间</Button>
             </Input>
-            <Button style="margin-left:10px;" type="primary" @click="onGoodCycle">开始</Button>
+            <Button v-if="hasCycleJobAccess" style="margin-left:10px;" type="primary" @click="onGoodCycle">开始</Button>
           </div >
           <div style="display:flex; align-items:center;margin-top:10px;">
             <span>价签定期刷新：</span>
@@ -36,7 +36,7 @@
             <Input  v-model="tagFlushCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
                 <Button slot="append" @click="isTagFlushCronModalShow=true">选择时间</Button>
             </Input>
-            <Button style="margin-left:10px;" type="primary" @click="onTagFlushCycle">开始</Button>
+            <Button v-if="hasCycleJobAccess" style="margin-left:10px;" type="primary" @click="onTagFlushCycle">开始</Button>
           </div >
           <div style="display:flex; align-items:center;margin-top:10px;">
             <span>价签定期巡检：</span>
@@ -46,7 +46,7 @@
             <Input  v-model="tagScanCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
                 <Button slot="append" @click="isTagScanCronModalShow=true">选择时间</Button>
             </Input>
-            <Button style="margin-left:10px;" type="primary" @click="onTagScanCycle">开始</Button>
+            <Button v-if="hasCycleJobAccess" style="margin-left:10px;" type="primary" @click="onTagScanCycle">开始</Button>
             <Button style="margin-left:10px;" type="primary" @click="onScanAll">对所有价签巡检</Button>
           </div >
         </Card>
@@ -64,6 +64,7 @@ import { scanAll } from '@/api/tag'
 import super_table from '@/components/table/supertable.vue'
 import cronSelector from '@/components/corn-selector/corn-selector.vue'
 import { getAllShop } from '@/api/shop'
+import store from '@/store'
 export default {
   components: {
     super_table,
@@ -113,7 +114,8 @@ export default {
               h('Button', {
                 props: {
                   type: 'error',
-                  size: 'small'
+                  size: 'small',
+                  disabled: !this.hasCycleJobAccess
                 },
                 style: {
                   margin: '2px'
@@ -164,6 +166,9 @@ export default {
     }
   },
   computed: {
+    hasCycleJobAccess: () => {
+      return store.getters.access.indexOf(11) !== -1
+    }
   },
   methods: {
     onScanAll () {
@@ -210,6 +215,9 @@ export default {
       this.getCycyleJobTableData({ page: this.currentPage - 1, count: this.countPerPage })
     },
     onTableClick (currentRow) {
+      if (!this.hasCycleJobAccess) {
+        return
+      }
       var that = this
       this.currentCycyleJobData = currentRow
       if (currentRow.mode === -1 || currentRow.mode === -2) {
