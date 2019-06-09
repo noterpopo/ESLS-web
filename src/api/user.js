@@ -100,3 +100,14 @@ export const updateUser = (userInfo) => {
     data: userInfo
   })
 }
+
+export const updateRole = (roleid, userid) => {
+  return axios.request({
+    url: '/user/updateRole',
+    method: 'post',
+    params: {
+      roleId: roleid,
+      userId: userid
+    }
+  })
+}

@@ -54,7 +54,7 @@
     </div>
 </template>
 <script>
-import { getAllUser, switchUserUsable, updateUser } from '@/api/user'
+import { getAllUser, switchUserUsable, updateUser, updateRole } from '@/api/user'
 import { getAllRole, addPerm, delPerm, addRole, delRole } from '@/api/role'
 import { getAllPermissions } from '@/api/permission'
 import { getAllShop } from '@/api/shop'
@@ -290,12 +290,7 @@ export default {
       updateUser(userdata)
     },
     onUpdateRole (row, val) {
-      row.roleList = val + ' '
-      delete row.createTime
-      delete row.salt
-      delete row._index
-      delete row._rowKey
-      updateUser(row)
+      updateRole(val, row.id)
     },
     addRole () {
       this.$Modal.confirm({
