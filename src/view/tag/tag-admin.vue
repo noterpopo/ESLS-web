@@ -1011,6 +1011,8 @@ export default {
             title: '消息',
             content: '成功绑定样式'
           })
+        }).catch(e => {
+          this.tagReload()
         })
       }
       // let temp = this.tagData.find(function (item) { return item.id === tid })
