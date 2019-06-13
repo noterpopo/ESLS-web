@@ -54,7 +54,7 @@
     </div>
 </template>
 <script>
-import { getAllUser, switchUserUsable, updateUser, updateRole } from '@/api/user'
+import { getAllUser, switchUserUsable, updateUser, updateRole, deleteUser } from '@/api/user'
 import { getAllRole, addPerm, delPerm, addRole, delRole } from '@/api/role'
 import { getAllPermissions } from '@/api/permission'
 import { getAllShop } from '@/api/shop'
