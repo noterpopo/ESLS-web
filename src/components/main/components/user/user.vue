@@ -4,17 +4,34 @@
       <span style="vertical-align:middle;display:inline-block;">{{userName}}</span>
       <Icon :size="18" type="md-arrow-dropdown"></Icon>
       <DropdownMenu slot="list">
+        <DropdownItem name="changePsw">修改密码</DropdownItem>
         <DropdownItem name="logout">退出登录</DropdownItem>
       </DropdownMenu>
     </Dropdown>
+    <Modal
+        v-model="isShowChangePsw"
+        title="修改密码"
+        @on-ok="onChangePsw">
+        <span>
+          <p>输入新密码：</p>
+          <Input type="text" v-model="newPsw" />
+        </span>
+    </Modal>
   </div>
 </template>
 
 <script>
 import './user.less'
 import { mapActions } from 'vuex'
+import { changePsw } from '@/api/user'
 export default {
   name: 'User',
+  data () {
+    return {
+      isShowChangePsw: false,
+      newPsw: ''
+    }
+  },
   props: {
     userName: {
       type: String,
@@ -25,6 +42,16 @@ export default {
     ...mapActions([
       'handleLogOut'
     ]),
+    onChangePsw () {
+      let data = { newPassword: this.newPsw }
+      changePsw(data).then(res => {
+        this.$Message.info('修改密码成功')
+        this.logout()
+      })
+    },
+    changePsw () {
+      this.isShowChangePsw = true
+    },
     logout () {
       this.handleLogOut().then(() => {
         this.$router.push({
@@ -41,7 +68,7 @@ export default {
       switch (name) {
         case 'logout': this.logout()
           break
-        case 'message': this.message()
+        case 'changePsw': this.changePsw()
           break
       }
     }

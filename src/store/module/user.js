@@ -90,7 +90,7 @@ export default {
             commit('setUserId', res.data.data.id)
             localStorage.setItem('user_id', res.data.data.id)
             commit('setUserName', res.data.data.name)
-            resolve()
+            resolve(res)
           }).catch(err => {
             reject(err)
           })
@@ -116,7 +116,7 @@ export default {
             commit('setUserId', res.data.data.id)
             localStorage.setItem('user_id', res.data.data.id)
             commit('setUserName', res.data.data.name)
-            resolve()
+            resolve(res)
           }).catch(err => {
             reject(err)
           })

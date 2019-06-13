@@ -28,6 +28,11 @@
                       <Option v-for="item in shoplist" :key="item.id" :value="item.id">{{item.name}}</Option>
                     </Select>
                 </FormItem>
+                <FormItem label="角色" prop="role">
+                    <Select v-model="formValidate.roleList">
+                      <Option v-for="item in rolelist" :key="item.id" :value="item.id">{{item.name}}</Option>
+                    </Select>
+                </FormItem>
                 <FormItem label="密码" prop="passwd">
                     <Input type="password" v-model="formValidate.passwd"></Input>
                 </FormItem>
@@ -45,6 +50,7 @@
 <script>
 import { registryUser } from '@/api/user'
 import { getAllShop } from '@/api/shop'
+import { getAllRole } from '@/api/role'
 export default {
   data () {
     const validatePass = (rule, value, callback) => {
@@ -69,8 +75,10 @@ export default {
     }
     return {
       windowWidth: 0,
+      rolelist: [],
       shoplist: [],
       formValidate: {
+        roleList: '',
         shopId: -1,
         name: '',
         address: '',
@@ -123,13 +131,15 @@ export default {
     getAllShop({ page: 0, count: 100 }).then(res => {
       this.shoplist = res.data.data
     })
+    getAllRole().then(res => {
+      this.rolelist = res.data.data
+    })
   },
   methods: {
     handleSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.$delete(this.formValidate, 'passwdCheck', this.formValidate.passwdCheck)
-          console.log(this.formValidate)
           registryUser(this.formValidate).then(res => {
             this.$Message.success('注册成功!')
             this.$router.push({

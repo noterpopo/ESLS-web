@@ -57,8 +57,10 @@ class HttpRequest {
           request: { responseURL: config.url }
         }
       }
-      printError(errorInfo.data.data)
-      return Promise.reject(error)
+      if (errorInfo.data.code !== 20015) {
+        printError(errorInfo.data.data)
+      }
+      return Promise.reject(errorInfo)
     })
   }
   request (options) {

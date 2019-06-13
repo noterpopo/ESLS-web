@@ -17,9 +17,6 @@
     <FormItem>
       <Button @click="handleSubmit" type="primary" long>登录</Button>
     </FormItem>
-    <FormItem>
-      <Button @click="toSMSLogin" type="primary" long>短信登陆</Button>
-    </FormItem>
   </Form>
 </template>
 <script>

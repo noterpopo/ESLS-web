@@ -8,7 +8,7 @@
       <Card icon="log-in" title="欢迎登录" :bordered="false">
         <div class="form-con">
           <login-form v-if="!isSMS" @on-success-valid="handleSubmit" @toSMSLogin="toSMSLogin"></login-form>
-          <LoginFormSMS v-if="isSMS" @on-success-valid="handleSubmitSMS" @toPswLogin="toPswLogin"></LoginFormSMS>
+          <LoginFormSMS v-if="isSMS" :phone="phone" @on-success-valid="handleSubmitSMS" @toPswLogin="toPswLogin"></LoginFormSMS>
         </div>
       </Card>
     </div>
@@ -26,7 +26,8 @@ export default {
   },
   data () {
     return {
-      isSMS: false
+      isSMS: false,
+      phone: ''
     }
   },
   methods: {
@@ -37,9 +38,20 @@ export default {
     handleSubmit ({ userName, password }) {
       let type = 1
       this.handleLogin({ userName, password, type }).then(res => {
-        this.$router.push({
-          name: this.$config.homeName
-        })
+        console.log(res)
+        if (res.data.data.loginType === 'username') {
+          this.$router.push({
+            name: this.$config.homeName
+          })
+        } else {
+          this.isSMS = true
+        }
+      }).catch(error => {
+        if (error.data.code === 20015) {
+          this.phone = error.data.data
+          this.$Message.info('该账户需要短信二次验证')
+          this.isSMS = true
+        }
       })
     },
     handleSubmitSMS ({ phone, vercode }) {

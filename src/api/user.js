@@ -27,6 +27,14 @@ export const getVerCode = (data) => {
   })
 }
 
+export const changePsw = (data) => {
+  return axios.request({
+    url: 'user/changeOwnPassword',
+    data: data,
+    method: 'post'
+  })
+}
+
 export const switchUserUsable = (id) => {
   return axios.request({
     url: '/user/status/' + id,

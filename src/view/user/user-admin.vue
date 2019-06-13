@@ -201,6 +201,39 @@ export default {
           }
         },
         {
+          title: '短信验证',
+          render: (h, params) => {
+            const row = params.row
+            const needSMS = row.loginType !== 'username'
+            return h('i-switch', {
+              props: {
+                value: needSMS,
+                size: 'large',
+                disabled: !this.hasUserAccess
+              },
+              on: {
+                'on-change': (val) => {
+                  if (val) {
+                    params.row.loginType = 'phone'
+                  } else {
+                    params.row.loginType = 'username'
+                  }
+                  delete params.row.createTime
+                  delete params.row.lastLoginTime
+                  updateUser(params.row)
+                }
+              }
+            }, [
+              h('span', {
+                slot: 'open'
+              }, '开启'),
+              h('span', {
+                slot: 'close'
+              }, '关闭')
+            ])
+          }
+        },
+        {
           title: '操作',
           key: 'action',
           align: 'center',
@@ -268,6 +301,8 @@ export default {
   methods: {
     asyncEditOK () {
       this.editModal = false
+      delete this.currentSelectedRow.createTime
+      delete this.currentSelectedRow.lastLoginTime
       updateUser(this.currentSelectedRow).then(res => {
         this.getUserTableData({ page: 0, count: this.countPerPage })
         this.$Message.info('修改成功')
@@ -283,14 +318,25 @@ export default {
     onUpdateShop (userdata, newshopId) {
       userdata.shopId = newshopId
       delete userdata.createTime
-      delete userdata.roleList
       delete userdata.lastLoginTime
-      delete userdata.salt
       console.log(userdata)
       updateUser(userdata)
     },
     onUpdateRole (row, val) {
-      updateRole(val, row.id)
+      if (row.roleList === '1 ') {
+        this.$Modal.confirm({
+          title: '警告',
+          content: '确定更换该用户总店管理员角色吗？',
+          onOk: () => {
+            updateRole(val, row.id)
+          },
+          onCancel: () => {
+            this.getUserTableData({ page: this.currentPage - 1, count: this.countPerPage })
+          }
+        })
+      } else {
+        updateRole(val, row.id)
+      }
     },
     addRole () {
       this.$Modal.confirm({

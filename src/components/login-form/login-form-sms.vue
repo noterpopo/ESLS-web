@@ -1,12 +1,5 @@
 <template>
   <Form ref="loginForm" :model="form" :rules="rules" @keydown.enter.native="handleSubmit">
-    <FormItem prop="phoneNumber">
-      <Input v-model="form.phone" placeholder="请输入手机号码">
-        <span slot="prepend">
-          <Icon :size="16" type="ios-person"></Icon>
-        </span>
-      </Input>
-    </FormItem>
     <FormItem prop="verCode">
       <Input v-model="form.vercode" placeholder="请输入验证码">
         <span slot="prepend">
@@ -20,9 +13,6 @@
     <FormItem>
       <Button @click="handleSubmit" type="primary" long>登录</Button>
     </FormItem>
-    <FormItem>
-      <Button @click="toPswLogin" type="primary" long>密码登陆</Button>
-    </FormItem>
   </Form>
 </template>
 <script>
@@ -30,13 +20,9 @@ import { getVerCode } from '@/api/user'
 export default {
   name: 'LoginFormSMS',
   props: {
-    phoneRules: {
-      type: Array,
-      default: () => {
-        return [
-          { required: true, message: '手机号不能为空', trigger: 'blur' }
-        ]
-      }
+    phone: {
+      type: String,
+      default: ''
     },
     vercodeRules: {
       type: Array,
@@ -50,7 +36,6 @@ export default {
   data () {
     return {
       form: {
-        phone: '',
         vercode: ''
       }
     }
@@ -58,7 +43,6 @@ export default {
   computed: {
     rules () {
       return {
-        phone: this.phoneRules,
         vercode: this.vercodeRules
       }
     }
@@ -68,14 +52,14 @@ export default {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.$emit('on-success-valid', {
-            phone: this.form.phone,
+            phone: this.phone,
             vercode: this.form.vercode
           })
         }
       })
     },
     getVercode () {
-      let data = { phoneNumber: this.form.phone, smsType: 'AUTH' }
+      let data = { phoneNumber: this.phone, smsType: 'AUTH' }
       getVerCode(data)
     },
     toPswLogin () {
