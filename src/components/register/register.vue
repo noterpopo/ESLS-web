@@ -1,6 +1,5 @@
 <template>
-    <div  ref="container" class="regBg" style="height:100%;display: flex;flex-direction: column;flex-wrap: wrap;justify-content: center; align-items: center;align-content: center;">
-        <Card v-bind:style="{ width: windowWidth*0.6 + 'px'}">
+    <div>
             <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
                 <FormItem label="姓名" prop="name">
                     <Input v-model="formValidate.name" placeholder="请输入姓名"></Input>
@@ -23,12 +22,12 @@
                 <FormItem label="电话" prop="telephone">
                     <Input v-model="formValidate.telephone" placeholder="请输入电话"></Input>
                 </FormItem>
-                <FormItem label="店铺" prop="shop">
+                <FormItem label="店铺" prop="shopId">
                     <Select v-model="formValidate.shopId">
                       <Option v-for="item in shoplist" :key="item.id" :value="item.id">{{item.name}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem label="角色" prop="role">
+                <FormItem label="角色" prop="roleList">
                     <Select v-model="formValidate.roleList">
                       <Option v-for="item in rolelist" :key="item.id" :value="item.id">{{item.name}}</Option>
                     </Select>
@@ -44,7 +43,6 @@
                     <Button @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
                 </FormItem>
             </Form>
-        </Card>
     </div>
 </template>
 <script>
@@ -52,6 +50,7 @@ import { registryUser } from '@/api/user'
 import { getAllShop } from '@/api/shop'
 import { getAllRole } from '@/api/role'
 export default {
+  name: 'userRedister',
   data () {
     const validatePass = (rule, value, callback) => {
       if (value === '') {
@@ -69,6 +68,13 @@ export default {
         callback(new Error('请再次输入您的密码'))
       } else if (value !== this.formValidate.passwd) {
         callback(new Error('两次输入密码不一致'))
+      } else {
+        callback()
+      }
+    }
+    const selectCheck = (rule, value, callback) => {
+      if (value === ''||value===-1) {
+        callback(new Error('请选择必填项'))
       } else {
         callback()
       }
@@ -93,9 +99,6 @@ export default {
         name: [
           { required: true, message: '名字栏不能为空', trigger: 'blur' }
         ],
-        address: [
-          { required: true, message: '地址栏不能为空', trigger: 'blur' }
-        ],
         department: [
           { required: true, message: '部门栏不能为空', trigger: 'blur' }
         ],
@@ -104,6 +107,12 @@ export default {
         ],
         gender: [
           { required: true, message: '性别栏不能为空', trigger: 'change' }
+        ],
+        shopId: [
+          { required: true, validator:selectCheck, trigger: 'blur' }
+        ],
+        roleList: [
+          { required: true, validator:selectCheck, trigger: 'blur' }
         ],
         telephone: [
           { required: true, message: '电话栏不能为空', trigger: 'blur' }
@@ -157,10 +166,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.regBg{
-    background-image: url('../../assets/images/login-bg.jpg');
-    background-size: cover;
-    background-position: center;
-}
-</style>

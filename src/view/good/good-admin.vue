@@ -79,6 +79,10 @@
                     <Col span="2"><p>图片链接：</p></Col>
                     <Col span="22"><Input type="text" v-model="currentSelectedRow.imageUrl" /></Col>
                 </Row>
+                 <Row type="flex" justify="center" align="middle" class="Row">
+                    <Col span="2"><p>导入时间：</p></Col>
+                    <Col span="22"><p >{{currentSelectedRow.importTime}}</p></Col>
+                </Row>
               </div>
             </Modal>
             <Modal :width="1040" v-model="addModal" title="添加商品" :loading="addOkLoading" @on-ok="asyncAddOK">
@@ -341,8 +345,8 @@ export default {
           }
         },
         {
-          title: '导入时间',
-          key: 'importTime',
+          title: '店铺',
+          key: 'shopNumber',
           width: '140'
         },
         {

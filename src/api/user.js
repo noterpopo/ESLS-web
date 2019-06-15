@@ -35,6 +35,17 @@ export const changePsw = (data) => {
   })
 }
 
+export const adminChangePsw = (data, newPsw) => {
+  return axios.request({
+    url: 'user/changePassword',
+    data: data,
+    params: {
+      新密码: newPsw
+    },
+    method: 'post'
+  })
+}
+
 export const switchUserUsable = (id) => {
   return axios.request({
     url: '/user/status/' + id,

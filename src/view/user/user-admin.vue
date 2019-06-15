@@ -51,21 +51,27 @@
                     <Col span="23"><Input type="text" v-model="currentSelectedRow.address" /></Col>
                 </Row>
         </Modal>
+        <Modal :width="1040" v-model="addUserModal" title="添加用户" :footer-hide="true">
+          <userRedister></userRedister>
+        </Modal>
     </div>
 </template>
 <script>
-import { getAllUser, switchUserUsable, updateUser, updateRole, deleteUser } from '@/api/user'
+import { getAllUser, switchUserUsable, updateUser, updateRole, deleteUser, adminChangePsw } from '@/api/user'
 import { getAllRole, addPerm, delPerm, addRole, delRole } from '@/api/role'
 import { getAllPermissions } from '@/api/permission'
 import { getAllShop } from '@/api/shop'
 import store from '@/store'
 import super_table from '@/components/table/supertable.vue'
+import userRedister from '@/components/register/register.vue'
 export default {
   components: {
-    super_table
+    super_table,
+    userRedister
   },
   data () {
     return {
+      addUserModal: false,
       currentSelectedRow: {},
       editModal: false,
       windowWidth: 0,
@@ -239,7 +245,31 @@ export default {
           align: 'center',
           width: '150',
           render: (h, params) => {
+            let data = {}
+            let tparams = {}
+            let items = []
+            tparams = {}
+            this.$set(tparams, 'query', 'id')
+            this.$set(tparams, 'queryString', params.row.id)
+            items.push(tparams)
+            this.$set(data, 'items', items)
             return h('div', [
+              h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small',
+                  disabled: !this.hasUserAccess
+                },
+                style: {
+                  margin: '2px'
+                },
+                on: {
+                  'click': (event) => {
+                    event.stopPropagation()
+                    this.adminChangePsw(data)
+                  }
+                }
+              }, '修改密码'),
               h('Button', {
                 props: {
                   type: 'error',
@@ -299,6 +329,32 @@ export default {
     }
   },
   methods: {
+    adminChangePsw (data) {
+      let newPsw = ''
+      this.$Modal.confirm({
+        title: '修改密码',
+        render: (h, params) => {
+          return h('div', [
+            h('p', '输入新密码'),
+            h('Input', {
+              props: {
+                value: newPsw
+              },
+              on: {
+                'on-change': (event) => {
+                  newPsw = event.target.value
+                }
+              }
+            })
+          ])
+        },
+        onOk: () => {
+          adminChangePsw(data, newPsw).then(res => {
+            this.$Message.info('修改密码成功')
+          })
+        }
+      })
+    },
     asyncEditOK () {
       this.editModal = false
       delete this.currentSelectedRow.createTime
@@ -499,9 +555,7 @@ export default {
       })
     },
     addUser () {
-      this.$router.push({
-        name: 'register'
-      })
+      this.addUserModal = true
     }
   }
 
