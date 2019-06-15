@@ -20,14 +20,16 @@ export const downloadGoodsCsv = () => {
   })
 }
 
-export const cronUpdate = (cron, filepath, mode) => {
+export const cronUpdate = (cron, filepath, mode, shopNumber, cyclejobId) => {
   return axios.request({
     url: 'good/schedule',
     method: 'get',
     params: {
+      shopId: shopNumber,
       cron: cron,
       rootFilePath: filepath,
-      mode: mode
+      mode: mode,
+      cyclejobId: cyclejobId
     }
   })
 }

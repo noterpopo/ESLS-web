@@ -21,12 +21,17 @@
                   <Option :value="-1">商品基本数据</Option>
                   <Option :value="-2">商品变价数据</Option>
             </Select>
-              <span style="width:120px;margin-left:10px;">文件路径：</span>
+            <span style="margin-left:8px;">选择变价店铺：</span>
+            <Select v-model="shopId" style="width: 300px" :transfer="true">
+              <Option :value="-1">全部商店</Option>
+              <Option v-for="(item) in shopData" :key="item.id" :value="item.id">{{item.name}}</Option>
+            </Select>
+              <span style="margin-left:10px;">文件路径：</span>
               <Input type="text" style="width:200px" v-model="goodFilePath" />
             <Input  v-model="goodCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
                 <Button slot="append" @click="isGoodCronModalShow=true">选择时间</Button>
             </Input>
-            <Button v-if="hasCycleJobAccess" style="margin-left:10px;" type="primary" @click="onGoodCycle">开始</Button>
+            <Button v-if="hasCycleJobAccess" style="margin-left:10px;" type="primary" @click="onGoodCycle">添加</Button>
           </div >
           <div style="display:flex; align-items:center;margin-top:10px;">
             <span>价签定期刷新：</span>
@@ -36,7 +41,7 @@
             <Input  v-model="tagFlushCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
                 <Button slot="append" @click="isTagFlushCronModalShow=true">选择时间</Button>
             </Input>
-            <Button v-if="hasCycleJobAccess" style="margin-left:10px;" type="primary" @click="onTagFlushCycle">开始</Button>
+            <Button v-if="hasCycleJobAccess" style="margin-left:10px;" type="primary" @click="onTagFlushCycle">添加</Button>
           </div >
           <div style="display:flex; align-items:center;margin-top:10px;">
             <span>价签定期巡检：</span>
@@ -46,7 +51,7 @@
             <Input  v-model="tagScanCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
                 <Button slot="append" @click="isTagScanCronModalShow=true">选择时间</Button>
             </Input>
-            <Button v-if="hasCycleJobAccess" style="margin-left:10px;" type="primary" @click="onTagScanCycle">开始</Button>
+            <Button v-if="hasCycleJobAccess" style="margin-left:10px;" type="primary" @click="onTagScanCycle">添加</Button>
             <Button style="margin-left:10px;" type="primary" @click="onScanAll">对所有价签巡检</Button>
           </div >
         </Card>
@@ -175,9 +180,17 @@ export default {
       scanAll()
     },
     onGoodCycle () {
-      cronUpdate(this.goodCronExpr, this.goodFilePath, this.goodMode).then(res => {
-        this.$Message.info('设置成功')
-      })
+      if (this.shopId === -1) {
+        cronUpdate(this.goodCronExpr, this.goodFilePath, this.goodMode).then(res => {
+          this.cycyleJobReload()
+          this.$Message.info('设置成功')
+        })
+      } else {
+        cronUpdate(this.goodCronExpr, this.goodFilePath, this.goodMode, this.shopId).then(res => {
+          this.cycyleJobReload()
+          this.$Message.info('设置成功')
+        })
+      }
     },
     getCycyleJobTableData ({ page, count, query, queryString }) {
       var that = this
@@ -221,10 +234,31 @@ export default {
       var that = this
       this.currentCycyleJobData = currentRow
       if (currentRow.mode === -1 || currentRow.mode === -2) {
+        console.log(currentRow)
         this.$Modal.confirm({
           title: '设置定期任务',
           render: (h, params) => {
             return h('span', [
+              h('p', '商店:'),
+              h('Select', {
+                props: {
+                  value: currentRow.shopId
+                },
+                on: {
+                  'on-change': (val) => {
+                    this.currentCycyleJobData.shopId = val
+                  }
+                }
+              },
+              this.shopData.map((item) => {
+                return h('Option', {
+                  props: {
+                    value: item.id,
+                    label: item.name
+                  }
+                })
+              })
+              ),
               h('p', '文件路径:'),
               h('Input', {
                 props: {
@@ -237,6 +271,7 @@ export default {
                   }
                 }
               }),
+              h('p', '定期:'),
               h('Input', {
                 attrs: {
                   style: 'width: 360px'
