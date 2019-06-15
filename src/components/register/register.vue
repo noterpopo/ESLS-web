@@ -1,8 +1,11 @@
 <template>
     <div>
             <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
-                <FormItem label="姓名" prop="name">
-                    <Input v-model="formValidate.name" placeholder="请输入姓名"></Input>
+              <FormItem label="用户名" prop="name">
+                    <Input v-model="formValidate.name" placeholder="请输入用户名"></Input>
+                </FormItem>
+                <FormItem label="姓名" prop="realName">
+                    <Input v-model="formValidate.realName" placeholder="请输入姓名"></Input>
                 </FormItem>
                 <FormItem label="性别" prop="gender">
                     <RadioGroup v-model="formValidate.gender">
@@ -73,7 +76,7 @@ export default {
       }
     }
     const selectCheck = (rule, value, callback) => {
-      if (value === ''||value===-1) {
+      if (value === '' || value === -1) {
         callback(new Error('请选择必填项'))
       } else {
         callback()
@@ -84,6 +87,7 @@ export default {
       rolelist: [],
       shoplist: [],
       formValidate: {
+        realName: '',
         roleList: '',
         shopId: -1,
         name: '',
@@ -96,8 +100,11 @@ export default {
         passwdCheck: ''
       },
       ruleValidate: {
+        realName: [
+          { required: true, message: '姓名栏不能为空', trigger: 'blur' }
+        ],
         name: [
-          { required: true, message: '名字栏不能为空', trigger: 'blur' }
+          { required: true, message: '用户名字栏不能为空', trigger: 'blur' }
         ],
         department: [
           { required: true, message: '部门栏不能为空', trigger: 'blur' }
@@ -109,10 +116,10 @@ export default {
           { required: true, message: '性别栏不能为空', trigger: 'change' }
         ],
         shopId: [
-          { required: true, validator:selectCheck, trigger: 'blur' }
+          { required: true, validator: selectCheck, trigger: 'change' }
         ],
         roleList: [
-          { required: true, validator:selectCheck, trigger: 'blur' }
+          { required: true, validator: selectCheck, trigger: 'change' }
         ],
         telephone: [
           { required: true, message: '电话栏不能为空', trigger: 'blur' }
@@ -127,13 +134,6 @@ export default {
     }
   },
   mounted () {
-    var that = this
-    this.$nextTick(() => {
-      this.windowWidth = this.$refs.container.offsetWidth
-    })
-    window.onresize = function () {
-      that.windowWidth = that.$refs.container.offsetWidth
-    }
     this.$Message.config({
       duration: 3
     })
@@ -151,9 +151,7 @@ export default {
           this.$delete(this.formValidate, 'passwdCheck', this.formValidate.passwdCheck)
           registryUser(this.formValidate).then(res => {
             this.$Message.success('注册成功!')
-            this.$router.push({
-              name: 'user_admin'
-            })
+            this.$emit('onSubmitSucess')
           })
         } else {
           this.$Message.error('注册失败!')

@@ -52,7 +52,7 @@
                 </Row>
         </Modal>
         <Modal :width="1040" v-model="addUserModal" title="添加用户" :footer-hide="true">
-          <userRedister></userRedister>
+          <userRedister @onSubmitSucess="onSubmitSucess"></userRedister>
         </Modal>
     </div>
 </template>
@@ -83,8 +83,15 @@ export default {
       shopData: [],
       tableColumns: [
         {
-          title: '名字',
+          title: ' 用户名',
           key: 'name',
+          filter: {
+            type: 'Input'
+          }
+        },
+        {
+          title: '姓名',
+          key: 'realName',
           filter: {
             type: 'Input'
           }
@@ -329,6 +336,10 @@ export default {
     }
   },
   methods: {
+    onSubmitSucess () {
+      this.getUserTableData({ page: 0, count: this.countPerPage })
+      this.addUserModal = false
+    },
     adminChangePsw (data) {
       let newPsw = ''
       this.$Modal.confirm({
