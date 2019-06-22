@@ -39,6 +39,7 @@ import e_label from '@/components/e-label/e-lable.vue'
 import { getAllTag, bindStyle, bindGood, deleteTag, lightTag, flushTag, removeTag, scanTag, statusTag } from '@/api/tag'
 import { getAllGood, getGood, getBindedTags } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
+import { balance } from '@/api/eweigher'
 import { coppyArray } from '@/libs/util'
 import store from '@/store'
 export default {
@@ -330,7 +331,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: '110',
+          width: '170',
           align: 'center',
           render: (h, params) => {
             let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
@@ -443,6 +444,53 @@ export default {
                 }
               }, '移除')
             ]
+            let dzcListItem = [
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+
+                  }
+                }
+              }, '获取计量数据'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送电子秤置零命令')
+                    balance(1, data).then()
+                  }
+                }
+              }, '电子秤置零'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送电子秤去皮命令')
+                    balance(2, data).then()
+                  }
+                }
+              }, '电子秤去皮'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+
+                  }
+                }
+              }, '获取电子秤电量'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送清空计量数据命令')
+                    balance(4, data).then()
+                  }
+                }
+              }, '清空计量数据'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+
+                  }
+                }
+              }, '电子秤标定')
+            ]
             if (this.hasBindTagAccess) {
               if (this.hasBaseTagAccess) {
                 if (this.hasHighTagAccess) {
@@ -483,11 +531,31 @@ export default {
                     type: 'primary',
                     size: 'small',
                     disabled: listitem.length === 0
+                  },
+                  style: {
+                    margin: '2px'
                   }
                 }, '操作'),
                 h('DropdownMenu', {
                   slot: 'list'
                 }, listitem)
+              ]),
+              h('Dropdown', {
+                props: {
+                  trigger: 'click',
+                  transfer: true
+                }
+              }, [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small',
+                    disabled: !this.hasHighTagAccess
+                  }
+                }, '电子秤'),
+                h('DropdownMenu', {
+                  slot: 'list'
+                }, dzcListItem)
               ]),
               h('Button', {
                 props: {
