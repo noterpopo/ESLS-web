@@ -15,6 +15,8 @@
         <span>
           <p>输入新密码：</p>
           <Input type="text" v-model="newPsw" />
+          <p>再次输入新密码：</p>
+          <Input type="text" v-model="newPswTwice" />
         </span>
     </Modal>
   </div>
@@ -29,7 +31,8 @@ export default {
   data () {
     return {
       isShowChangePsw: false,
-      newPsw: ''
+      newPsw: '',
+      newPswTwice: ''
     }
   },
   props: {
@@ -43,11 +46,15 @@ export default {
       'handleLogOut'
     ]),
     onChangePsw () {
-      let data = { newPassword: this.newPsw }
-      changePsw(data).then(res => {
-        this.$Message.info('修改密码成功')
-        this.logout()
-      })
+      if (this.newPsw === this.newPswTwice) {
+        let data = { newPassword: this.newPsw }
+        changePsw(data).then(res => {
+          this.$Message.info('修改密码成功')
+          this.logout()
+        })
+      } else {
+        this.$Message.error('两次输入的密码不一致')
+      }
     },
     changePsw () {
       this.isShowChangePsw = true

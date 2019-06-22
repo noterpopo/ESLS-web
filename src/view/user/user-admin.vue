@@ -35,10 +35,14 @@
         </Card>
         <Modal :width="1040" v-model="editModal" title="修改用户信息" @on-ok="asyncEditOK">
           <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="1"><p>名字：</p></Col>
+                    <Col span="1"><p>用户名：</p></Col>
                     <Col span="11"><Input type="text" v-model="currentSelectedRow.name"/></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">部门</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentSelectedRow.department" /></Col>
+                    <Col span="1"><p style="position:relative;left:10px;">姓名：</p></Col>
+                    <Col span="11"><Input type="text" v-model="currentSelectedRow.realName" /></Col>
+                </Row>
+                <Row type="flex" justify="center" align="middle" class="Row">
+                    <Col span="1"><p>部门：</p></Col>
+                    <Col span="23"><Input type="text" v-model="currentSelectedRow.department" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="1"><p>电话：</p></Col>
@@ -342,6 +346,7 @@ export default {
     },
     adminChangePsw (data) {
       let newPsw = ''
+      let newPswTwice = ''
       this.$Modal.confirm({
         title: '修改密码',
         render: (h, params) => {
@@ -356,13 +361,28 @@ export default {
                   newPsw = event.target.value
                 }
               }
+            }),
+            h('p', '重复输入新密码'),
+            h('Input', {
+              props: {
+                value: newPswTwice
+              },
+              on: {
+                'on-change': (event) => {
+                  newPswTwice = event.target.value
+                }
+              }
             })
           ])
         },
         onOk: () => {
-          adminChangePsw(data, newPsw).then(res => {
-            this.$Message.info('修改密码成功')
-          })
+          if (newPsw === newPswTwice) {
+            adminChangePsw(data, newPsw).then(res => {
+              this.$Message.info('修改密码成功')
+            })
+          } else {
+            this.$Message.error('两次输入的密码不一致')
+          }
         }
       })
     },

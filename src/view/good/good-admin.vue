@@ -76,12 +76,15 @@
                     <Col span="22"><Input type="text" v-model="currentSelectedRow.promotionReason" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
+                  <Col span="2"><p>店铺：</p></Col>
+                  <Col span="22"><Select v-model="currentSelectedRow.shopNumber">
+                      <Option v-for="item in shoplist" :key="item.id" :value="item.number">{{item.number}}</Option>
+                    </Select>
+                  </Col>
+                </Row>
+                <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>图片链接：</p></Col>
                     <Col span="22"><Input type="text" v-model="currentSelectedRow.imageUrl" /></Col>
-                </Row>
-                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="2"><p>导入时间：</p></Col>
-                    <Col span="22"><p >{{currentSelectedRow.importTime}}</p></Col>
                 </Row>
               </div>
             </Modal>
@@ -128,6 +131,13 @@
                     <Col span="22"><Input type="text" v-model="addGooddata.promotionReason" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
+                  <Col span="2"><p>店铺：</p></Col>
+                  <Col span="22"><Select v-model="addGooddata.shopNumber">
+                      <Option v-for="item in shoplist" :key="item.id" :value="item.number">{{item.number}}</Option>
+                    </Select>
+                  </Col>
+                </Row>
+                <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>图片链接：</p></Col>
                     <Col span="22"><Input type="text" v-model="addGooddata.imageUrl" /></Col>
                 </Row>
@@ -168,20 +178,24 @@
 import super_table from '@/components/table/supertable.vue'
 import { getAllGood, updateGood, deleteGood, getBindedTags, getGood, cronUpdate } from '@/api/good'
 import { getAllTag, getTag, lightTag, flushTag, removeTag, scanTag, statusTag } from '@/api/tag'
+import { getAllShop } from '@/api/shop'
 import e_label from '@/components/e-label/e-lable.vue'
 import { getStyleDisp, getStyleInfo, getStyle } from '@/api/style'
 import store from '@/store'
 import { VueContext } from 'vue-context'
 import goodTagExpand from '@/components/table/good-tag-expand.vue'
+import goodExpand from '@/components/table/good-expand.vue'
 export default {
   components: {
     e_label,
     super_table,
     goodTagExpand,
-    VueContext
+    VueContext,
+    goodExpand
   },
   data () {
     return {
+      shoplist: [],
       headers: {
         ESLS: store.getters.token
       },
@@ -205,6 +219,17 @@ export default {
       goodData: [],
       tagData: [],
       tableColumns: [
+        {
+          type: 'expand',
+          width: 30,
+          render: (h, params) => {
+            return h(goodExpand, {
+              props: {
+                row: params.row
+              }
+            })
+          }
+        },
         {
           type: 'index',
           width: 60,
@@ -727,6 +752,7 @@ export default {
         promotionReason: '默认促销理由',
         provider: '默认供应商',
         qrCode: '默认二维码',
+        shopNumber: '',
         regionNames: '',
         rfu01: '',
         rfu02: '',
@@ -769,6 +795,9 @@ export default {
     window.onresize = function () {
       that.windowWidth = that.$refs.container.offsetWidth
     }
+    getAllShop({ page: 0, count: 100 }).then(res => {
+      this.shoplist = res.data.data
+    })
   },
   created () {
     this.currentPage = 1
