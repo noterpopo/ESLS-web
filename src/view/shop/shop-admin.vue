@@ -22,9 +22,7 @@
             <div>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="1"><p>编码：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentShopData.number"/></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">类型：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentShopData.type" /></Col>
+                    <Col span="23"><Input type="text" v-model="currentShopData.number"/></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="1"><p>名称：</p></Col>
@@ -33,14 +31,8 @@
                     <Col span="11"><Input type="text" v-model="currentShopData.phone"/></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="1"><p >管理员:</p></Col>
+                    <Col span="1"><p >店长姓名:</p></Col>
                     <Col span="23"><Input type="text" v-model="currentShopData.manager" /></Col>
-                </Row>
-                <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="1"><p>账号：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentShopData.account"/></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">密码:</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentShopData.password" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="1"><p>地址:</p></Col>
@@ -52,9 +44,7 @@
             <div>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="1"><p>编码：</p></Col>
-                    <Col span="11"><Input type="text" v-model="addShopData.number"/></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">类型：</p></Col>
-                    <Col span="11"><Input type="text" v-model="addShopData.type" /></Col>
+                    <Col span="23"><Input type="text" v-model="addShopData.number"/></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="1"><p>名称：</p></Col>
@@ -63,14 +53,8 @@
                     <Col span="11"><Input type="text" v-model="addShopData.phone"/></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="1"><p>管理员:</p></Col>
+                    <Col span="1"><p>店长姓名:</p></Col>
                     <Col span="23"><Input type="text" v-model="addShopData.manager" /></Col>
-                </Row>
-                <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="1"><p>账号：</p></Col>
-                    <Col span="11"><Input type="text" v-model="addShopData.account"/></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">密码:</p></Col>
-                    <Col span="11"><Input type="text" v-model="addShopData.password" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="1"><p>地址:</p></Col>

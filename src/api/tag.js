@@ -20,6 +20,13 @@ export const getTag = (id) => {
   })
 }
 
+export const computeTagToZero = (id) => {
+  return axios.request({
+    url: 'tag/computeZero',
+    method: 'post'
+  })
+}
+
 export const flushTag = (data, mode) => {
   return axios.request({
     url: 'tag/flush',

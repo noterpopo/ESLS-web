@@ -213,39 +213,39 @@ export default {
             ])
           }
         },
-        {
-          title: '短信验证',
-          render: (h, params) => {
-            const row = params.row
-            const needSMS = row.loginType !== 'username'
-            return h('i-switch', {
-              props: {
-                value: needSMS,
-                size: 'large',
-                disabled: !this.hasUserAccess
-              },
-              on: {
-                'on-change': (val) => {
-                  if (val) {
-                    params.row.loginType = 'phone'
-                  } else {
-                    params.row.loginType = 'username'
-                  }
-                  delete params.row.createTime
-                  delete params.row.lastLoginTime
-                  updateUser(params.row)
-                }
-              }
-            }, [
-              h('span', {
-                slot: 'open'
-              }, '开启'),
-              h('span', {
-                slot: 'close'
-              }, '关闭')
-            ])
-          }
-        },
+        // {
+        //   title: '短信验证',
+        //   render: (h, params) => {
+        //     const row = params.row
+        //     const needSMS = row.loginType !== 'username'
+        //     return h('i-switch', {
+        //       props: {
+        //         value: needSMS,
+        //         size: 'large',
+        //         disabled: !this.hasUserAccess
+        //       },
+        //       on: {
+        //         'on-change': (val) => {
+        //           if (val) {
+        //             params.row.loginType = 'phone'
+        //           } else {
+        //             params.row.loginType = 'username'
+        //           }
+        //           delete params.row.createTime
+        //           delete params.row.lastLoginTime
+        //           updateUser(params.row)
+        //         }
+        //       }
+        //     }, [
+        //       h('span', {
+        //         slot: 'open'
+        //       }, '开启'),
+        //       h('span', {
+        //         slot: 'close'
+        //       }, '关闭')
+        //     ])
+        //   }
+        // },
         {
           title: '操作',
           key: 'action',

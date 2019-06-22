@@ -269,6 +269,26 @@ export default [
     ]
   },
   {
+    path: '/systemSetting',
+    name: 'systemSetting',
+    meta: {
+      icon: 'ios-albums',
+      title: '系统参数设置'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'systemSetting',
+        name: 'systemSetting',
+        meta: {
+          icon: 'ios-albums',
+          title: '系统参数设置'
+        },
+        component: () => import('@/view/system-settings/system-setting-admin.vue')
+      }
+    ]
+  },
+  {
     path: '/401',
     name: 'error_401',
     meta: {
