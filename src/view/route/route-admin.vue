@@ -361,6 +361,7 @@ export default {
           render: (h, params) => {
             return h('Select', {
               props: {
+                transfer: true,
                 value: params.row.shopId,
                 disabled: !this.hasHighRouteAccess
               },

@@ -449,7 +449,8 @@ export default {
               h('DropdownItem', {
                 nativeOn: {
                   click: (name) => {
-
+                    this.$Message.info('发送获取计量数据命令')
+                    balance(0, data).then(res => this.tagReload())
                   }
                 }
               }, '获取计量数据'),
@@ -457,7 +458,7 @@ export default {
                 nativeOn: {
                   click: (name) => {
                     this.$Message.info('发送电子秤置零命令')
-                    balance(1, data).then()
+                    balance(1, data).then(res => this.tagReload())
                   }
                 }
               }, '电子秤置零'),
@@ -465,14 +466,15 @@ export default {
                 nativeOn: {
                   click: (name) => {
                     this.$Message.info('发送电子秤去皮命令')
-                    balance(2, data).then()
+                    balance(2, data).then(res => this.tagReload())
                   }
                 }
               }, '电子秤去皮'),
               h('DropdownItem', {
                 nativeOn: {
                   click: (name) => {
-
+                    this.$Message.info('发送获取电子秤电量命令')
+                    balance(3, data).then(res => this.tagReload())
                   }
                 }
               }, '获取电子秤电量'),
@@ -480,14 +482,15 @@ export default {
                 nativeOn: {
                   click: (name) => {
                     this.$Message.info('发送清空计量数据命令')
-                    balance(4, data).then()
+                    balance(4, data).then(res => this.tagReload())
                   }
                 }
               }, '清空计量数据'),
               h('DropdownItem', {
                 nativeOn: {
                   click: (name) => {
-
+                    this.$Message.info('发送电子秤标定命令')
+                    balance(5, data).then(res => this.tagReload())
                   }
                 }
               }, '电子秤标定')

@@ -21,6 +21,7 @@
             @on-ok="onUpdate"
             width="auto"
             title="样式编辑器"
+            :mask-closable="false"
             class-name="modal-style-designer">
             <modal_style_designer ref="designer" @reloadTable="reload" @onSava="isModal=false"></modal_style_designer>
         </Modal>
