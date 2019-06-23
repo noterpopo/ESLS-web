@@ -30,7 +30,8 @@
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px',marginTop:'10px'}">
           <div slot="title">
                 <Row type="flex" justify="center" align="middle">
-                    <Col span="24"><p>价签信息</p></Col>
+                    <Col span="2"><p>价签信息</p></Col>
+                    <Col span="22"><p>价签数量:{{tagDataNum}}</p></Col>
                 </Row>
           </div>
           <super_table :pageSize="countPerPageTag" :current.sync="currentTagPage" :data="tagData" :columns="tagTableColumns" :isLoading="isTagTableLoading" :dataNum="tagDataNum"></super_table>
@@ -70,6 +71,14 @@ export default {
                 row: params.row
               }
             })
+          }
+        },
+        {
+          type: 'index',
+          width: 60,
+          align: 'center',
+          indexMethod: (row) => {
+            return row._index + 1 + (this.currentTagPage - 1) * this.countPerPageTag
           }
         },
         {
@@ -646,6 +655,9 @@ export default {
   watch: {
     currentPage () {
       this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+    },
+    currentTagPage () {
+      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag, queryId: 'routerId', queryString: currentSelectRow.id })
     }
   },
   mounted () {
