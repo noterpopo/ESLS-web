@@ -36,34 +36,34 @@
             <Modal :width="1040" v-model="editModal" title="修改商品信息" :loading="editOkLoading" @on-ok="asyncEditOK">
               <div>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="1"><p>名称：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentSelectedRow.name"/></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">产地：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentSelectedRow.origin" /></Col>
+                    <Col span="2"><p>名称：</p></Col>
+                    <Col span="10"><Input type="text" v-model="currentSelectedRow.name"/></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">产地：</p></Col>
+                    <Col span="10"><Input type="text" v-model="currentSelectedRow.origin" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="1"><p>规格：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentSelectedRow.spec" /></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">类别：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentSelectedRow.category" /></Col>
+                    <Col span="2"><p>规格：</p></Col>
+                    <Col span="10"><Input type="text" v-model="currentSelectedRow.spec" /></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">类别：</p></Col>
+                    <Col span="10"><Input type="text" v-model="currentSelectedRow.category" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p >供应商：</p></Col>
                     <Col span="10"><Input type="text" v-model="currentSelectedRow.provider" /></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">单位：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentSelectedRow.unit" /></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">单位：</p></Col>
+                    <Col span="10"><Input type="text" v-model="currentSelectedRow.unit" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>操作员：</p></Col>
                     <Col span="10"><Input type="text" v-model="currentSelectedRow.operator" /></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">货号：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentSelectedRow.shelfNumber" /></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">货号：</p></Col>
+                    <Col span="10"><Input type="text" v-model="currentSelectedRow.shelfNumber" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="2"><p>价格</p></Col>
+                  <Col span="2"><p>原价：</p></Col>
+                    <Col span="10"><Input type="text" v-model="currentSelectedRow.price" /></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">价格</p></Col>
                     <Col span="10"><Input type="text" v-model="currentSelectedRow.promotePrice" /></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">原价：</p></Col>
-                    <Col span="11"><Input type="text" v-model="currentSelectedRow.price" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>条形码：</p></Col>
@@ -76,13 +76,6 @@
                     <Col span="22"><Input type="text" v-model="currentSelectedRow.promotionReason" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                  <Col span="2"><p>店铺：</p></Col>
-                  <Col span="22"><Select v-model="currentSelectedRow.shopNumber">
-                      <Option v-for="item in shoplist" :key="item.id" :value="item.number">{{item.number}}</Option>
-                    </Select>
-                  </Col>
-                </Row>
-                <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>图片链接：</p></Col>
                     <Col span="22"><Input type="text" v-model="currentSelectedRow.imageUrl" /></Col>
                 </Row>
@@ -91,34 +84,34 @@
             <Modal :width="1040" v-model="addModal" title="添加商品" :loading="addOkLoading" @on-ok="asyncAddOK">
               <div>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="1"><p>名称：</p></Col>
-                    <Col span="11"><Input type="text" v-model="addGooddata.name"/></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">产地：</p></Col>
-                    <Col span="11"><Input type="text" v-model="addGooddata.origin" /></Col>
+                    <Col span="2"><p>名称：</p></Col>
+                    <Col span="10"><Input type="text" v-model="addGooddata.name"/></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">产地：</p></Col>
+                    <Col span="10"><Input type="text" v-model="addGooddata.origin" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="1"><p>规格：</p></Col>
-                    <Col span="11"><Input type="text" v-model="addGooddata.spec" /></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">类别：</p></Col>
-                    <Col span="11"><Input type="text" v-model="addGooddata.category" /></Col>
+                    <Col span="2"><p>规格：</p></Col>
+                    <Col span="10"><Input type="text" v-model="addGooddata.spec" /></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">类别：</p></Col>
+                    <Col span="10"><Input type="text" v-model="addGooddata.category" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p >供应商：</p></Col>
                     <Col span="10"><Input type="text" v-model="addGooddata.provider" /></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">单位：</p></Col>
-                    <Col span="11"><Input type="text" v-model="addGooddata.unit" /></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">单位：</p></Col>
+                    <Col span="10"><Input type="text" v-model="addGooddata.unit" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>操作员：</p></Col>
                     <Col span="10"><Input type="text" v-model="addGooddata.operator" /></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">货号：</p></Col>
-                    <Col span="11"><Input type="text" v-model="addGooddata.shelfNumber" /></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">货号：</p></Col>
+                    <Col span="10"><Input type="text" v-model="addGooddata.shelfNumber" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="2"><p>价格：</p></Col>
+                  <Col span="2"><p >原价：</p></Col>
+                    <Col span="10"><Input type="text" v-model="addGooddata.price" /></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">价格：</p></Col>
                     <Col span="10"><Input type="text" v-model="addGooddata.promotePrice" /></Col>
-                    <Col span="1"><p style="position:relative;left:10px;">原价：</p></Col>
-                    <Col span="11"><Input type="text" v-model="addGooddata.price" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>条形码：</p></Col>
@@ -133,7 +126,7 @@
                 <Row type="flex" justify="center" align="middle" class="Row">
                   <Col span="2"><p>店铺：</p></Col>
                   <Col span="22"><Select v-model="addGooddata.shopNumber">
-                      <Option v-for="item in shoplist" :key="item.id" :value="item.number">{{item.number}}</Option>
+                      <Option v-for="item in shoplist" :key="item.id" :value="item.number">{{item.name}}</Option>
                     </Select>
                   </Col>
                 </Row>
@@ -355,6 +348,11 @@ export default {
           }
         },
         {
+          title: '店铺',
+          key: 'shopNumber',
+          width: '140'
+        },
+        {
           title: '货号',
           width: '100',
           key: 'shelfNumber',
@@ -368,11 +366,6 @@ export default {
           filter: {
             type: 'Input'
           }
-        },
-        {
-          title: '店铺',
-          key: 'shopNumber',
-          width: '140'
         },
         {
           title: '绑定状态',

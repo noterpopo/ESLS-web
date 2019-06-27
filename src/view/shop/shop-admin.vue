@@ -106,7 +106,7 @@ export default {
           }
         },
         {
-          title: '管理员',
+          title: '店长姓名',
           key: 'manager',
           filter: {
             type: 'Input'
@@ -188,7 +188,7 @@ export default {
           }
         },
         {
-          title: '管理员',
+          title: '店长姓名',
           key: 'manager',
           filter: {
             type: 'Input'

@@ -349,6 +349,7 @@ export default {
         },
         {
           title: '信道',
+          width: '60',
           key: 'channelId',
           filter: {
             type: 'Input'
@@ -357,7 +358,7 @@ export default {
         },
         {
           title: '店铺',
-          width: '200',
+          width: '220',
           render: (h, params) => {
             return h('Select', {
               props: {

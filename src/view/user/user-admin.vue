@@ -156,7 +156,7 @@ export default {
           }
         },
         {
-          title: '商店',
+          title: '店铺',
           key: 'shop',
           render: (h, params) => {
             return h('Select', {
