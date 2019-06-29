@@ -13,6 +13,14 @@
                     <p>是否开启短信验证:</p>
                     <i-switch style="margin-top:10px;" v-model="isSMS" @on-change="changeSMS"/>
                 </TabPane>
+                <TabPane label="盘点方式">
+                    <p>盘点方式:</p>
+                    <Select :transfer="true" v-model="computeWay">
+                      <Option  :value="1">{{'电子秤'}}</Option>
+                      <Option  :value="2">{{'手动盘点'}}</Option>
+                    </Select>
+                    <Button style="margin-top:10px;" type="primary" @click="changeEBlance">确定</Button>
+                </TabPane>
             </Tabs>
         </Card>
     </div>
@@ -28,6 +36,7 @@ export default {
         ESLS: store.getters.token
       },
       isSMS: true,
+      computeWay: '',
       windowWidth: 0,
       currentFileArgs: [],
       fileArgs: [
@@ -101,6 +110,13 @@ export default {
         })
       } else {
         setSystemArgs(13, 0).then(res => {
+          this.$Message.info('修改成功')
+        })
+      }
+    },
+    changeEBlance () {
+      if (this.computeWay != null) {
+        setSystemArgs(14, this.computeWay).then(res => {
           this.$Message.info('修改成功')
         })
       }

@@ -9,7 +9,7 @@
                     <Col span="2"><Button type="primary" @click="tagReload">刷新</Button></Col>
                 </Row>
                 </div>
-            <super_table @onClick="onTagTableClick" :pageSize="countPerPage" :current.sync="currentTagPage" @onDoubleClick="onTableClick" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="tagDataCount"></super_table>
+            <super_table @onClick="onTagTableClick" :customRowClassFunc="customRowClass" :pageSize="countPerPage" :current.sync="currentTagPage" @onDoubleClick="onTableClick" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="tagDataCount"></super_table>
             <Modal @on-cancle='onBindGoodCancel' v-model="isBindGoodModalShow" title="绑定商品" width="1400" @on-ok="onBindGood">
               <super_table  key="3" ref="goodST" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageSize="8" :current.sync="currentGoodPage" :dataNum="modalGoodDataCount"></super_table>
             </Modal>
@@ -867,6 +867,17 @@ export default {
     }
   },
   methods: {
+    customRowClass (row, index) {
+      let isReplenish = false
+      if (row.isReplenish != null && row.isReplenish === 1) {
+        isReplenish = true
+      }
+      if (isReplenish) {
+        return 'replenish-class'
+      } else {
+        return ''
+      }
+    },
     clearZero () {
       computeTagToZero().then(res => {
         this.$Message.info('清零成功')

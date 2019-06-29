@@ -9,7 +9,7 @@
                   <Col span="2"><Button v-if="hasGoodAccess" type="primary" @click="addGood">添加商品</Button></Col>
               </Row>
             </div>
-            <super_table :pageSize="countPerPageGood" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
+            <super_table :pageSize="countPerPageGood" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :customRowClassFunc="rowClass" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
             <Button v-if="hasGoodAccess" type="primary" @click="isUploadShow=true">导入文件</Button>
             <Button v-if="hasGjAccess" type="primary" style="margin-left:10px;" @click="downloadGoodsData">导出文件</Button>
             <Modal v-model="isUploadShow" title="上传商品信息文件">
@@ -1049,6 +1049,17 @@ export default {
     },
     onRightClick () {
       this.$Message.info('rbtn')
+    },
+    rowClass (row, index) {
+      let isReplenish = false
+      if (row.isReplenish != null && row.isReplenish === 1) {
+        isReplenish = true
+      }
+      if (isReplenish) {
+        return 'no-replenish-class'
+      } else {
+        return ''
+      }
     }
   }
 

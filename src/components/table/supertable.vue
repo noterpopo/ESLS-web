@@ -1,7 +1,7 @@
 <template>
     <div>
         <Table size="small" border :data="filters" :columns="tableColumnsFilters" stripe></Table>
-        <Table ref="st" size="small" highlight-row @on-row-click="handleClick" @on-row-dblclick="handleDoubleClick" @on-selection-change="handleSelection" border :data="data" :columns="columns" :show-header="false" :loading="isLoading" stripe></Table>
+        <Table ref="st" size="small" highlight-row @on-row-click="handleClick" :row-class-name="customRowClassFunc" @on-row-dblclick="handleDoubleClick" @on-selection-change="handleSelection" border :data="data" :columns="columns" :show-header="false" :loading="isLoading"></Table>
         <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
             <Page :total="dataNum" :page-size="pageSize" :current="current" @on-change="changePage"></Page>
@@ -20,7 +20,8 @@ export default {
     isLoading: Boolean,
     dataNum: Number,
     current: Number,
-    pageSize: Number
+    pageSize: Number,
+    customRowClassFunc: Function
   },
   data () {
     return {
@@ -140,6 +141,9 @@ export default {
 }
 </script>
 <style>
+.ivu-table .replenish-class td{
+    background-color: #f8990088;
+}
 tr.ivu-table-row-hover td{
   background-color:rgb(220, 244, 253)!important;
 }
