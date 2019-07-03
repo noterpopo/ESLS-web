@@ -37,7 +37,7 @@
 import tagExpand from '@/components/table/tag-expand.vue'
 import super_table from '@/components/table/supertable.vue'
 import e_label from '@/components/e-label/e-lable.vue'
-import { getAllTag, bindStyle, bindGood, deleteTag, lightTag, flushTag, removeTag, scanTag, statusTag, computeTagToZero } from '@/api/tag'
+import { updateTag, getAllTag, bindStyle, bindGood, deleteTag, lightTag, flushTag, removeTag, scanTag, statusTag, computeTagToZero } from '@/api/tag'
 import { getAllGood, getGood, getBindedTags } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
 import { balance } from '@/api/eweigher'
@@ -89,14 +89,14 @@ export default {
         {
           title: '价签条码',
           key: 'barCode',
-          width: '140',
+          width: '100',
           filter: {
             type: 'Input'
           }
         },
         {
           title: '价签类型',
-          width: '128',
+          width: '118',
           render: (h, params) => {
             let size = ''
             let type = ''
@@ -153,6 +153,35 @@ export default {
               }
             })
             return h('p', result.barCode + '_' + result.name)
+          }
+        },
+        {
+          title: '商品数量',
+          key: 'goodNumber',
+          width: '50',
+          render: (h, params) => {
+            return h('InputNumber', {
+              attrs: {
+                style: 'width: 48px'
+              },
+              props: {
+                size: 'small',
+                value: params.row.goodNumber,
+                disabled: !this.hasBaseTagAccess,
+                activeChange: false
+              },
+              on: {
+                'on-change': (val) => {
+                  params.row.goodNumber = val
+                  updateTag(params.row).then(res => {
+                    this.$Message.info('修改数量成功')
+                  }).catch(e => {
+                    this.$Message.error('修改失败')
+                    this.tagReload()
+                  })
+                }
+              }
+            })
           }
         },
         {
@@ -365,6 +394,8 @@ export default {
                   click: (name) => {
                     this.$Message.info('发送闪灯命令')
                     lightTag(data, 1, 0).then(res => {
+                      this.tagReload()
+                    }).catch(e => {
                       this.tagReload()
                     })
                   }

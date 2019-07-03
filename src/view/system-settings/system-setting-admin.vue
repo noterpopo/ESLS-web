@@ -36,7 +36,7 @@ export default {
         ESLS: store.getters.token
       },
       isSMS: true,
-      computeWay: '',
+      computeWay: 0,
       windowWidth: 0,
       currentFileArgs: [],
       fileArgs: [
@@ -90,6 +90,7 @@ export default {
     getSystemArgs().then(res => {
       this.currentFileArgs = res.data.data[0].goodDataFormat.split(' ')
       this.isSMS = res.data.data[0].isMessageVerifyOpen === 1
+      this.computeWay = res.data.data[0].computeType
     })
   },
   computed: {

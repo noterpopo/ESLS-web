@@ -76,8 +76,27 @@
                     <Col span="22"><Input type="text" v-model="currentSelectedRow.promotionReason" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
+                  <Col span="2"><p >店铺：</p></Col>
+                  <Col span="10">
+                    <div v-for="item in shoplist" :key="item.id">
+                        <p v-if="item.number==currentSelectedRow.shopNumber">{{item.number+'--'+item.name}}</p>
+                      </div></Col>
+                  <Col span="2"><p style="position:relative;left:10px;">开启计件:</p></Col>
+                  <Col span="10"><i-switch type="text" v-model="currentSelectedRow.isComputeOpen" :true-value="1" :false-value="0"></i-switch></Col>
+                </Row>
+                <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>图片链接：</p></Col>
                     <Col span="22"><Input type="text" v-model="currentSelectedRow.imageUrl" /></Col>
+                </Row>
+                <Row type="flex" justify="center" align="middle" class="Row">
+                    <Col span="2"><p >重量规格：</p></Col>
+                    <Col span="10"><Input type="text" v-model="currentSelectedRow.weightSpec" /></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">预警门限:</p></Col>
+                    <Col span="10"><Input type="text" v-model="currentSelectedRow.replenishNumber" /></Col>
+                </Row>
+                <Row type="flex" justify="center" align="middle" class="Row">
+                    <Col span="2"><p>导入时间：</p></Col>
+                    <Col span="22"><p>{{currentSelectedRow.importTime==null?0:currentSelectedRow.importTime}}</p></Col>
                 </Row>
               </div>
             </Modal>
@@ -125,14 +144,22 @@
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                   <Col span="2"><p>店铺：</p></Col>
-                  <Col span="22"><Select v-model="addGooddata.shopNumber">
+                  <Col span="10"><Select v-model="addGooddata.shopNumber">
                       <Option v-for="item in shoplist" :key="item.id" :value="item.number">{{item.name}}</Option>
                     </Select>
                   </Col>
+                  <Col span="2"><p style="position:relative;left:10px;">开启计件:</p></Col>
+                  <Col span="10"><i-switch type="text" v-model="addGooddata.isComputeOpen" :true-value="1" :false-value="0"></i-switch></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
                     <Col span="2"><p>图片链接：</p></Col>
                     <Col span="22"><Input type="text" v-model="addGooddata.imageUrl" /></Col>
+                </Row>
+                <Row type="flex" justify="center" align="middle" class="Row">
+                    <Col span="2"><p >重量规格：</p></Col>
+                    <Col span="10"><Input type="text" v-model="addGooddata.weightSpec" /></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">预警门限:</p></Col>
+                    <Col span="10"><Input type="text" v-model="addGooddata.replenishNumber" /></Col>
                 </Row>
               </div>
             </Modal>
@@ -212,17 +239,6 @@ export default {
       goodData: [],
       tagData: [],
       tableColumns: [
-        {
-          type: 'expand',
-          width: 30,
-          render: (h, params) => {
-            return h(goodExpand, {
-              props: {
-                row: params.row
-              }
-            })
-          }
-        },
         {
           type: 'index',
           width: 60,
@@ -358,6 +374,15 @@ export default {
           key: 'shelfNumber',
           filter: {
             type: 'Input'
+          }
+        },
+        {
+          title: '数量',
+          width: '50',
+          key: 'computeNumber',
+          render: (h, params) => {
+            let num = params.row.computeNumber == null ? 0 : params.row.computeNumber
+            return h('span', {}, num)
           }
         },
         {
@@ -756,7 +781,10 @@ export default {
         status: 0,
         unit: '默认单位',
         stock: 0,
-        waitUpdate: 0
+        waitUpdate: 0,
+        isComputeOpen: 0,
+        weightSpec: 0,
+        replenishNumber: 0
       },
       currentPage: 1,
       currentTagPage: 1,
