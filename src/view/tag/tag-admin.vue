@@ -37,7 +37,7 @@
 import tagExpand from '@/components/table/tag-expand.vue'
 import super_table from '@/components/table/supertable.vue'
 import e_label from '@/components/e-label/e-lable.vue'
-import { updateTag, getAllTag, bindStyle, bindGood, deleteTag, lightTag, flushTag, removeTag, scanTag, statusTag, computeTagToZero } from '@/api/tag'
+import { updateTagComp, getAllTag, bindStyle, bindGood, deleteTag, lightTag, flushTag, removeTag, scanTag, statusTag, computeTagToZero } from '@/api/tag'
 import { getSystemArgs } from '@/api/systemsetting'
 import { getAllGood, getGood, getBindedTags } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
@@ -169,12 +169,20 @@ export default {
                 size: 'small',
                 value: params.row.goodNumber,
                 disabled: !this.hasBaseTagAccess,
-                activeChange: false
+                activeChange: false,
+                readonly: this.isOpenEBlance === 1
               },
               on: {
                 'on-change': (val) => {
-                  params.row.goodNumber = val
-                  updateTag(params.row).then(res => {
+                  let data = {}
+                  let tparams = {}
+                  let items = []
+                  tparams = {}
+                  this.$set(tparams, 'query', 'id')
+                  this.$set(tparams, 'queryString', params.row.id)
+                  items.push(tparams)
+                  this.$set(data, 'items', items)
+                  updateTagComp(data, val).then(res => {
                     this.$Message.info('修改数量成功')
                   }).catch(e => {
                     this.$Message.error('修改失败')
@@ -267,7 +275,7 @@ export default {
               },
               type: 'post',
               success: (res) => {
-                if (params.row.goodId === 0) {
+                if (params.row.goodId === 0 || params.row.styleId === 0) {
                   styleFiltters = res.data.filter((item) => {
                     return item.isPromote === 0
                   })
@@ -601,7 +609,7 @@ export default {
                 h('Button', {
                   style: {
                     marginRight: '5px',
-                    display: this.isOpenEBlance ? 'inline-block' : 'none'
+                    display: this.isOpenEBlance === 0 || this.isOpenEBlance === 2 ? 'inline-block' : 'none'
                   },
                   props: {
                     type: 'primary',
@@ -870,7 +878,7 @@ export default {
       currentStylePage: 1,
       currentRightGoodPage: 1,
       filterStyleData: [],
-      isOpenEBlance: false
+      isOpenEBlance: -1
     }
   },
   mounted () {
@@ -882,7 +890,7 @@ export default {
       that.windowWidth = that.$refs.container.offsetWidth
     }
     getSystemArgs().then(res => {
-      this.isOpenEBlance = res.data.data[0].computeType === 1
+      this.isOpenEBlance = res.data.data[0].computeType
     })
   },
   created () {

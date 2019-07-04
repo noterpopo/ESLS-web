@@ -359,7 +359,10 @@ export default {
           title: '促销原因',
           key: 'promotionReason',
           render: (h, params) => {
-            let t = params.row.promotionReason.toString()
+            let t = ''
+            if (params.row.promotionReason !== null) {
+              t = params.row.promotionReason.toString()
+            }
             if (params.row.isPromote === 1) { return h('span', {}, t) } else { return h('span', {}, '') }
           }
         },

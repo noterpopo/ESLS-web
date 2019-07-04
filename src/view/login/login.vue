@@ -39,13 +39,9 @@ export default {
       let type = 1
       this.handleLogin({ userName, password, type }).then(res => {
         console.log(res)
-        if (res.data.data.loginType === 'username') {
-          this.$router.push({
-            name: this.$config.homeName
-          })
-        } else {
-          this.isSMS = true
-        }
+        this.$router.push({
+          name: this.$config.homeName
+        })
       }).catch(error => {
         if (error.data.code === 20015) {
           this.phone = error.data.data

@@ -54,16 +54,27 @@
             <Button v-if="hasCycleJobAccess" style="margin-left:10px;" type="primary" @click="onTagScanCycle">添加</Button>
             <Button style="margin-left:10px;" type="primary" @click="onScanAll">对所有价签巡检</Button>
           </div >
+          <div style="display:flex; align-items:center;margin-top:10px;">
+            <span>价签定期获取计量数据：</span>
+            <Select v-model="shopId" style="width: 300px" :transfer="true">>
+              <Option v-for="(item) in shopData" :key="item.id" :value="item.id">{{item.name}}</Option>
+            </Select>
+            <Input  v-model="tagComCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
+                <Button slot="append" @click="isTagComCronModalShow=true">选择时间</Button>
+            </Input>
+            <Button v-if="hasCycleJobAccess" style="margin-left:10px;" type="primary" @click="onTagComCycle">添加</Button>
+          </div >
         </Card>
         <corn-selector ref="cornSel" :isModalShow="isCronModalShow" @onOk="onCron" @onIsShow="onIsShow"></corn-selector>
         <corn-selector ref="cornGoodSel" :isModalShow="isGoodCronModalShow" @onOk="onGoodCron" @onIsShow="onIsGoodShow"></corn-selector>
         <corn-selector ref="cornFlushSel" :isModalShow="isTagFlushCronModalShow" @onOk="onFlushTagCron" @onIsShow="onIsFlushTagShow"></corn-selector>
         <corn-selector ref="cornScanSel" :isModalShow="isTagScanCronModalShow" @onOk="onScanTagCron" @onIsShow="onIsScanTagShow"></corn-selector>
+        <corn-selector ref="cornComSel" :isModalShow="isTagComCronModalShow" @onOk="onComTagCron" @onIsShow="onIsComTagShow"></corn-selector>
 
     </div>
 </template>
 <script>
-import { getAllCycleJob, updateCycleJob, deleteCyclejobs, scanShoptag, flushShoptag } from '@/api/cycylejob'
+import { getAllCycleJob, updateCycleJob, deleteCyclejobs, scanShoptag, flushShoptag, getCalShoptag } from '@/api/cycylejob'
 import { cronUpdate } from '@/api/good'
 import { scanAll } from '@/api/tag'
 import super_table from '@/components/table/supertable.vue'
@@ -101,7 +112,7 @@ export default {
           key: 'cron',
           render: (h, params) => {
             let cron = ''
-            if (params.row.mode === 0 || params.row.mode === 1) {
+            if (params.row.mode === 0 || params.row.mode === 1 || params.row.mode === 2) {
               cron = params.row.args.split('、')[0]
             } else {
               cron = params.row.cron
@@ -147,7 +158,9 @@ export default {
       tagFlushCronExpr: '',
       isTagFlushCronModalShow: false,
       tagScanCronExpr: '',
-      isTagScanCronModalShow: false
+      isTagScanCronModalShow: false,
+      tagComCronExpr: '',
+      isTagComCronModalShow: false
     }
   },
   created () {
@@ -400,10 +413,62 @@ export default {
             that.editOK()
           }
         })
+      } else if (currentRow.mode === 2) {
+        this.currentCycyleJobData.cron = currentRow.args.split('、')[0]
+        this.shopId = currentRow.args.split('、')[2].replace('-', '')
+        this.shopId = parseInt(this.shopId)
+        this.$Modal.confirm({
+          title: '设置定期任务',
+          render: (h, params) => {
+            return h('span', [
+              h('p', '商店:'),
+              h('Select', {
+                props: {
+                  value: that.shopId
+                },
+                on: {
+                  'on-change': (val) => {
+                    that.shopId = val
+                  }
+                }
+              },
+              this.shopData.map((item) => {
+                return h('Option', {
+                  props: {
+                    value: item.id,
+                    label: item.name
+                  }
+                })
+              })
+              ),
+              h('Input', {
+                attrs: {
+                  style: 'width: 360px'
+                },
+                props: {
+                  value: that.currentCycyleJobData.cron
+                }
+              }, [
+                h('Button', {
+                  slot: 'append',
+                  on: {
+                    'click': () => {
+                      that.$refs.cornSel.init(that.currentCycyleJobData.cron)
+                      that.isCronModalShow = true
+                    }
+                  }
+                }, '选择时间')
+              ])
+            ])
+          },
+          onOk: () => {
+            that.editOK()
+          }
+        })
       }
     },
     editOK () {
-      if (this.currentCycyleJobData.mode === 0 || this.currentCycyleJobData.mode === 1) {
+      if (this.currentCycyleJobData.mode === 0 || this.currentCycyleJobData.mode === 1 || this.currentCycyleJobData.mode === 2) {
         this.currentCycyleJobData.args = this.currentCycyleJobData.cron + '、id、' + this.shopId + '-'
       }
       updateCycleJob(this.currentCycyleJobData).then(res => {
@@ -422,6 +487,9 @@ export default {
     onScanTagCron (data) {
       this.tagScanCronExpr = data
     },
+    onComTagCron (data) {
+      this.tagComCronExpr = data
+    },
     onIsShow (val) {
       this.isCronModalShow = val
     },
@@ -433,6 +501,9 @@ export default {
     },
     onIsScanTagShow (val) {
       this.isTagScanCronModalShow = val
+    },
+    onIsComTagShow (val) {
+      this.isTagComCronModalShow = val
     },
     onTagFlushCycle () {
       let data = {}
@@ -459,6 +530,20 @@ export default {
       this.$set(data, 'items', items)
       scanShoptag(data).then(res => {
         this.$Message.info('巡检成功')
+        this.cycyleJobReload()
+      })
+    },
+    onTagComCycle () {
+      let data = {}
+      let params = {}
+      let items = []
+      this.$set(params, 'cron', this.tagComCronExpr)
+      this.$set(params, 'query', 'id')
+      this.$set(params, 'queryString', this.shopId)
+      items.push(params)
+      this.$set(data, 'items', items)
+      getCalShoptag(data).then(res => {
+        this.$Message.info('获取计量成功')
         this.cycyleJobReload()
       })
     }

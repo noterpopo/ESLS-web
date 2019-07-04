@@ -174,6 +174,17 @@ export const updateTag = (data) => {
   })
 }
 
+export const updateTagComp = (data, num) => {
+  return axios.request({
+    url: 'tag/compute',
+    method: 'post',
+    params: {
+      goodNumber: num
+    },
+    data: data
+  })
+}
+
 export const gjTag = (data) => {
   return axios.request({
     url: 'tag/update',

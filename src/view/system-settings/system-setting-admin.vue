@@ -16,8 +16,9 @@
                 <TabPane label="盘点方式">
                     <p>盘点方式:</p>
                     <Select :transfer="true" v-model="computeWay">
+                      <Option  :value="0">{{'手动盘点'}}</Option>
                       <Option  :value="1">{{'电子秤'}}</Option>
-                      <Option  :value="2">{{'手动盘点'}}</Option>
+                      <Option  :value="2">{{'都开启'}}</Option>
                     </Select>
                     <Button style="margin-top:10px;" type="primary" @click="changeEBlance">确定</Button>
                 </TabPane>
@@ -40,9 +41,7 @@ export default {
       windowWidth: 0,
       currentFileArgs: [],
       fileArgs: [
-        'shopNumber',
         'name',
-        'barCode',
         'qrCode',
         'price',
         'promotePrice',
@@ -59,9 +58,7 @@ export default {
         'isPromote'
       ],
       translate: {
-        shopNumber: '店铺',
         name: '商品名称',
-        barCode: '商品条码',
         qrCode: '二维码',
         price: '原件',
         promotePrice: '价格',

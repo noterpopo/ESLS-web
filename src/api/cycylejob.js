@@ -49,3 +49,14 @@ export const flushShoptag = (data) => {
     }
   })
 }
+
+export const getCalShoptag = (data) => {
+  return axios.request({
+    url: 'shop/cyclejob',
+    method: 'put',
+    data: data,
+    params: {
+      mode: 2
+    }
+  })
+}
