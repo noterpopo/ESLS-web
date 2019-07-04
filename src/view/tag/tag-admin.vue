@@ -38,6 +38,7 @@ import tagExpand from '@/components/table/tag-expand.vue'
 import super_table from '@/components/table/supertable.vue'
 import e_label from '@/components/e-label/e-lable.vue'
 import { updateTag, getAllTag, bindStyle, bindGood, deleteTag, lightTag, flushTag, removeTag, scanTag, statusTag, computeTagToZero } from '@/api/tag'
+import { getSystemArgs } from '@/api/systemsetting'
 import { getAllGood, getGood, getBindedTags } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
 import { balance } from '@/api/eweigher'
@@ -364,6 +365,22 @@ export default {
           width: '170',
           align: 'center',
           render: (h, params) => {
+            let isCalOpen = false
+            if (params.row.goodId !== 0 && params.row.goodId !== null) {
+              console.log('in')
+              $.ajax({
+                url: 'http://39.108.106.167:8086/goods/' + params.row.goodId,
+                async: false,
+                headers: {
+                  ESLS: store.getters.token
+                },
+                type: 'get',
+                success: (res) => {
+                  isCalOpen = res.data[0].isComputeOpen === 1
+                  console.log(isCalOpen)
+                }
+              })
+            }
             let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
             let data = {}
             let tparams = {}
@@ -582,12 +599,16 @@ export default {
                 }
               }, [
                 h('Button', {
+                  style: {
+                    marginRight: '5px',
+                    display: this.isOpenEBlance ? 'inline-block' : 'none'
+                  },
                   props: {
                     type: 'primary',
                     size: 'small',
-                    disabled: !this.hasHighTagAccess
+                    disabled: !this.hasHighTagAccess || !isCalOpen
                   }
-                }, '电子秤'),
+                }, '计量'),
                 h('DropdownMenu', {
                   slot: 'list'
                 }, dzcListItem)
@@ -848,7 +869,8 @@ export default {
       currentGoodPage: 1,
       currentStylePage: 1,
       currentRightGoodPage: 1,
-      filterStyleData: []
+      filterStyleData: [],
+      isOpenEBlance: false
     }
   },
   mounted () {
@@ -859,6 +881,9 @@ export default {
     window.onresize = function () {
       that.windowWidth = that.$refs.container.offsetWidth
     }
+    getSystemArgs().then(res => {
+      this.isOpenEBlance = res.data.data[0].computeType === 1
+    })
   },
   created () {
     this.currentTagPage = 1

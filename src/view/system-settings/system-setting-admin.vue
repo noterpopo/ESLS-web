@@ -59,12 +59,12 @@ export default {
         'isPromote'
       ],
       translate: {
-        shopNumber: '店铺编码',
-        name: '名称',
-        barCode: '条码',
+        shopNumber: '店铺',
+        name: '商品名称',
+        barCode: '商品条码',
         qrCode: '二维码',
-        price: '价格',
-        promotePrice: '促销价',
+        price: '原件',
+        promotePrice: '价格',
         provider: '供应商',
         operator: '操作员',
         category: '类别',
@@ -73,7 +73,7 @@ export default {
         stock: '库存',
         unit: '单位',
         shelfNumber: '货号',
-        promoteTimeGap: '促销价格',
+        promoteTimeGap: '促销间隔',
         promotionReason: '促销原因',
         isPromote: '是否促销'
       }
