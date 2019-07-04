@@ -1,8 +1,8 @@
 <template>
     <div ref="container" style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;">
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
-            <Tabs :animated="false">
-                <TabPane v-if="hasProAccess" label="设置导出文件字段">
+            <Tabs v-if="hasProAccess" :animated="false">
+                <TabPane label="设置导出文件字段">
                     <p>字段设置:</p>
                     <Select :transfer="true" :multiple="true" v-model="currentFileArgs">
                       <Option v-for="item in fileArgs" :value="item" :key="item" >{{translate[item]}}</Option>

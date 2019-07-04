@@ -17,7 +17,7 @@
             </Row>
           </div>
           <Collapse v-model="selectRole" accordion>
-            <Panel v-for="(item,index) in roleData" :name="item.id+''" :key="item.id">
+            <Panel v-for="(item,index) in roleData" v-if="item.name!=='总店管理员'" :name="item.id+''" :key="item.id">
             {{item.name}}
                 <div slot="content">
                   <Transfer

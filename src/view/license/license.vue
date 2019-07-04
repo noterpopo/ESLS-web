@@ -14,7 +14,7 @@
                       <Col span="8"><p>{{licenseData.notAfter}}</p></Col>
                     </Row>
                 </TabPane>
-                <TabPane label="导入证书">
+                <TabPane v-if="hasLicenseAccess" label="导入证书">
                     <Upload style="margin-top:10px;"
                         multiple
                         :on-success="onUploadSucess"
@@ -67,7 +67,9 @@ export default {
     })
   },
   computed: {
-
+    hasLicenseAccess: () => {
+      return store.getters.access.indexOf(14) !== -1
+    }
   },
   methods: {
     onUploadSucess () {
