@@ -255,11 +255,11 @@ export default {
               h('p', '商店:'),
               h('Select', {
                 props: {
-                  value: currentRow.shopId
+                  value: parseInt(this.currentCycyleJobData.shopid)
                 },
                 on: {
                   'on-change': (val) => {
-                    this.currentCycyleJobData.shopId = val
+                    this.currentCycyleJobData.shopid = val
                   }
                 }
               },
