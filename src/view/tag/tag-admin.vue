@@ -118,43 +118,12 @@ export default {
         },
         {
           title: '店铺',
-          render: (h, params) => {
-            let result = null
-            $.ajax({
-              url: 'http://39.108.106.167:8086/router/' + params.row.routerId,
-              async: false,
-              headers: {
-                ESLS: store.getters.token
-              },
-              type: 'get',
-              success: (res) => {
-                result = res.data[0].name
-              }
-            })
-            return h('p', result)
-          }
+          key: 'shopNameAndShopNumber'
         },
         {
           title: '商品条码/名称',
           width: '200',
-          render: (h, params) => {
-            let result = null
-            if (params.row.goodId === 0 || params.row.goodId === null) {
-              return h('p', '')
-            }
-            $.ajax({
-              url: 'http://39.108.106.167:8086/goods/' + params.row.goodId,
-              async: false,
-              headers: {
-                ESLS: store.getters.token
-              },
-              type: 'get',
-              success: (res) => {
-                result = res.data[0]
-              }
-            })
-            return h('p', result.barCode + '_' + result.name)
-          }
+          key: 'goodBarCodeAndName'
         },
         {
           title: '商品数量',
@@ -170,7 +139,8 @@ export default {
                 value: params.row.goodNumber,
                 disabled: !this.hasBaseTagAccess,
                 activeChange: false,
-                readonly: this.isOpenEBlance === 1
+                readonly: this.isOpenEBlance === 1,
+                min: 0
               },
               on: {
                 'on-change': (val) => {
@@ -196,21 +166,7 @@ export default {
         {
           title: 'AP/信道',
           width: '140',
-          render: (h, params) => {
-            let result = null
-            $.ajax({
-              url: 'http://39.108.106.167:8086/router/' + params.row.routerId,
-              async: false,
-              headers: {
-                ESLS: store.getters.token
-              },
-              type: 'get',
-              success: (res) => {
-                result = res.data[0].barCode + '_' + res.data[0].channelId
-              }
-            })
-            return h('p', result)
-          }
+          key: 'routerBarCodeAndChannelId'
         },
         {
           title: '电量',
@@ -280,19 +236,23 @@ export default {
                     return item.isPromote === 0
                   })
                 } else {
-                  $.ajax({
-                    url: 'http://39.108.106.167:8086/style/' + params.row.styleId,
-                    async: false,
-                    headers: {
-                      ESLS: store.getters.token
-                    },
-                    type: 'get',
-                    success: (r) => {
-                      let isPromote = r.data[0].isPromote
-                      styleFiltters = res.data.filter((item) => {
-                        return item.isPromote === isPromote
-                      })
-                    }
+                  // $.ajax({
+                  //   url: 'http://39.108.106.167:8086/style/' + params.row.styleId,
+                  //   async: false,
+                  //   headers: {
+                  //     ESLS: store.getters.token
+                  //   },
+                  //   type: 'get',
+                  //   success: (r) => {
+                  //     let isPromote = r.data[0].isPromote
+                  //     styleFiltters = res.data.filter((item) => {
+                  //       return item.isPromote === isPromote
+                  //     })
+                  //   }
+                  // })
+                  let isPromote = params.row.style.isPromote
+                  styleFiltters = res.data.filter((item) => {
+                    return item.isPromote === isPromote
                   })
                 }
               }
@@ -375,19 +335,7 @@ export default {
           render: (h, params) => {
             let isCalOpen = false
             if (params.row.goodId !== 0 && params.row.goodId !== null) {
-              console.log('in')
-              $.ajax({
-                url: 'http://39.108.106.167:8086/goods/' + params.row.goodId,
-                async: false,
-                headers: {
-                  ESLS: store.getters.token
-                },
-                type: 'get',
-                success: (res) => {
-                  isCalOpen = res.data[0].isComputeOpen === 1
-                  console.log(isCalOpen)
-                }
-              })
+              isCalOpen = params.row.goodIsComputeOpen === 1
             }
             let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
             let data = {}
@@ -541,15 +489,7 @@ export default {
                     balance(4, data).then(res => this.tagReload())
                   }
                 }
-              }, '清空计量数据'),
-              h('DropdownItem', {
-                nativeOn: {
-                  click: (name) => {
-                    this.$Message.info('发送电子秤标定命令')
-                    balance(5, data).then(res => this.tagReload())
-                  }
-                }
-              }, '电子秤标定')
+              }, '清空计量数据')
             ]
             if (this.hasBindTagAccess) {
               if (this.hasBaseTagAccess) {
@@ -609,7 +549,7 @@ export default {
                 h('Button', {
                   style: {
                     marginRight: '5px',
-                    display: this.isOpenEBlance === 0 || this.isOpenEBlance === 2 ? 'inline-block' : 'none'
+                    display: this.isOpenEBlance === 1 || this.isOpenEBlance === 2 ? 'inline-block' : 'none'
                   },
                   props: {
                     type: 'primary',
@@ -900,10 +840,10 @@ export default {
     this.currentStylePage = 1
     this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage })
     this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
-    this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8 })
-    getAllStyle({ page: 0, count: 1 }).then(res => {
-      this.getStyleTableData({ page: this.currentStylePage - 1, count: res.data.code })
-    })
+    // this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8 })
+    // getAllStyle({ page: 0, count: 1 }).then(res => {
+    //   this.getStyleTableData({ page: this.currentStylePage - 1, count: res.data.code })
+    // })
   },
   watch: {
     currentTagPage () {

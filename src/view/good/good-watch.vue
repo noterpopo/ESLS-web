@@ -151,59 +151,17 @@ export default {
         },
         {
           title: '店铺',
-          render: (h, params) => {
-            let result = null
-            $.ajax({
-              url: 'http://39.108.106.167:8086/router/' + params.row.routerId,
-              async: false,
-              headers: {
-                ESLS: store.getters.token
-              },
-              type: 'get',
-              success: (res) => {
-                result = res.data[0].name
-              }
-            })
-            return h('p', result)
-          }
+          key: 'shopNameAndShopNumber'
         },
         {
           title: 'AP/信道',
           width: '140',
-          render: (h, params) => {
-            let result = null
-            $.ajax({
-              url: 'http://39.108.106.167:8086/router/' + params.row.routerId,
-              async: false,
-              headers: {
-                ESLS: store.getters.token
-              },
-              type: 'get',
-              success: (res) => {
-                result = res.data[0].barCode + '/' + res.data[0].channelId
-              }
-            })
-            return h('p', result)
-          }
+          key: 'routerBarCodeAndChannelId'
         },
         {
           title: '商品条码/名称',
           width: '200',
-          render: (h, params) => {
-            let result = null
-            $.ajax({
-              url: 'http://39.108.106.167:8086/goods/' + params.row.goodId,
-              async: false,
-              headers: {
-                ESLS: store.getters.token
-              },
-              type: 'get',
-              success: (res) => {
-                result = res.data[0]
-              }
-            })
-            return h('p', result.barCode + '/' + result.name)
-          }
+          key: 'goodBarCodeAndName'
         },
         {
           title: '电量',

@@ -9,10 +9,13 @@
           </div>
           <super_table @onSelectionChange="handleSelectionChange" @onClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="routeData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="routeDataCount"></super_table>
           <Button v-if="hasProAccess" type="primary" @click="isUploadShow=true">上传路由器升级文件</Button>
-          <Modal v-model="isUploadShow" title="上传路由器升级文件">
+          <Modal v-model="isUploadShow" title="上传路由器升级文件" @on-ok="uploadFile">
             <div>
-              <Upload style="margin-top:10px;"
+              <Upload
+                  ref="upload"
+                  style="margin-top:10px;"
                   multiple
+                  :before-upload="handleBeforeUpload"
                   :on-success="onUploadSucess"
                   :on-error="onUploadFail"
                   :show-upload-list="false"
@@ -645,7 +648,8 @@ export default {
       tagQuery: 'barCode',
       tagQueryString: '',
       routeQuery: 'barCode',
-      routeQueryString: ''
+      routeQueryString: '',
+      readyFiles: []
     }
   },
   created () {
@@ -689,10 +693,20 @@ export default {
     }
   },
   methods: {
+    uploadFile () {
+      console.log('11')
+      for (let i = 0; i < this.readyFiles.length; i++) {
+        let file = this.readyFiles[i]
+        this.$refs.upload.post(file)
+      }
+    },
+    handleBeforeUpload (file) {
+      this.readyFiles.push(file)
+      return false
+    },
     onUploadSucess () {
       this.isUploadShow = false
       this.$Message.info('上传成功')
-      this.goodReload()
     },
     onUploadFail () {
       this.isUploadShow = false

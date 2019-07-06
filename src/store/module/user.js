@@ -11,7 +11,8 @@ export default {
     userName: '',
     userId: '' || localStorage.getItem('user_id'),
     token: getToken(),
-    access: ''
+    access: '',
+    shopId: -1
 
   },
   mutations: {
@@ -26,6 +27,9 @@ export default {
     },
     setAccess (state, access) {
       state.access = access
+    },
+    setShopId (state, shopId) {
+      state.shopId = shopId
     },
     setToken (state, token) {
       state.token = token
@@ -62,7 +66,8 @@ export default {
     messageTrashCount: state => state.messageTrashList.length,
     token: state => state.token,
     userName: state => state.userName,
-    access: state => state.access
+    access: state => state.access,
+    shopId: state => state.shopId
 
   },
   actions: {
@@ -90,6 +95,7 @@ export default {
             commit('setUserId', res.data.data.id)
             localStorage.setItem('user_id', res.data.data.id)
             commit('setUserName', res.data.data.name)
+            commit('setShopId', res.data.data.shopId)
             resolve(res)
           }).catch(err => {
             reject(err)
@@ -116,6 +122,7 @@ export default {
             commit('setUserId', res.data.data.id)
             localStorage.setItem('user_id', res.data.data.id)
             commit('setUserName', res.data.data.name)
+            commit('setShopId', res.data.data.shopId)
             resolve(res)
           }).catch(err => {
             reject(err)
@@ -142,6 +149,7 @@ export default {
           getUserInfo(state.userId).then(res => {
             const data = res.data.data
             commit('setUserName', data.name)
+            commit('setShopId', data.shopId)
             let per = new Set()
             getRoleInfo(state.userId).then(pers => {
               const data = pers.data.data

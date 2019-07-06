@@ -23,7 +23,7 @@
             </Select>
             <span style="margin-left:8px;">选择变价店铺：</span>
             <Select v-model="shopId" style="width: 300px" :transfer="true">
-              <Option :value="-1">全部商店</Option>
+              <Option v-if="getShopId()===1" :value="-1">全部商店</Option>
               <Option v-for="(item) in shopData" :key="item.id" :value="item.id">{{item.name}}</Option>
             </Select>
               <span style="margin-left:10px;">文件路径：</span>
@@ -36,7 +36,7 @@
           <div style="display:flex; align-items:center;margin-top:10px;">
             <span>价签定期刷新：</span>
             <Select v-model="shopId" style="width: 300px" :transfer="true">
-              <Option v-for="(item) in shopData" :key="item.id" :value="item.id">{{item.name}}</Option>
+              <Option v-for="(item) in shopData" :key="item.id" v-if="item.id!=-1" :value="item.id">{{item.name}}</Option>
             </Select>
             <Input  v-model="tagFlushCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
                 <Button slot="append" @click="isTagFlushCronModalShow=true">选择时间</Button>
@@ -46,7 +46,7 @@
           <div style="display:flex; align-items:center;margin-top:10px;">
             <span>价签定期巡检：</span>
             <Select v-model="shopId" style="width: 300px" :transfer="true">>
-              <Option v-for="(item) in shopData" :key="item.id" :value="item.id">{{item.name}}</Option>
+              <Option v-for="(item) in shopData" :key="item.id" v-if="item.id!=-1" :value="item.id">{{item.name}}</Option>
             </Select>
             <Input  v-model="tagScanCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
                 <Button slot="append" @click="isTagScanCronModalShow=true">选择时间</Button>
@@ -57,7 +57,7 @@
           <div style="display:flex; align-items:center;margin-top:10px;">
             <span>价签定期获取计量数据：</span>
             <Select v-model="shopId" style="width: 300px" :transfer="true">>
-              <Option v-for="(item) in shopData" :key="item.id" :value="item.id">{{item.name}}</Option>
+              <Option v-for="(item) in shopData" :key="item.id" v-if="item.id!=-1" :value="item.id">{{item.name}}</Option>
             </Select>
             <Input  v-model="tagComCronExpr" placeholder="输入cron表达式" style="margin-left:8px;width: 300px">
                 <Button slot="append" @click="isTagComCronModalShow=true">选择时间</Button>
@@ -167,6 +167,12 @@ export default {
     this.getCycyleJobTableData({ page: 0, count: this.countPerPage })
     getAllShop({ page: 0, count: 100 }).then(res => {
       this.shopData = res.data.data
+      this.shopData.push({ id: -1, name: '所有店铺' })
+      if (store.getters.shopId !== 1) {
+        this.shopData = this.shopData.filter((item) => {
+          return item.id === store.getters.shopId
+        })
+      }
     })
   },
   mounted () {
@@ -189,6 +195,9 @@ export default {
     }
   },
   methods: {
+    getShopId () {
+      return store.getters.shopId
+    },
     onScanAll () {
       scanAll()
     },
@@ -255,7 +264,7 @@ export default {
               h('p', '商店:'),
               h('Select', {
                 props: {
-                  value: parseInt(this.currentCycyleJobData.shopid)
+                  value: this.currentCycyleJobData.shopid === null ? -1 : parseInt(this.currentCycyleJobData.shopid)
                 },
                 on: {
                   'on-change': (val) => {
@@ -320,7 +329,7 @@ export default {
               h('p', '商店:'),
               h('Select', {
                 props: {
-                  value: that.shopId
+                  value: that.shopId === null ? -1 : that.shopId
                 },
                 on: {
                   'on-change': (val) => {
@@ -365,6 +374,7 @@ export default {
         this.currentCycyleJobData.cron = currentRow.args.split('、')[0]
         this.shopId = currentRow.args.split('、')[2].replace('-', '')
         this.shopId = parseInt(this.shopId)
+        console.log(this.shopId)
         this.$Modal.confirm({
           title: '设置定期任务',
           render: (h, params) => {
@@ -372,7 +382,7 @@ export default {
               h('p', '商店:'),
               h('Select', {
                 props: {
-                  value: that.shopId
+                  value: that.shopId === null ? -1 : that.shopId
                 },
                 on: {
                   'on-change': (val) => {
@@ -417,6 +427,7 @@ export default {
         this.currentCycyleJobData.cron = currentRow.args.split('、')[0]
         this.shopId = currentRow.args.split('、')[2].replace('-', '')
         this.shopId = parseInt(this.shopId)
+        console.log(this.shopId)
         this.$Modal.confirm({
           title: '设置定期任务',
           render: (h, params) => {
@@ -424,7 +435,7 @@ export default {
               h('p', '商店:'),
               h('Select', {
                 props: {
-                  value: that.shopId
+                  value: that.shopId == null ? -1 : that.shopId
                 },
                 on: {
                   'on-change': (val) => {

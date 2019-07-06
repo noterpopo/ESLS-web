@@ -145,7 +145,7 @@
                 <Row type="flex" justify="center" align="middle" class="Row">
                   <Col span="2"><p>店铺：</p></Col>
                   <Col span="10"><Select v-model="addGooddata.shopNumber">
-                      <Option v-for="item in shoplist" :key="item.id" :value="item.number">{{item.name}}</Option>
+                      <Option v-for="item in shoplist" :key="item.id" :value="item.number">{{item.number+'--'+item.name}}</Option>
                     </Select>
                   </Col>
                   <Col span="2"><p style="position:relative;left:10px;">开启计件:</p></Col>
@@ -205,6 +205,8 @@ import store from '@/store'
 import { VueContext } from 'vue-context'
 import goodTagExpand from '@/components/table/good-tag-expand.vue'
 import goodExpand from '@/components/table/good-expand.vue'
+import { balance } from '@/api/eweigher'
+import { getSystemArgs } from '@/api/systemsetting'
 export default {
   components: {
     e_label,
@@ -215,6 +217,7 @@ export default {
   },
   data () {
     return {
+      isOpenEBlance: -1,
       shoplist: [],
       headers: {
         ESLS: store.getters.token
@@ -498,40 +501,12 @@ export default {
         },
         {
           title: '店铺',
-          render: (h, params) => {
-            let result = null
-            $.ajax({
-              url: 'http://39.108.106.167:8086/router/' + params.row.routerId,
-              async: false,
-              headers: {
-                ESLS: store.getters.token
-              },
-              type: 'get',
-              success: (res) => {
-                result = res.data[0].name
-              }
-            })
-            return h('p', result)
-          }
+          key: 'shopNameAndShopNumber'
         },
         {
           title: 'AP/信道',
           width: '134',
-          render: (h, params) => {
-            let result = null
-            $.ajax({
-              url: 'http://39.108.106.167:8086/router/' + params.row.routerId,
-              async: false,
-              headers: {
-                ESLS: store.getters.token
-              },
-              type: 'get',
-              success: (res) => {
-                result = res.data[0].barCode + '_' + res.data[0].channelId
-              }
-            })
-            return h('p', result)
-          }
+          key: 'routerBarCodeAndChannelId'
         },
         {
           title: '电量',
@@ -628,6 +603,22 @@ export default {
           width: '70',
           align: 'center',
           render: (h, params) => {
+            let isCalOpen = false
+            if (params.row.goodId !== 0 && params.row.goodId !== null) {
+              console.log('in')
+              $.ajax({
+                url: 'http://39.108.106.167:8086/goods/' + params.row.goodId,
+                async: false,
+                headers: {
+                  ESLS: store.getters.token
+                },
+                type: 'get',
+                success: (res) => {
+                  isCalOpen = res.data[0].isComputeOpen === 1
+                  console.log(isCalOpen)
+                }
+              })
+            }
             let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
             let data = {}
             let tparams = {}
@@ -725,6 +716,48 @@ export default {
                 }
               }, '移除')
             ]
+            let dzcListItem = [
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送获取计量数据命令')
+                    balance(0, data).then(res => this.tagReload())
+                  }
+                }
+              }, '获取计量数据'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送电子秤置零命令')
+                    balance(1, data).then(res => this.tagReload())
+                  }
+                }
+              }, '电子秤置零'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送电子秤去皮命令')
+                    balance(2, data).then(res => this.tagReload())
+                  }
+                }
+              }, '电子秤去皮'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送获取电子秤电量命令')
+                    balance(3, data).then(res => this.tagReload())
+                  }
+                }
+              }, '获取电子秤电量'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送清空计量数据命令')
+                    balance(4, data).then(res => this.tagReload())
+                  }
+                }
+              }, '清空计量数据')
+            ]
             if (!this.hasBaseTagAccess) {
               listitem.splice(0, 4)
               if (!this.hasHighTagAccess) {
@@ -752,6 +785,27 @@ export default {
                 h('DropdownMenu', {
                   slot: 'list'
                 }, listitem)
+              ]),
+              h('Dropdown', {
+                props: {
+                  trigger: 'click',
+                  transfer: true
+                }
+              }, [
+                h('Button', {
+                  style: {
+                    marginTop: '5px',
+                    display: this.isOpenEBlance === 1 || this.isOpenEBlance === 2 ? 'inline-block' : 'none'
+                  },
+                  props: {
+                    type: 'primary',
+                    size: 'small',
+                    disabled: !this.hasHighTagAccess || !isCalOpen
+                  }
+                }, '计量'),
+                h('DropdownMenu', {
+                  slot: 'list'
+                }, dzcListItem)
               ])
             ])
           }
@@ -821,6 +875,9 @@ export default {
     }
     getAllShop({ page: 0, count: 100 }).then(res => {
       this.shoplist = res.data.data
+    })
+    getSystemArgs().then(res => {
+      this.isOpenEBlance = res.data.data[0].computeType
     })
   },
   created () {
