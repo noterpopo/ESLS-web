@@ -10,7 +10,7 @@
                 </Row>
                 </div>
             <super_table @onClick="onTagTableClick" :customRowClassFunc="customRowClass" :pageSize="countPerPage" :current.sync="currentTagPage" @onDoubleClick="onTableClick" @onSearch="onTableSearch" :data="tagData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="tagDataCount"></super_table>
-            <Modal @on-cancle='onBindGoodCancel' v-model="isBindGoodModalShow" title="绑定商品" width="1400" @on-ok="onBindGood">
+            <Modal @on-cancel='onBindGoodCancel' v-model="isBindGoodModalShow" title="绑定商品" width="1400" @on-ok="onBindGood">
               <super_table  key="3" ref="goodST" @onSearch="onModalGoodTableSearch" @onClick="onMoadlGoodTableClick" :data="goodData" :columns="tableModalGoodColumns" :isLoading="isModalGoodTableLoading" :pageSize="8" :current.sync="currentGoodPage" :dataNum="modalGoodDataCount"></super_table>
             </Modal>
             <Modal v-model="isActionModalShow" title="操作">
@@ -39,7 +39,7 @@ import super_table from '@/components/table/supertable.vue'
 import e_label from '@/components/e-label/e-lable.vue'
 import { updateTagComp, getAllTag, bindStyle, bindGood, deleteTag, lightTag, flushTag, removeTag, scanTag, statusTag, computeTagToZero } from '@/api/tag'
 import { getSystemArgs } from '@/api/systemsetting'
-import { getAllGood, getGood, getBindedTags } from '@/api/good'
+import { getAllGood, getGood, getBindedTags, searchGood } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
 import { balance } from '@/api/eweigher'
 import { coppyArray } from '@/libs/util'
@@ -52,6 +52,7 @@ export default {
   },
   data () {
     return {
+      shopNumber: '',
       searchState: 0,
       searchData: {},
       currentActionId: '',
@@ -212,51 +213,16 @@ export default {
           width: '180',
           render: (h, params) => {
             let styleFiltters = []
-            let data = {
-              items: [
-                {
-                  'query': 'id',
-                  'queryString': params.row.id
-                }
-              ]
+            if (params.row.goodId === 0 || params.row.styleId === 0) {
+              styleFiltters = params.row.styles.filter((item) => {
+                return item.isPromote === 0
+              })
+            } else {
+              let isPromote = params.row.style.isPromote
+              styleFiltters = params.row.styles.filter((item) => {
+                return item.isPromote === isPromote
+              })
             }
-            $.ajax({
-              url: 'http://39.108.106.167:8086/tag/styles',
-              contentType: 'application/json;charset=utf-8',
-              dataType: 'json',
-              data: JSON.stringify(data),
-              async: false,
-              headers: {
-                ESLS: store.getters.token
-              },
-              type: 'post',
-              success: (res) => {
-                if (params.row.goodId === 0 || params.row.styleId === 0) {
-                  styleFiltters = res.data.filter((item) => {
-                    return item.isPromote === 0
-                  })
-                } else {
-                  // $.ajax({
-                  //   url: 'http://39.108.106.167:8086/style/' + params.row.styleId,
-                  //   async: false,
-                  //   headers: {
-                  //     ESLS: store.getters.token
-                  //   },
-                  //   type: 'get',
-                  //   success: (r) => {
-                  //     let isPromote = r.data[0].isPromote
-                  //     styleFiltters = res.data.filter((item) => {
-                  //       return item.isPromote === isPromote
-                  //     })
-                  //   }
-                  // })
-                  let isPromote = params.row.style.isPromote
-                  styleFiltters = res.data.filter((item) => {
-                    return item.isPromote === isPromote
-                  })
-                }
-              }
-            })
             return h('Select', {
               props: {
                 value: params.row.styleId,
@@ -350,7 +316,7 @@ export default {
               h('DropdownItem', {
                 nativeOn: {
                   click: (name) => {
-                    this.onBind(temp.id)
+                    this.onBind(temp.id, temp.shopNameAndShopNumber)
                   }
                 }
               }, '绑定'),
@@ -850,7 +816,7 @@ export default {
       this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
     },
     currentGoodPage () {
-      this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8 })
+      this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8, queryId: 'shopNumber', queryString: this.shopNumber })
     },
     currentStylePage () {
       this.getStyleTableData({ page: this.currentStylePage - 1, count: 13 })
@@ -945,7 +911,12 @@ export default {
       var value = search[key[0]]
       this.getRightGoodTableData({ queryId: key[0], queryString: value })
     },
-    onBind (id) {
+    onBind (id, shopNumber) {
+      this.shopNumber = ''
+      if (shopNumber.indexOf('_') !== -1) {
+        this.shopNumber = shopNumber.split('_')[1]
+      }
+      this.getGoodTableData({ page: 0, count: 8, queryId: 'shopNumber', queryString: this.shopNumber })
       this.bindTagId = id
       this.isBindGoodModalShow = true
     },
@@ -962,7 +933,15 @@ export default {
     getGoodTableData ({ page, count, queryId, queryString }) {
       var that = this
       that.isModalGoodTableLoading = true
-      getAllGood({ page: page, count: count, queryId: queryId, queryString: queryString }).then(res => {
+      let data = {}
+      let tparams = {}
+      let items = []
+      tparams = {}
+      this.$set(tparams, 'query', queryId)
+      this.$set(tparams, 'queryString', queryString)
+      items.push(tparams)
+      this.$set(data, 'items', items)
+      searchGood(data, page, count).then(res => {
         const data = res.data.data
         that.modalGoodDataCount = res.data.code
         that.goodData = data
@@ -1156,7 +1135,6 @@ export default {
           that.bindGoodSelectId = 0
         })
       }).catch(e => {
-        console.log('errpr')
         that.tagReload()
       })
     },

@@ -45,7 +45,8 @@ export const lightTag = (data, mode, typeMode) => {
     data: data,
     params: {
       mode: mode,
-      typeMode: typeMode
+      typeMode: typeMode,
+      isNeedWaiting: 1
     }
   })
 }

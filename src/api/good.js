@@ -76,3 +76,16 @@ export const deleteGood = (id) => {
     method: 'delete'
   })
 }
+
+export const searchGood = (data, page, count) => {
+  return axios.request({
+    url: '/goods/search',
+    method: 'post',
+    data: data,
+    params: {
+      count: count,
+      connection: '=',
+      page: page
+    }
+  })
+}
