@@ -242,7 +242,7 @@ export default {
               return h('Option', {
                 props: {
                   value: item.id,
-                  label: item.styleType
+                  label: item.name
                 }
               })
               // if(that.isStyleContain(item,that.filterStyleData)){

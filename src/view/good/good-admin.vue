@@ -12,6 +12,8 @@
             <super_table :pageSize="countPerPageGood" @onSearch="onTableSearch" @onClick="searchTag" @onDoubleClick="onTableClick" :customRowClassFunc="rowClass" :current.sync="currentPage" :data="goodData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="dataNum"></super_table>
             <Button v-if="hasGoodAccess" type="primary" @click="isUploadShow=true">导入文件</Button>
             <Button v-if="hasGjAccess" type="primary" style="margin-left:10px;" @click="downloadGoodsData">导出文件</Button>
+            <Button type="primary" style="margin-left:10px;" @click="downloadGoodsDataComp">导出商品计量数据</Button>
+            <Button type="primary" style="margin-left:10px;" @click="downloadGoodsDataRep">导出补货预警数据</Button>
             <Modal v-model="isUploadShow" title="上传商品信息文件">
               <div>
                 <Select v-model="uploadMode">
@@ -98,6 +100,18 @@
                     <Col span="2"><p>导入时间：</p></Col>
                     <Col span="22"><p>{{currentSelectedRow.importTime==null?0:currentSelectedRow.importTime}}</p></Col>
                 </Row>
+                <Row type="flex" justify="center" align="middle" class="Row">
+                    <Col span="2"><p >自定义字段1：</p></Col>
+                    <Col span="10"><Input type="text" v-model="currentSelectedRow.rfu01" /></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">自定义字段2：</p></Col>
+                    <Col span="10"><Input type="text" v-model="currentSelectedRow.rfu02" /></Col>
+                </Row>
+                <Row type="flex" justify="center" align="middle" class="Row">
+                    <Col span="2"><p >自定义字段3：</p></Col>
+                    <Col span="10"><Input type="text" v-model="currentSelectedRow.rfus01" /></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">自定义字段4：</p></Col>
+                    <Col span="10"><Input type="text" v-model="currentSelectedRow.rfus02" /></Col>
+                </Row>
               </div>
             </Modal>
             <Modal :width="1040" v-model="addModal" title="添加商品" :loading="addOkLoading" @on-ok="asyncAddOK">
@@ -160,6 +174,18 @@
                     <Col span="10"><Input type="text" v-model="addGooddata.weightSpec" /></Col>
                     <Col span="2"><p style="position:relative;left:10px;">预警门限:</p></Col>
                     <Col span="10"><Input type="text" v-model="addGooddata.replenishNumber" /></Col>
+                </Row>
+                <Row type="flex" justify="center" align="middle" class="Row">
+                    <Col span="2"><p >自定义字段1：</p></Col>
+                    <Col span="10"><Input type="text" v-model="addGooddata.rfu01" /></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">自定义字段2：</p></Col>
+                    <Col span="10"><Input type="text" v-model="addGooddata.rfu02" /></Col>
+                </Row>
+                <Row type="flex" justify="center" align="middle" class="Row">
+                    <Col span="2"><p >自定义字段3：</p></Col>
+                    <Col span="10"><Input type="text" v-model="addGooddata.rfus01" /></Col>
+                    <Col span="2"><p style="position:relative;left:10px;">自定义字段4：</p></Col>
+                    <Col span="10"><Input type="text" v-model="addGooddata.rfus02" /></Col>
                 </Row>
               </div>
             </Modal>
@@ -859,7 +885,11 @@ export default {
         itemPrice: '10.19',
         itemOnSalePrice: '444.44',
         itemProvider: '',
-        itemImgUrl: ''
+        itemImgUrl: '',
+        rfu01: '',
+        rfu02: '',
+        rfus01: '',
+        rfus02: ''
       },
       canShowData: [],
       showId: 0
@@ -922,6 +952,42 @@ export default {
         reader.onload = function (e) {
           let a = document.createElement('a')
           a.download = 'goodsData.csv'
+          a.href = e.target.result
+          a.click()
+        }
+      }
+      xhr.responseType = 'blob'
+      xhr.setRequestHeader('ESLS', store.getters.token)
+      xhr.send()
+    },
+    downloadGoodsDataComp () {
+      let xhr = new XMLHttpRequest()
+      xhr.open('POST', 'http://39.108.106.167:8086/good/excelComputing')
+      xhr.onload = function (a, b) {
+        let blob = this.response
+        let reader = new FileReader()
+        reader.readAsDataURL(blob)
+        reader.onload = function (e) {
+          let a = document.createElement('a')
+          a.download = 'goodsDataCom.csv'
+          a.href = e.target.result
+          a.click()
+        }
+      }
+      xhr.responseType = 'blob'
+      xhr.setRequestHeader('ESLS', store.getters.token)
+      xhr.send()
+    },
+    downloadGoodsDataRep () {
+      let xhr = new XMLHttpRequest()
+      xhr.open('POST', 'http://39.108.106.167:8086/good/excelWarning')
+      xhr.onload = function (a, b) {
+        let blob = this.response
+        let reader = new FileReader()
+        reader.readAsDataURL(blob)
+        reader.onload = function (e) {
+          let a = document.createElement('a')
+          a.download = 'goodsDataWar.csv'
           a.href = e.target.result
           a.click()
         }
@@ -1118,6 +1184,10 @@ export default {
       that.item.itemStock = goodInfo[0].stock
       that.item.itemImgUrl = goodInfo[0].imageUrl
       that.item.itemProvider = goodInfo[0].provider
+      that.item.rfu01 = goodInfo[0].rfu01
+      that.item.rfu02 = goodInfo[0].rfu02
+      that.item.rfus01 = goodInfo[0].rfus01
+      that.item.rfus02 = goodInfo[0].rfus02
 
       if (tid === 0) {
         return

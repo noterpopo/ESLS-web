@@ -13,14 +13,16 @@
                     <p>是否开启短信验证:</p>
                     <i-switch style="margin-top:10px;" v-model="isSMS" @on-change="changeSMS"/>
                 </TabPane>
-                <TabPane label="盘点方式">
+                <TabPane label="盘点">
                     <p>盘点方式:</p>
                     <Select :transfer="true" v-model="computeWay">
                       <Option  :value="0">{{'手动盘点'}}</Option>
-                      <Option  :value="1">{{'电子秤'}}</Option>
-                      <Option  :value="2">{{'都开启'}}</Option>
+                      <Option  :value="2">{{'电子秤'}}</Option>
                     </Select>
                     <Button style="margin-top:10px;" type="primary" @click="changeEBlance">确定</Button>
+                    <p style="margin-top:10px;">预警门限:</p>
+                    <Input v-model="repNum"></Input>
+                    <Button style="margin-top:10px;" type="primary" @click="changeRepNum">修改门限</Button>
                 </TabPane>
             </Tabs>
         </Card>
@@ -39,6 +41,7 @@ export default {
       isSMS: true,
       computeWay: 0,
       windowWidth: 0,
+      repNum: 0,
       currentFileArgs: [],
       fileArgs: [
         'name',
@@ -55,12 +58,21 @@ export default {
         'shelfNumber',
         'promoteTimeGap',
         'promotionReason',
-        'isPromote'
+        'isPromote',
+        'rfu01',
+        'rfu02',
+        'rfus01',
+        'rfus02',
+        'isComputeOpen',
+        'weightSpec',
+        'replenishNumber',
+        'barCode',
+        'computeNumber'
       ],
       translate: {
         name: '商品名称',
         qrCode: '二维码',
-        price: '原件',
+        price: '原价',
         promotePrice: '价格',
         provider: '供应商',
         operator: '操作员',
@@ -72,7 +84,16 @@ export default {
         shelfNumber: '货号',
         promoteTimeGap: '促销间隔',
         promotionReason: '促销原因',
-        isPromote: '是否促销'
+        isPromote: '是否促销',
+        rfu01: '自定义字段1',
+        rfu02: '自定义字段2',
+        rfus01: '自定义字段3',
+        rfus02: '自定义字段4',
+        isComputeOpen: '是否开启计件',
+        weightSpec: '重量规格',
+        replenishNumber: '预警数量',
+        barCode: '商品条码',
+        computeNumber: '件数'
       }
     }
   },
@@ -88,6 +109,7 @@ export default {
       this.currentFileArgs = res.data.data[0].goodDataFormat.split(' ')
       this.isSMS = res.data.data[0].isMessageVerifyOpen === 1
       this.computeWay = res.data.data[0].computeType
+      this.repNum = res.data.data[0].replenishNumber
     })
   },
   computed: {
@@ -115,6 +137,13 @@ export default {
     changeEBlance () {
       if (this.computeWay != null) {
         setSystemArgs(14, this.computeWay).then(res => {
+          this.$Message.info('修改成功')
+        })
+      }
+    },
+    changeRepNum () {
+      if (this.repNum != null) {
+        setSystemArgs(15, this.repNum).then(res => {
           this.$Message.info('修改成功')
         })
       }

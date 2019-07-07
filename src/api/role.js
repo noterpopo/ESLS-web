@@ -16,13 +16,14 @@ export const delRole = (id) => {
   })
 }
 
-export const addRole = (name, type) => {
+export const addRole = (name, type, shopId) => {
   return axios.request({
     url: '/role',
     method: 'post',
     params: {
       name: name,
-      type: type
+      type: type,
+      shopId: shopId
     }
   })
 }

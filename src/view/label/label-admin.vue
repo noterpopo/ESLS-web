@@ -92,7 +92,11 @@ export default {
         itemisOnSale: true,
         itemPrice: '10.19',
         itemOnSalePrice: '444.44',
-        labelStyle: '1'
+        labelStyle: '1',
+        rfu01: '自定义字段1',
+        rfu02: '自定义字段2',
+        rfus01: '自定义字段3',
+        rfus02: '自定义字段4'
       },
       styleList: [
         '1',
@@ -379,6 +383,14 @@ export default {
               that.item.itemBarCode = dispData[i].text
             } else if (dispData[i].sourceColumn === 'stock') {
               that.item.itemStock = dispData[i].text
+            } else if (dispData[i].sourceColumn === 'rfu01') {
+              that.item.rfu01 = dispData[i].text
+            } else if (dispData[i].sourceColumn === 'rfu02') {
+              that.item.rfu02 = dispData[i].text
+            } else if (dispData[i].sourceColumn === 'rfus01') {
+              that.item.rfus01 = dispData[i].text
+            } else if (dispData[i].sourceColumn === 'rfus02') {
+              that.item.rfus02 = dispData[i].text
             } else {
 
             }

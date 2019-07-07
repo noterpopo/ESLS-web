@@ -189,6 +189,14 @@ export default {
             data[i].text = item['itemImgUrl']
           } else if (data[i].sourceColumn === 'provider') {
             data[i].text = item['itemProvider']
+          } else if (data[i].sourceColumn === 'rfu01') {
+            data[i].text = item['rfu01']
+          } else if (data[i].sourceColumn === 'rfu02') {
+            data[i].text = item['rfu02']
+          } else if (data[i].sourceColumn === 'rfus01') {
+            data[i].text = item['rfus01']
+          } else if (data[i].sourceColumn === 'rfus02') {
+            data[i].text = item['rfus02']
           }
         }
         if (data[i].sourceColumn === 'barCode') {
