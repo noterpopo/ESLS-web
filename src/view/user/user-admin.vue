@@ -309,7 +309,8 @@ export default {
         height: '200px'
       },
       addRoleName: '',
-      addRoleType: ''
+      addRoleType: '',
+      addShopId: -1
     }
   },
   created () {
@@ -318,6 +319,12 @@ export default {
     this.getPermissionData()
     getAllShop({ page: 0, count: 100 }).then(res => {
       this.shopData = res.data.data
+      if (store.getters.shopId !== 1) {
+        this.shopData = this.shopData.filter((item) => {
+          console.log(item.id === store.getters.shopId)
+          return item.id === store.getters.shopId
+        })
+      }
     })
   },
   mounted () {
@@ -474,11 +481,32 @@ export default {
                   label: '低级权限'
                 }
               })
-            ])
+            ]),
+            h('Select', {
+              props: {
+                value: this.addShopId,
+                transfer: true
+              },
+              attrs: {
+                style: 'margin-top:10px'
+              },
+              on: {
+                'on-change': function (val) {
+                  that.addShopId = val
+                }
+              }
+            }, this.shopData.map((item) => {
+              return h('Option', {
+                props: {
+                  value: item.id,
+                  label: item.name
+                }
+              })
+            }))
           ])
         },
         onOk: () => {
-          addRole(this.addRoleName, this.addRoleType).then(res => {
+          addRole(this.addRoleName, this.addRoleType, this.addShopId).then(res => {
             this.$Message.info('添加角色成功')
             this.getRoleList()
           })
@@ -551,6 +579,11 @@ export default {
     getRoleList () {
       getAllRole().then(res => {
         this.roleData = res.data.data
+        if (store.getters.shopId !== 1) {
+          this.roleData.filter((item) => {
+            return item.shopid === store.getters.shopId
+          })
+        }
       })
     },
     onTableSearch (search) {
