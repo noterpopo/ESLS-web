@@ -116,7 +116,7 @@ export default {
           render: (h, params) => {
             let result = null
             $.ajax({
-              url: config.baseUrl.dev + '/router/' + params.row.routerId,
+              url: getUrl() + '/router/' + params.row.routerId,
               async: false,
               headers: {
                 ESLS: store.getters.token
@@ -693,6 +693,9 @@ export default {
     }
   },
   methods: {
+    getUrl () {
+      return config.baseUrl.dev
+    },
     uploadFile () {
       console.log('11')
       for (let i = 0; i < this.readyFiles.length; i++) {

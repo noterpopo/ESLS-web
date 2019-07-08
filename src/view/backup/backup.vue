@@ -14,7 +14,7 @@
                         :show-upload-list="false"
                         :headers="headers"
                         type="drag"
-                        :action="config.baseUrl.dev+'/excel/excelImport?update=1'">
+                        :action="getUrl()+'/excel/excelImport?update=1'">
                         <div style="padding: 20px 0;">
                             <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                             <p>点击上传或者拖拽文件上传</p>
@@ -58,6 +58,9 @@ export default {
     }
   },
   methods: {
+    getUrl () {
+      return config.baseUrl.dev
+    },
     download () {
       let xhr = new XMLHttpRequest()
       xhr.open('GET', config.baseUrl.dev + '/excel/excelExport')

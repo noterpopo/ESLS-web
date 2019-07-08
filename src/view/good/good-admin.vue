@@ -632,7 +632,7 @@ export default {
             if (params.row.goodId !== 0 && params.row.goodId !== null) {
               console.log('in')
               $.ajax({
-                url: config.baseUrl.dev + '/goods/' + params.row.goodId,
+                url: getUrl() + '/goods/' + params.row.goodId,
                 async: false,
                 headers: {
                   ESLS: store.getters.token
@@ -949,6 +949,9 @@ export default {
     }
   },
   methods: {
+    getUrl () {
+      return config.baseUrl.dev
+    },
     getWarGoods () {
       this.queryId = 'isReplenish'
       this.queryString = '1'

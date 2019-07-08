@@ -23,7 +23,7 @@
                     <p style="margin-top:10px;">预警门限:</p>
                     <Input v-model="repNum"></Input>
                     <Button style="margin-top:10px;" type="primary" @click="changeRepNum">修改门限</Button>
-                    <Button style="margin-top:10px;" type="primary" @click="clearZero">盘点清零</Button>
+                    <Button style="margin-top:10px;margin-left:10px;" type="primary" @click="clearZero">盘点清零</Button>
                 </TabPane>
             </Tabs>
         </Card>
