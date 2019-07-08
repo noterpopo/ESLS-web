@@ -4,8 +4,9 @@
           <Card :bordered="false" v-bind:style="{ width: windowWidth*0.99 + 'px' }">
             <div slot="title">
               <Row type="flex" justify="start" align="middle">
-                  <Col span="21"><p>商品信息</p></Col>
+                  <Col span="19"><p>商品信息</p></Col>
                   <Col span="1"><Button type="primary" @click="goodReload">刷新</Button></Col>
+                  <Col span="2"><Button type="primary" @click="getWarGoods">筛选预警商品</Button></Col>
                   <Col span="2"><Button v-if="hasGoodAccess" type="primary" @click="addGood">添加商品</Button></Col>
               </Row>
             </div>
@@ -233,6 +234,7 @@ import goodTagExpand from '@/components/table/good-tag-expand.vue'
 import goodExpand from '@/components/table/good-expand.vue'
 import { balance } from '@/api/eweigher'
 import { getSystemArgs } from '@/api/systemsetting'
+import config from '@/config'
 export default {
   components: {
     e_label,
@@ -630,7 +632,7 @@ export default {
             if (params.row.goodId !== 0 && params.row.goodId !== null) {
               console.log('in')
               $.ajax({
-                url: 'http://39.108.106.167:8086/goods/' + params.row.goodId,
+                url: config.baseUrl.dev + '/goods/' + params.row.goodId,
                 async: false,
                 headers: {
                   ESLS: store.getters.token
@@ -923,7 +925,7 @@ export default {
   },
   computed: {
     upLaodUrl: function () {
-      return 'http://39.108.106.167:8086/good/upload?mode=' + this.uploadMode
+      return config.baseUrl.dev + '/good/upload?mode=' + this.uploadMode
     },
     hasBaseTagAccess: () => {
       return store.getters.access.indexOf(3) !== -1
@@ -947,9 +949,14 @@ export default {
     }
   },
   methods: {
+    getWarGoods () {
+      this.queryId = 'isReplenish'
+      this.queryString = '1'
+      this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood, queryId: this.queryId, queryString: this.queryString })
+    },
     downloadGoodsData () {
       let xhr = new XMLHttpRequest()
-      xhr.open('GET', 'http://39.108.106.167:8086/common/database/exportCsvDataFile?tableName=goods')
+      xhr.open('GET', config.baseUrl.dev + '/common/database/exportCsvDataFile?tableName=goods')
       xhr.onload = function (a, b) {
         let blob = this.response
         let reader = new FileReader()
@@ -967,7 +974,7 @@ export default {
     },
     downloadGoodsDataComp () {
       let xhr = new XMLHttpRequest()
-      xhr.open('POST', 'http://39.108.106.167:8086/good/excelComputing')
+      xhr.open('POST', config.baseUrl.dev + '/good/excelComputing')
       xhr.onload = function (a, b) {
         let blob = this.response
         let reader = new FileReader()
@@ -985,7 +992,7 @@ export default {
     },
     downloadGoodsDataRep () {
       let xhr = new XMLHttpRequest()
-      xhr.open('POST', 'http://39.108.106.167:8086/good/excelWarning')
+      xhr.open('POST', config.baseUrl.dev + '/good/excelWarning')
       xhr.onload = function (a, b) {
         let blob = this.response
         let reader = new FileReader()
@@ -1025,6 +1032,8 @@ export default {
       this.canShowData = []
       this.showId = 0
       this.$refs.label_canvas.initData(null, 0, 0, this.item)
+      this.queryId = null
+      this.queryString = null
       this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood, queryId: this.queryId, queryString: this.queryString })
     },
     tagReload () {

@@ -22,7 +22,7 @@
                         :show-upload-list="false"
                         :headers="headers"
                         type="drag"
-                        :action="'http://39.108.106.167:8086/license/installLicense'">
+                        :action="getUrl()+'/license/installLicense'">
                         <div style="padding: 20px 0;">
                             <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                             <p>点击上传或者拖拽文件上传</p>
@@ -38,6 +38,7 @@
 import super_table from '@/components/table/supertable.vue'
 import store from '@/store'
 import { getLicense } from '@/api/license'
+import config from '@/config'
 export default {
   components: {
     super_table
@@ -72,6 +73,9 @@ export default {
     }
   },
   methods: {
+    getUrl () {
+      return config.baseUrl.dev
+    },
     onUploadSucess () {
       this.$Message.info('备份文件上传成功')
     },

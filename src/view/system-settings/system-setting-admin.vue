@@ -23,6 +23,7 @@
                     <p style="margin-top:10px;">预警门限:</p>
                     <Input v-model="repNum"></Input>
                     <Button style="margin-top:10px;" type="primary" @click="changeRepNum">修改门限</Button>
+                    <Button style="margin-top:10px;" type="primary" @click="clearZero">盘点清零</Button>
                 </TabPane>
             </Tabs>
         </Card>
@@ -31,6 +32,7 @@
 
 <script>
 import { setSystemArgs, getSystemArgs } from '@/api/systemsetting'
+import { computeTagToZero } from '@/api/tag'
 import store from '@/store'
 export default {
   data () {
@@ -118,6 +120,11 @@ export default {
     }
   },
   methods: {
+    clearZero () {
+      computeTagToZero().then(res => {
+        this.$Message.info('清零成功')
+      })
+    },
     onSubmit () {
       setSystemArgs(9, this.currentFileArgs.join(' ')).then(res => {
         this.$Message.info('修改成功')

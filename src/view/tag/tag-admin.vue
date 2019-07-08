@@ -905,7 +905,7 @@ export default {
       var value = search[key[0]]
       this.tagQueryId = key[0]
       this.tagQueryString = value
-      this.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage, queryId: this.tagQueryId, queryString: this.tagQueryString })
+      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage, queryId: this.tagQueryId, queryString: this.tagQueryString })
       this.searchState = 1
     },
     onRightGoodTableSearch (search) {

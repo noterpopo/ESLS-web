@@ -49,6 +49,7 @@ import { flushTag, scanTag, lightTag, testInkScreen, searchTag } from '@/api/tag
 import store from '@/store'
 import { getAllShop } from '@/api/shop'
 import goodTagExpand from '@/components/table/good-tag-expand.vue'
+import config from '@/config'
 export default {
   components: {
     routerExpand,
@@ -115,7 +116,7 @@ export default {
           render: (h, params) => {
             let result = null
             $.ajax({
-              url: 'http://39.108.106.167:8086/router/' + params.row.routerId,
+              url: config.baseUrl.dev + '/router/' + params.row.routerId,
               async: false,
               headers: {
                 ESLS: store.getters.token
@@ -676,7 +677,7 @@ export default {
   },
   computed: {
     upLaodUrl: function () {
-      return 'http://39.108.106.167:8086/router/upload'
+      return config.baseUrl.dev + '/router/upload'
     },
     hasBaseTagAccess: () => {
       return store.getters.access.indexOf(3) !== -1

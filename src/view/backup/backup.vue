@@ -14,7 +14,7 @@
                         :show-upload-list="false"
                         :headers="headers"
                         type="drag"
-                        :action="'http://39.108.106.167:8086/excel/excelImport?update=1'">
+                        :action="config.baseUrl.dev+'/excel/excelImport?update=1'">
                         <div style="padding: 20px 0;">
                             <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                             <p>点击上传或者拖拽文件上传</p>
@@ -29,6 +29,7 @@
 <script>
 import super_table from '@/components/table/supertable.vue'
 import store from '@/store'
+import config from '@/config'
 export default {
   components: {
     super_table
@@ -59,7 +60,7 @@ export default {
   methods: {
     download () {
       let xhr = new XMLHttpRequest()
-      xhr.open('GET', 'http://39.108.106.167:8086/excel/excelExport')
+      xhr.open('GET', config.baseUrl.dev + '/excel/excelExport')
       xhr.onload = function (a, b) {
         let blob = this.response
         let reader = new FileReader()

@@ -81,7 +81,7 @@ export default {
           }
         }
       ],
-      isShow: true,
+      isShow: false,
       inforCardData: [
         { title: '商品数量', icon: 'md-person-add', count: 803, color: '#2d8cf0' },
         { title: '价签数量', icon: 'md-locate', count: 232, color: '#19be6b' },
@@ -106,82 +106,24 @@ export default {
   created () {
     this.getLogTableData({ page: 0, count: this.countPerPage })
     axios.request({
-      url: '/goods',
-      methods: 'get'
-    }).then(res => { this.inforCardData[0].count = res.data.code })
-    axios.request({
-      url: '/tags',
+      url: '/common/index',
       methods: 'get'
     }).then(res => {
-      this.inforCardData[1].count = res.data.code
-      const data = res.data.data
-      let goodTagCount = 0
-      let noBIndTagCount = 0
-      let noWorkingTagCount = 0
-      let disableTagCount = 0
-      for (let i = 0; i < data.length; ++i) {
-        if (data[i].completeTime === null && data[i].execTime === null) {
-          noWorkingTagCount = noWorkingTagCount + 1
-        }
-        if (data[i].goodId === 0) {
-          noBIndTagCount = noBIndTagCount + 1
-        }
-        if (data[i].forbidState === 0) {
-          disableTagCount = disableTagCount + 1
-        }
-        if (data[i].completeTime !== null && data[i].execTime !== null && data[i].goodId !== 0 && data[i].forbidState !== 0) {
-          goodTagCount = goodTagCount + 1
-        }
-      }
-      this.isShow = false
-      this.$nextTick(() => {
-        this.tagPieData[0].value = goodTagCount
-        this.tagPieData[1].value = noBIndTagCount
-        this.tagPieData[2].value = noWorkingTagCount
-        this.tagPieData[3].value = disableTagCount
-        this.isShow = true
-      })
+      this.inforCardData[0].count = res.data.data.goodSize
+      this.inforCardData[1].count = res.data.data.tagSize
+      this.inforCardData[2].count = res.data.data.styleSize
+      this.inforCardData[3].count = res.data.data.shopSize
+      this.inforCardData[4].count = res.data.data.routerSize
+      this.inforCardData[5].count = res.data.data.userSize
+      this.tagPieData[0].value = res.data.data.normalTagSize
+      this.tagPieData[1].value = res.data.data.noBindTagSize
+      this.tagPieData[2].value = res.data.data.noIsWorkingTagSize
+      this.tagPieData[3].value = res.data.data.forbiddenTagSize
+      this.routerPieData[0].value = res.data.data.normalRouterSize
+      this.routerPieData[1].value = res.data.data.noIsWorkingRouterSize
+      this.routerPieData[2].value = res.data.data.forbiddenRouterSize
+      this.isShow = true
     })
-    axios.request({
-      url: '/styles',
-      methods: 'get'
-    }).then(res => { this.inforCardData[2].count = res.data.code })
-    axios.request({
-      url: '/shops',
-      methods: 'get'
-    }).then(res => { this.inforCardData[3].count = res.data.code })
-    axios.request({
-      url: '/routers',
-      methods: 'get'
-    }).then(res => {
-      this.inforCardData[4].count = res.data.code
-      const data = res.data.data
-      let goodRouterCount = 0
-      let disableRouterCount = 0
-      let noWorkingRouterCount = 0
-      for (let i = 0; i < data.length; ++i) {
-        if (data[i].isWorking === 0) {
-          noWorkingRouterCount++
-        }
-        if (data[i].state === 0) {
-          disableRouterCount++
-        }
-        if (data[i].state !== 0 && data[i].isWorking !== 0) {
-          goodRouterCount++
-        }
-      }
-      this.isShow = false
-      this.$nextTick(() => {
-        this.routerPieData[0].value = goodRouterCount
-        this.routerPieData[1].value = noWorkingRouterCount
-        this.routerPieData[2].value = disableRouterCount
-        this.isShow = true
-      })
-    })
-    axios.request({
-      url: '/users',
-      methods: 'get'
-    }).then(res => { this.inforCardData[5].count = res.data.code })
   },
   watch: {
     currentPage () {
