@@ -531,7 +531,7 @@ export default {
       let data = {}
       let params = {}
       let items = []
-      this.$set(params, 'cron', this.tagFlushCronExpr)
+      this.$set(params, 'cron', this.tagScanCronExpr)
       this.$set(params, 'query', 'id')
       this.$set(params, 'queryString', this.shopId)
       items.push(params)
