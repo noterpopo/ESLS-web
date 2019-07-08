@@ -97,10 +97,7 @@ export default {
       tableColumns: [
         {
           title: '描述',
-          key: 'description',
-          filter: {
-            type: 'Input'
-          }
+          key: 'description'
         },
         {
           title: '参数',

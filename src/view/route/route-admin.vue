@@ -87,10 +87,7 @@ export default {
         {
           title: '价签条码',
           key: 'barCode',
-          width: '120',
-          filter: {
-            type: 'Input'
-          }
+          width: '120'
         },
         {
           title: '价签类型',
@@ -542,7 +539,7 @@ export default {
                 nativeOn: {
                   click: (name) => {
                     scanRoute(data, 0).then(res => {
-                      this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+                      this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage, queryId: this.queryId, queryString: this.queryString })
                     })
                   }
                 }
@@ -614,13 +611,13 @@ export default {
             if (this.hasHighRouteAccess) {
               if (this.hasBaseRouteAccess) {
               } else {
-                listitem.splice(3, 5)
+                listitem.splice(4, 4)
               }
             } else {
-              listitem.splice(0, 3)
+              listitem.splice(0, 4)
               if (this.hasBaseRouteAccess) {
               } else {
-                listitem.splice(0, 5)
+                listitem.splice(0, 4)
               }
             }
             return h('div', [
@@ -649,18 +646,20 @@ export default {
       tagQueryString: '',
       routeQuery: 'barCode',
       routeQueryString: '',
-      readyFiles: []
+      readyFiles: [],
+      queryId: null,
+      queryString: null
     }
   },
   created () {
-    this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+    this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage, queryId: this.queryId, queryString: this.queryString })
     getAllShop({ page: 0, count: 100 }).then(res => {
       this.shopData = res.data.data
     })
   },
   watch: {
     currentPage () {
-      this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+      this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage, queryId: this.queryId, queryString: this.queryString })
     },
     currentTagPage () {
       this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag, queryId: 'routerId', queryString: currentSelectRow.id })
@@ -731,7 +730,7 @@ export default {
     onUpdateShop (row, shopId) {
       row.shopId = shopId
       updateRouter(row).then(res => {
-        this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+        this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage, queryId: this.queryId, queryString: this.queryString })
       })
     },
     onTableClick (currentRow) {
@@ -751,12 +750,15 @@ export default {
     onTableSearch (search) {
       var key = Object.keys(search)
       if (key.length === 0) {
-        this.getRouteTableData({ page: 0, count: this.countPerPage })
-        this.currentTagPage = 1
+        this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+        this.queryId = null
+        this.queryString = null
         return
       }
       var value = search[key[0]]
-      this.getRouteTableData({ queryId: key[0], queryString: value })
+      this.queryId = key[0]
+      this.queryString = value
+      this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage, queryId: this.queryId, queryString: this.queryString })
     },
     changeRoute (sorId, tarID) {
       changeRoute(this.tagQuery, sorId, this.routeQuery, tarID).then(r => {
@@ -769,11 +771,11 @@ export default {
     },
     onAllScan () {
       scanAll().then(res => {
-        this.getRouteTableData({ page: 0, count: this.countPerPage })
+        this.getRouteTableData({ page: 0, count: this.countPerPage, queryId: this.queryId, queryString: this.queryString })
       })
     },
     routeReload () {
-      this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage })
+      this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage, queryId: this.queryId, queryString: this.queryString })
     },
     handleSelectionChange (selection) {
 

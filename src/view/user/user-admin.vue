@@ -310,11 +310,13 @@ export default {
       },
       addRoleName: '',
       addRoleType: '',
-      addShopId: -1
+      addShopId: -1,
+      queryId: null,
+      queryString: null
     }
   },
   created () {
-    this.getUserTableData({ page: 0, count: this.countPerPage })
+    this.getUserTableData({ page: 0, count: this.countPerPage, query: this.queryId, queryString: this.queryString })
     this.getRoleList()
     this.getPermissionData()
     getAllShop({ page: 0, count: 100 }).then(res => {
@@ -338,7 +340,7 @@ export default {
   },
   watch: {
     currentPage () {
-      this.getUserTableData({ page: this.currentPage - 1, count: this.countPerPage })
+      this.getUserTableData({ page: this.currentPage - 1, count: this.countPerPage, query: this.queryId, queryString: this.queryString })
     }
   },
   computed: {
@@ -348,7 +350,7 @@ export default {
   },
   methods: {
     onSubmitSucess () {
-      this.getUserTableData({ page: 0, count: this.countPerPage })
+      this.getUserTableData({ page: 0, count: this.countPerPage, query: this.queryId, queryString: this.queryString })
       this.addUserModal = false
     },
     adminChangePsw (data) {
@@ -398,7 +400,7 @@ export default {
       delete this.currentSelectedRow.createTime
       delete this.currentSelectedRow.lastLoginTime
       updateUser(this.currentSelectedRow).then(res => {
-        this.getUserTableData({ page: 0, count: this.countPerPage })
+        this.getUserTableData({ page: 0, count: this.countPerPage, query: this.queryId, queryString: this.queryString })
         this.$Message.info('修改成功')
       })
     },
@@ -425,7 +427,7 @@ export default {
             updateRole(val, row.id)
           },
           onCancel: () => {
-            this.getUserTableData({ page: this.currentPage - 1, count: this.countPerPage })
+            this.getUserTableData({ page: this.currentPage - 1, count: this.countPerPage, query: this.queryId, queryString: this.queryString })
           }
         })
       } else {
@@ -514,9 +516,9 @@ export default {
       })
     },
     delRole () {
-      delRole(this.selectRole).then(
+      delRole(this.selectRole).then(res => {
         this.getRoleList()
-      )
+      })
     },
     getPermissionData () {
       getAllPermissions().then(res => {
@@ -589,12 +591,15 @@ export default {
     onTableSearch (search) {
       var key = Object.keys(search)
       if (key.length === 0) {
-        this.getUserTableData({ page: 0, count: this.countPerPage })
-        this.currentTagPage = 1
+        this.getUserTableData({ page: this.currentPage - 1, count: this.countPerPage })
+        this.queryId = null
+        this.queryString = null
         return
       }
       var value = search[key[0]]
-      this.getUserTableData({ query: key[0], queryString: value })
+      this.queryId = key[0]
+      this.queryString = value
+      this.getUserTableData({ page: this.currentPage - 1, count: this.countPerPage, query: this.queryId, queryString: this.queryString })
     },
     getUserTableData ({ page, count, query, queryString }) {
       var that = this
@@ -613,7 +618,7 @@ export default {
         onOk: function () {
           deleteUser(id)
             .then(() => {
-              that.getUserTableData({ page: that.currentPage - 1, count: that.countPerPage })
+              that.getUserTableData({ page: that.currentPage - 1, count: that.countPerPage, query: this.queryId, queryString: this.queryString })
             })
         }
       })

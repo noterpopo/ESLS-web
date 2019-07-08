@@ -232,11 +232,13 @@ export default {
         account: '默认账户',
         password: '默认密码',
         phone: '默认电话'
-      }
+      },
+      queryId: null,
+      queryString: null
     }
   },
   created () {
-    this.getShopTableData({ page: 0, count: this.countPerPage })
+    this.getShopTableData({ page: 0, count: this.countPerPage, query: this.queryId, queryString: this.queryString })
     this.getCenterShop()
   },
   mounted () {
@@ -250,7 +252,7 @@ export default {
   },
   watch: {
     currentPage () {
-      this.getShopTableData({ page: this.currentPage - 1, count: this.countPerPage })
+      this.getShopTableData({ page: this.currentPage - 1, count: this.countPerPage, query: this.queryId, queryString: this.queryString })
     }
   },
   computed: {
@@ -291,7 +293,7 @@ export default {
         onOk: function () {
           deleteShop(id)
             .then(() => {
-              that.getShopTableData({ page: that.currentPage - 1, count: that.countPerPage })
+              that.getShopTableData({ page: that.currentPage - 1, count: that.countPerPage, query: this.queryId, queryString: this.queryString })
             })
         }
       })
@@ -299,15 +301,18 @@ export default {
     onTableSearch (search) {
       var key = Object.keys(search)
       if (key.length === 0) {
-        this.getShopTableData({ page: 0, count: this.countPerPage })
-        this.currentTagPage = 1
+        this.getShopTableData({ page: this.currentPage - 1, count: this.countPerPage })
+        this.queryId = null
+        this.queryString = null
         return
       }
       var value = search[key[0]]
-      this.getShopTableData({ query: key[0], queryString: value })
+      this.queryId = key[0]
+      this.queryString = value
+      this.getShopTableData({ page: this.currentPage - 1, count: this.countPerPage, query: this.queryId, queryString: this.queryString })
     },
     shopReload () {
-      this.getShopTableData({ page: this.currentPage - 1, count: this.countPerPage })
+      this.getShopTableData({ page: this.currentPage - 1, count: this.countPerPage, query: this.queryId, queryString: this.queryString })
     },
     onTableClick (currentRow) {
       if (!this.hasShopAccess) {
@@ -318,7 +323,7 @@ export default {
     },
     editOK () {
       updateShop(this.currentShopData).then(res => {
-        this.getShopTableData({ page: this.currentPage - 1, count: this.countPerPage })
+        this.getShopTableData({ page: this.currentPage - 1, count: this.countPerPage, query: this.queryId, queryString: this.queryString })
       })
     },
     addShop () {
@@ -327,7 +332,7 @@ export default {
     addOK () {
       this.addShopData.fatherShop = this.centerShopData[0].number
       updateShop(this.addShopData).then(res => {
-        this.getShopTableData({ page: 0, count: this.countPerPage })
+        this.getShopTableData({ page: 0, count: this.countPerPage, query: this.queryId, queryString: this.queryString })
       })
     }
   }

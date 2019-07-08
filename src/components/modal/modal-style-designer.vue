@@ -28,7 +28,7 @@
                       </Row>
                     </p>
                   </div>
-                  <Button :style="{margin:'10px'}" type="primary" @click="addArea">添加自定义字段</Button>
+                  <Button :style="{margin:'10px'}" type="primary" @click="addArea">添加自定义文本</Button>
                   <Button  type="primary" @click="reset">恢复默认值</Button>
                   <Button v-if="mode!='new'" :style="{marginLeft:'10px',marginTop:'10px'}" type="primary" @click="saveAsNew">另存为新样式</Button>
               </Card>
@@ -619,7 +619,7 @@ export default {
         promotePrice: '价格',
         name: '名称',
         qrCode: '二维码',
-        0: '文本',
+        0: '自定义文本',
         price: '原价',
         imageUrl: '图片',
         barCode: '条形码',
@@ -629,7 +629,7 @@ export default {
         origin: '产地',
         shelfNumber: '货号',
         stock: '库存',
-        custom: '文本',
+        custom: '自定义文本',
         provider: '供应商',
         line: '线段',
         rfu01: '自定义字段1',

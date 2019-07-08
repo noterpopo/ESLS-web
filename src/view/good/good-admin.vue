@@ -499,10 +499,7 @@ export default {
         {
           title: '价签条码',
           key: 'barCode',
-          width: '120',
-          filter: {
-            type: 'Input'
-          }
+          width: '120'
         },
         {
           title: '价签类型',
@@ -892,7 +889,9 @@ export default {
         rfus02: ''
       },
       canShowData: [],
-      showId: 0
+      showId: 0,
+      queryId: null,
+      queryString: null
     }
   },
   mounted () {
@@ -905,6 +904,12 @@ export default {
     }
     getAllShop({ page: 0, count: 100 }).then(res => {
       this.shoplist = res.data.data
+      if (store.getters.shopId !== 1) {
+        this.shoplist = this.shoplist.filter((item) => {
+          console.log(item.id === store.getters.shopId)
+          return item.id === store.getters.shopId
+        })
+      }
     })
     getSystemArgs().then(res => {
       this.isOpenEBlance = res.data.data[0].computeType
@@ -913,7 +918,7 @@ export default {
   created () {
     this.currentPage = 1
     this.currentTagPage = 1
-    this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood })
+    this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood, queryId: this.queryId, queryString: this.queryString })
     this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag })
   },
   computed: {
@@ -935,7 +940,7 @@ export default {
   },
   watch: {
     currentPage () {
-      this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood })
+      this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood, queryId: this.queryId, queryString: this.queryString })
     },
     currentTagPage () {
       this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag })
@@ -1020,7 +1025,7 @@ export default {
       this.canShowData = []
       this.showId = 0
       this.$refs.label_canvas.initData(null, 0, 0, this.item)
-      this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood })
+      this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood, queryId: this.queryId, queryString: this.queryString })
     },
     tagReload () {
       this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag })
@@ -1043,7 +1048,7 @@ export default {
         const data = res.data.data
         if (data.length === 0 && that.currentPage > 1) {
           that.currentPage = that.currentPage - 1
-          that.getGoodTableData({ page: that.currentPage - 1, count: that.countPerPageGood })
+          that.getGoodTableData({ page: that.currentPage - 1, count: that.countPerPageGood, queryId: this.queryId, queryString: this.queryString })
         }
         that.goodData = data
         that.isTableLoading = false
@@ -1052,12 +1057,15 @@ export default {
     onTableSearch (search) {
       var key = Object.keys(search)
       if (key.length === 0) {
-        this.getGoodTableData({ page: 0, count: this.countPerPageGood })
-        this.currentTagPage = 1
+        this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood })
+        this.queryId = null
+        this.queryString = null
         return
       }
       var value = search[key]
-      if (search) { this.getGoodTableData({ queryId: key[0], queryString: value }) }
+      this.queryId = key[0]
+      this.queryString = value
+      if (search) { this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood, queryId: this.queryId, queryString: this.queryString }) }
     },
     onTableClick (currentRow) {
       if (!this.hasGoodAccess) {
@@ -1112,7 +1120,7 @@ export default {
         content: '确定删除该商品吗？',
         onOk: function () {
           deleteGood(dId).then(res => {
-            that.getGoodTableData({ page: that.currentPage - 1, count: that.countPerPageGood })
+            that.getGoodTableData({ page: that.currentPage - 1, count: that.countPerPageGood, queryId: this.queryId, queryString: this.queryString })
           })
         }
       })
@@ -1138,7 +1146,7 @@ export default {
       }
       this.currentSelectedRow.promotePrice = tp
       this.getLabelData(this.showId)
-      updateGood(that.currentSelectedRow).then(res => { that.editModal = false; that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood }) })
+      updateGood(that.currentSelectedRow).then(res => { that.editModal = false; that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood, queryId: this.queryId, queryString: this.queryString }) })
     },
     addGood () {
       this.addModal = true

@@ -243,15 +243,17 @@ export default {
           }
         }
       ],
-      currentStyleID: 0
+      currentStyleID: 0,
+      queryId: null,
+      queryString: null
     }
   },
   created () {
-    this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage })
+    this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage, queryId: this.queryId, queryString: this.queryString })
   },
   watch: {
     currentPage () {
-      this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage })
+      this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage, queryId: this.queryId, queryString: this.queryString })
     }
   },
   computed: {
@@ -413,17 +415,20 @@ export default {
       })
     },
     reload () {
-      this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage })
+      this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage, queryId: this.queryId, queryString: this.queryString })
     },
     onTableSearch (search) {
       var key = Object.keys(search)
       if (key.length === 0) {
-        this.getStyleTableData({ page: 0, count: this.countPerPage })
-        this.currentTagPage = 1
+        this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage })
+        this.queryId = null
+        this.queryString = null
         return
       }
       var value = search[key]
-      this.getStyleTableData({ queryId: key[0], queryString: value })
+      this.queryId = key[0]
+      this.queryString = value
+      this.getStyleTableData({ page: this.currentPage - 1, count: this.countPerPage, queryId: this.queryId, queryString: this.queryString })
     },
     onTableClick (currentRow) {
       this.getLabelData(currentRow.styleNumber, currentRow.isPromote, currentRow.width, currentRow.height)
@@ -436,7 +441,7 @@ export default {
         onOk: function () {
           deleteStyle(id)
             .then(() => {
-              that.getStyleTableData({ page: that.currentPage - 1, count: that.countPerPage })
+              that.getStyleTableData({ page: that.currentPage - 1, count: that.countPerPage, queryId: this.queryId, queryString: this.queryString })
             })
         }
       })

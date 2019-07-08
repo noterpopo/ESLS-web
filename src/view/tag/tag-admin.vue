@@ -408,7 +408,7 @@ export default {
                       title: '警告',
                       content: '确定移除该价签吗？',
                       onOk: function () {
-                        removeTag(data, 0).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage }) }).catch(e => { this.tagReload() })
+                        removeTag(data, 0).then(res => { that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage, queryId: this.tagQueryId, queryString: this.tagQueryString }) }).catch(e => { this.tagReload() })
                       }
                     })
                   }
@@ -784,7 +784,11 @@ export default {
       currentStylePage: 1,
       currentRightGoodPage: 1,
       filterStyleData: [],
-      isOpenEBlance: -1
+      isOpenEBlance: -1,
+      tagQueryId: null,
+      tagQueryString: null,
+      shopQueryId: null,
+      shopQueryString: null
     }
   },
   mounted () {
@@ -804,8 +808,8 @@ export default {
     this.currentRightGoodPage = 1
     this.currentGoodPage = 1
     this.currentStylePage = 1
-    this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage })
-    this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
+    this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage, queryId: this.shopQueryId, queryString: this.shopQueryString })
+    this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage, queryId: this.tagQueryId, queryString: this.tagQueryString })
     // this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8 })
     // getAllStyle({ page: 0, count: 1 }).then(res => {
     //   this.getStyleTableData({ page: this.currentStylePage - 1, count: res.data.code })
@@ -813,7 +817,7 @@ export default {
   },
   watch: {
     currentTagPage () {
-      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
+      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage, queryId: this.tagQueryId, queryString: this.tagQueryString })
     },
     currentGoodPage () {
       this.getGoodTableData({ page: this.currentGoodPage - 1, count: 8, queryId: 'shopNumber', queryString: this.shopNumber })
@@ -822,7 +826,7 @@ export default {
       this.getStyleTableData({ page: this.currentStylePage - 1, count: 13 })
     },
     currentRightGoodPage () {
-      this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage })
+      this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage, queryId: this.shopQueryId, queryString: this.shopQueryString })
     }
   },
   computed: {
@@ -866,7 +870,7 @@ export default {
         if (data.length === 0 && that.currentTagPage > 1) {
           console.log('hhh')
           that.currentTagPage = that.currentTagPage - 1
-          that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage })
+          that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage, queryId: this.tagQueryId, queryString: this.tagQueryString })
           return
         }
         that.tagDataCount = res.data.code
@@ -883,7 +887,7 @@ export default {
         content: '该操作会导致价签数据永远从数据库移除，确定删除该价签吗？（非专业人员和维护人员请勿执行此操作）',
         onOk: function () {
           deleteTag(dId).then(res => {
-            that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage })
+            that.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage, queryId: this.tagQueryId, queryString: this.tagQueryString })
           })
         }
       })
@@ -893,23 +897,29 @@ export default {
       var key = Object.keys(search)
       if (key.length === 0) {
         this.searchState = 0
-        this.getTagTableData({ page: 0, count: this.countPerPage })
-        this.currentTagPage = 1
+        this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
+        this.tagQueryId = null
+        this.tagQueryString = null
         return
       }
       var value = search[key[0]]
-      this.getTagTableData({ queryId: key[0], queryString: value })
+      this.tagQueryId = key[0]
+      this.tagQueryString = value
+      this.getTagTableData({ page: that.currentTagPage - 1, count: that.countPerPage, queryId: this.tagQueryId, queryString: this.tagQueryString })
       this.searchState = 1
     },
     onRightGoodTableSearch (search) {
       var key = Object.keys(search)
       if (key.length === 0) {
-        this.currentRightGoodPage = 1
-        this.getRightGoodTableData({ page: 0, count: this.countPerPage })
+        this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage })
+        this.shopQueryId = null
+        this.shopQueryString = null
         return
       }
       var value = search[key[0]]
-      this.getRightGoodTableData({ queryId: key[0], queryString: value })
+      this.shopQueryId = key[0]
+      this.shopQueryString = value
+      this.getRightGoodTableData({ page: this.currentRightGoodPage - 1, count: this.countPerPage, queryId: this.shopQueryId, queryString: this.shopQueryString })
     },
     onBind (id, shopNumber) {
       this.shopNumber = ''
@@ -1048,12 +1058,12 @@ export default {
       })
     },
     goodReload () {
-      this.getRightGoodTableData({ page: this.currentGoodPage - 1, count: this.countPerPage })
+      this.getRightGoodTableData({ page: this.currentGoodPage - 1, count: this.countPerPage, queryId: this.shopQueryId, queryString: this.shopQueryString })
     },
     tagReload () {
       console.log(this.searchState)
       if (this.searchState === 0) {
-        this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage })
+        this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPage, queryId: this.tagQueryId, queryString: this.tagQueryString })
       } else {
         this.onTableSearch(this.searchData)
       }
