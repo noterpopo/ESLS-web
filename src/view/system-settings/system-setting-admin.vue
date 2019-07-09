@@ -1,6 +1,9 @@
 <template>
     <div ref="container" style="display: flex;flex-direction: column;flex-wrap: wrap;justify-content: flex-start; align-items: center;align-content: center;">
         <Card :bordered="false" v-bind:style="{ width: windowWidth*0.6 + 'px' }">
+          <Select v-if="hasProAccess" :transfer="true" v-model="curShopId" @on-change="changeShop">
+            <Option v-for="item in shopData" :key="item.id" :value="item.id" :label="item.name"></Option>
+          </Select>
             <Tabs v-if="hasProAccess" :animated="false">
                 <TabPane label="设置导出文件字段">
                     <p>字段设置:</p>
@@ -34,9 +37,13 @@
 import { setSystemArgs, getSystemArgs } from '@/api/systemsetting'
 import { computeTagToZero } from '@/api/tag'
 import store from '@/store'
+import { getAllShop } from '@/api/shop'
 export default {
   data () {
     return {
+      curShopId: -1,
+      shopData: [],
+      currentArgs: {},
       headers: {
         ESLS: store.getters.token
       },
@@ -108,10 +115,20 @@ export default {
       that.windowWidth = that.$refs.container.offsetWidth
     }
     getSystemArgs().then(res => {
-      this.currentFileArgs = res.data.data[0].goodDataFormat.split(' ')
-      this.isSMS = res.data.data[0].isMessageVerifyOpen === 1
-      this.computeWay = res.data.data[0].computeType
-      this.repNum = res.data.data[0].replenishNumber
+      this.currentArgs = res.data.data
+      this.curShopId = this.currentArgs[0].shopid
+      this.currentFileArgs = this.currentArgs[0].goodDataFormat.split(' ')
+      this.isSMS = this.currentArgs[0].isMessageVerifyOpen === 1
+      this.computeWay = this.currentArgs[0].computeType
+      this.repNum = this.currentArgs[0].replenishNumber
+    })
+    getAllShop({ page: 0, count: 100 }).then(res => {
+      this.shopData = res.data.data
+      if (store.getters.shopId !== 1) {
+        this.shopData = this.shopData.filter((item) => {
+          return item.id === store.getters.shopId
+        })
+      }
     })
   },
   computed: {
@@ -120,6 +137,16 @@ export default {
     }
   },
   methods: {
+    changeShop (shopId) {
+      this.currentArgs.map((item) => {
+        if (item.shopid === shopId) {
+          this.currentFileArgs = item.goodDataFormat.split(' ')
+          this.isSMS = item.isMessageVerifyOpen === 1
+          this.computeWay = item.computeType
+          this.repNum = item.replenishNumber
+        }
+      })
+    },
     clearZero () {
       computeTagToZero().then(res => {
         this.$Message.info('清零成功')
