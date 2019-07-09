@@ -253,28 +253,44 @@ export default {
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
-                        lightTag(data, 1, 0)
+                        lightTag(data, 1, 0).then((res) => {
+                          this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag, queryId: 'routerId', queryString: currentRow.id })
+                        }).catch(e => {
+                          this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag, queryId: 'routerId', queryString: currentRow.id })
+                        })
                       }
                     }
                   }, '闪灯'),
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
-                        lightTag(data, 0, 0)
+                        lightTag(data, 0, 0).then((res) => {
+                          this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag, queryId: 'routerId', queryString: currentRow.id })
+                        }).catch(e => {
+                          this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag, queryId: 'routerId', queryString: currentRow.id })
+                        })
                       }
                     }
                   }, '熄灯'),
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
-                        flushTag(data, 0)
+                        flushTag(data, 0).then((res) => {
+                          this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag, queryId: 'routerId', queryString: currentRow.id })
+                        }).catch(e => {
+                          this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag, queryId: 'routerId', queryString: currentRow.id })
+                        })
                       }
                     }
                   }, '刷屏'),
                   h('DropdownItem', {
                     nativeOn: {
                       click: (name) => {
-                        scanTag(data, 0)
+                        scanTag(data, 0).then((res) => {
+                          this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag, queryId: 'routerId', queryString: currentRow.id })
+                        }).catch(e => {
+                          this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag, queryId: 'routerId', queryString: currentRow.id })
+                        })
                       }
                     }
                   }, '巡检')

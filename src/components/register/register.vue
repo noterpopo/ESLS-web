@@ -52,6 +52,7 @@
 import { registryUser } from '@/api/user'
 import { getAllShop } from '@/api/shop'
 import { getAllRole } from '@/api/role'
+import store from '@/store'
 export default {
   name: 'userRedister',
   data () {
@@ -139,6 +140,11 @@ export default {
     })
     getAllShop({ page: 0, count: 100 }).then(res => {
       this.shoplist = res.data.data
+      if (store.getters.shopId !== 1) {
+        this.shoplist = this.shoplist.filter((item) => {
+          return item.id === store.getters.shopId
+        })
+      }
     })
     getAllRole().then(res => {
       this.rolelist = res.data.data

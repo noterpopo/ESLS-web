@@ -323,7 +323,6 @@ export default {
       this.shopData = res.data.data
       if (store.getters.shopId !== 1) {
         this.shopData = this.shopData.filter((item) => {
-          console.log(item.id === store.getters.shopId)
           return item.id === store.getters.shopId
         })
       }
