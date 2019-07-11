@@ -7,13 +7,14 @@ export const getSystemArgs = () => {
   })
 }
 
-export const setSystemArgs = (mode, args) => {
+export const setSystemArgs = (mode, args, shopId) => {
   return axios.request({
     url: 'common/systemArgs',
     method: 'put',
     params: {
       mode: mode,
-      args: args
+      args: args,
+      shopId: shopId
     }
   })
 }

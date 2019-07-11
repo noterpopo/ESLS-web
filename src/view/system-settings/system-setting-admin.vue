@@ -28,6 +28,16 @@
                     <Button style="margin-top:10px;" type="primary" @click="changeRepNum">修改门限</Button>
                     <Button style="margin-top:10px;margin-left:10px;" type="primary" @click="clearZero">盘点清零</Button>
                 </TabPane>
+                <TabPane label=" 改价通知方式">
+                    <p>改价方式:</p>
+                    <Select :transfer="true" v-model="currentwarWay">
+                      <Option :value="0" >{{"邮箱"}}</Option>
+                      <Option :value="1" >{{"短信"}}</Option>
+                      <Option :value="2" >{{"邮箱和短信"}}</Option>
+                      <Option :value="3" >{{"不通知"}}</Option>
+                    </Select>
+                    <Button style="margin-top:10px;" type="primary" @click="onWarWaySubmit">确定</Button>
+                </TabPane>
             </Tabs>
         </Card>
     </div>
@@ -41,6 +51,7 @@ import { getAllShop } from '@/api/shop'
 export default {
   data () {
     return {
+      currentwarWay: -1,
       curShopId: -1,
       shopData: [],
       currentArgs: {},
@@ -121,6 +132,7 @@ export default {
       this.isSMS = this.currentArgs[0].isMessageVerifyOpen === 1
       this.computeWay = this.currentArgs[0].computeType
       this.repNum = this.currentArgs[0].replenishNumber
+      this.currentwarWay = this.currentArgs[0].notifyType
     })
     getAllShop({ page: 0, count: 100 }).then(res => {
       this.shopData = res.data.data
@@ -137,6 +149,11 @@ export default {
     }
   },
   methods: {
+    onWarWaySubmit () {
+      setSystemArgs(16, this.currentwarWay, this.curShopId).then(res => {
+        this.$Message.info('修改成功')
+      })
+    },
     changeShop (shopId) {
       this.currentArgs.map((item) => {
         if (item.shopid === shopId) {
@@ -144,6 +161,7 @@ export default {
           this.isSMS = item.isMessageVerifyOpen === 1
           this.computeWay = item.computeType
           this.repNum = item.replenishNumber
+          this.currentwarWay = item.notifyType
         }
       })
     },
@@ -153,31 +171,31 @@ export default {
       })
     },
     onSubmit () {
-      setSystemArgs(9, this.currentFileArgs.join(' ')).then(res => {
+      setSystemArgs(9, this.currentFileArgs.join(' '), this.curShopId).then(res => {
         this.$Message.info('修改成功')
       })
     },
     changeSMS (val) {
       if (val) {
-        setSystemArgs(13, 1).then(res => {
+        setSystemArgs(13, 1, this.curShopId).then(res => {
           this.$Message.info('修改成功')
         })
       } else {
-        setSystemArgs(13, 0).then(res => {
+        setSystemArgs(13, 0, this.curShopId).then(res => {
           this.$Message.info('修改成功')
         })
       }
     },
     changeEBlance () {
       if (this.computeWay != null) {
-        setSystemArgs(14, this.computeWay).then(res => {
+        setSystemArgs(14, this.computeWay, this.curShopId).then(res => {
           this.$Message.info('修改成功')
         })
       }
     },
     changeRepNum () {
       if (this.repNum != null) {
-        setSystemArgs(15, this.repNum).then(res => {
+        setSystemArgs(15, this.repNum, this.curShopId).then(res => {
           this.$Message.info('修改成功')
         })
       }
