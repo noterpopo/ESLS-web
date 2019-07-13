@@ -265,7 +265,7 @@ export default {
           width: '100',
           render: (h, params) => {
             let row = params.row
-            let isWorking = row.execTime === null && row.completeTime === null
+            let isWorking = row.execTime === '' && row.completeTime === ''
             let color = !isWorking ? 'primary' : 'error'
             let text = !isWorking ? '正常' : '超时'
             return h('Tag', {
