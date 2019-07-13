@@ -115,21 +115,7 @@ export default {
         },
         {
           title: '店铺',
-          render: (h, params) => {
-            let result = null
-            $.ajax({
-              url: getUrl() + '/router/' + params.row.routerId,
-              async: false,
-              headers: {
-                ESLS: store.getters.token
-              },
-              type: 'get',
-              success: (res) => {
-                result = res.data[0].name
-              }
-            })
-            return h('p', result)
-          }
+          key: 'shopNameAndShopNumber'
         },
         {
           title: '电量',
@@ -682,7 +668,7 @@ export default {
       this.getRouteTableData({ page: this.currentPage - 1, count: this.countPerPage, queryId: this.queryId, queryString: this.queryString })
     },
     currentTagPage () {
-      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag, queryId: 'routerId', queryString: currentSelectRow.id })
+      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag, queryId: 'routerId', queryString: this.currentSelectRow.id })
     }
   },
   mounted () {
