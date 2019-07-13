@@ -8,7 +8,7 @@
               </Row>
           </div>
           <super_table @onSelectionChange="handleSelectionChange" @onClick="onTableClick" :pageSize="countPerPage" :current.sync="currentPage" @onSearch="onTableSearch" :data="routeData" :columns="tableColumns" :isLoading="isTableLoading" :dataNum="routeDataCount"></super_table>
-          <Button v-if="hasProAccess" type="primary" @click="isUploadShow=true">上传路由器升级文件</Button>
+          <Button v-if="hasProAccess" type="primary" @click="onUploadClick">上传路由器升级文件</Button>
           <Modal v-model="isUploadShow" title="上传路由器升级文件" @on-ok="uploadFile">
             <div>
               <Upload
@@ -18,7 +18,8 @@
                   :before-upload="handleBeforeUpload"
                   :on-success="onUploadSucess"
                   :on-error="onUploadFail"
-                  :show-upload-list="false"
+                  :format="['bin']"
+                  :show-upload-list="true"
                   :headers="headers"
                   type="drag"
                   :action="upLaodUrl">
@@ -27,6 +28,7 @@
                       <p>点击上传或者拖拽文件上传</p>
                   </div>
               </Upload>
+              <p>{{'上传文件为：'+uploadFileName}}</p>
               </div>
             </Modal>
         </Card>
@@ -664,6 +666,7 @@ export default {
       routeQuery: 'barCode',
       routeQueryString: '',
       readyFiles: [],
+      uploadFileName: '',
       queryId: null,
       queryString: null
     }
@@ -709,6 +712,10 @@ export default {
     }
   },
   methods: {
+    onUploadClick () {
+      this.isUploadShow = true
+      this.uploadFileName = ''
+    },
     getUrl () {
       return config.baseUrl.dev
     },
@@ -720,7 +727,13 @@ export default {
       }
     },
     handleBeforeUpload (file) {
-      this.readyFiles.push(file)
+      this.readyFiles = []
+      if (file.name.indexOf('.bin') !== -1) {
+        this.readyFiles.push(file)
+        this.uploadFileName = file.name
+      } else {
+        this.$Message.error('上传文件格式错误')
+      }
       return false
     },
     onUploadSucess () {
