@@ -145,12 +145,14 @@ export default {
                 }
               }
             }, this.roleData.map((item) => {
-              return h('Option', {
-                props: {
-                  value: item.id,
-                  label: item.name
-                }
-              })
+              if (item.shopid === params.row.shopId) {
+                return h('Option', {
+                  props: {
+                    value: item.id,
+                    label: item.name
+                  }
+                })
+              }
             })
             )
           }
