@@ -1229,14 +1229,18 @@ export default {
       this.$Message.info('rbtn')
     },
     rowClass (row, index) {
-      let isReplenish = false
-      if (row.isReplenish != null && row.isReplenish === 1) {
-        isReplenish = true
-      }
-      if (isReplenish) {
-        return 'no-replenish-class'
-      } else {
+      if (!store.getters.isWar) {
         return ''
+      } else {
+        let isReplenish = false
+        if (row.isReplenish != null && row.isReplenish === 1) {
+          isReplenish = true
+        }
+        if (isReplenish) {
+          return 'no-replenish-class'
+        } else {
+          return ''
+        }
       }
     }
   }
