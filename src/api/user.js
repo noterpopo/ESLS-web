@@ -130,3 +130,17 @@ export const updateRole = (roleid, userid) => {
     }
   })
 }
+
+export const getUserMaxPer = (id) => {
+  return axios.request({
+    url: '/user/assgin/' + id,
+    method: 'get'
+  })
+}
+
+export const getCurUser = () => {
+  return axios.request({
+    url: '/user/currentUser',
+    method: 'get'
+  })
+}

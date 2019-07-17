@@ -61,9 +61,8 @@
     </div>
 </template>
 <script>
-import { getAllUser, switchUserUsable, updateUser, updateRole, deleteUser, adminChangePsw } from '@/api/user'
+import { getAllUser, switchUserUsable, updateUser, updateRole, deleteUser, adminChangePsw, getUserMaxPer, getCurUser } from '@/api/user'
 import { getAllRole, addPerm, delPerm, addRole, delRole } from '@/api/role'
-import { getAllPermissions } from '@/api/permission'
 import { getAllShop } from '@/api/shop'
 import store from '@/store'
 import super_table from '@/components/table/supertable.vue'
@@ -219,39 +218,39 @@ export default {
             ])
           }
         },
-        {
-          title: '短信验证',
-          render: (h, params) => {
-            const row = params.row
-            const needSMS = row.loginType !== 'username'
-            return h('i-switch', {
-              props: {
-                value: needSMS,
-                size: 'large',
-                disabled: !this.hasUserAccess
-              },
-              on: {
-                'on-change': (val) => {
-                  if (val) {
-                    params.row.loginType = 'phone'
-                  } else {
-                    params.row.loginType = 'username'
-                  }
-                  delete params.row.createTime
-                  delete params.row.lastLoginTime
-                  updateUser(params.row)
-                }
-              }
-            }, [
-              h('span', {
-                slot: 'open'
-              }, '开启'),
-              h('span', {
-                slot: 'close'
-              }, '关闭')
-            ])
-          }
-        },
+        // {
+        //   title: '短信验证',
+        //   render: (h, params) => {
+        //     const row = params.row
+        //     const needSMS = row.loginType !== 'username'
+        //     return h('i-switch', {
+        //       props: {
+        //         value: needSMS,
+        //         size: 'large',
+        //         disabled: !this.hasUserAccess
+        //       },
+        //       on: {
+        //         'on-change': (val) => {
+        //           if (val) {
+        //             params.row.loginType = 'phone'
+        //           } else {
+        //             params.row.loginType = 'username'
+        //           }
+        //           delete params.row.createTime
+        //           delete params.row.lastLoginTime
+        //           updateUser(params.row)
+        //         }
+        //       }
+        //     }, [
+        //       h('span', {
+        //         slot: 'open'
+        //       }, '开启'),
+        //       h('span', {
+        //         slot: 'close'
+        //       }, '关闭')
+        //     ])
+        //   }
+        // },
         {
           title: '操作',
           key: 'action',
@@ -522,14 +521,16 @@ export default {
       })
     },
     getPermissionData () {
-      getAllPermissions().then(res => {
-        const data = res.data.data
-        for (let i = 0; i < data.length; ++i) {
-          data[i].id = data[i].id + ''
-          Object.assign(data[i], { key: data[i].id })
-        }
-        console.log(data)
-        this.allPerData = data
+      getCurUser().then(r => {
+        getUserMaxPer(r.data.data.id).then(res => {
+          let data = res.data.data
+          for (let i = 0; i < data.length; ++i) {
+            data[i].id = data[i].id + ''
+            Object.assign(data[i], { key: data[i].id })
+          }
+          console.log(data)
+          this.allPerData = data
+        })
       })
     },
     onTransferChange (index, argu) {

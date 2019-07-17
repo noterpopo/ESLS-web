@@ -4,8 +4,7 @@
             <Card :bordered="false" v-bind:style="{ width: windowWidth*0.98 + 'px' }">
                 <div slot="title">
                 <Row type="flex" justify="center" align="middle">
-                    <Col span="20"><p>价签信息</p></Col>
-                    <Col span="2"><Button type="primary" @click="clearZero">商品清零</Button></Col>
+                    <Col span="22"><p>价签信息</p></Col>
                     <Col span="2"><Button type="primary" @click="tagReload">刷新</Button></Col>
                 </Row>
                 </div>
@@ -37,7 +36,7 @@
 import tagExpand from '@/components/table/tag-expand.vue'
 import super_table from '@/components/table/supertable.vue'
 import e_label from '@/components/e-label/e-lable.vue'
-import { updateTagComp, getAllTag, bindStyle, bindGood, deleteTag, lightTag, flushTag, removeTag, scanTag, statusTag, computeTagToZero } from '@/api/tag'
+import { updateTagComp, getAllTag, bindStyle, bindGood, deleteTag, lightTag, flushTag, removeTag, scanTag, statusTag } from '@/api/tag'
 import { getSystemArgs } from '@/api/systemsetting'
 import { getAllGood, getGood, getBindedTags, searchGood } from '@/api/good'
 import { getAllStyle, getStyle } from '@/api/style'
@@ -855,11 +854,6 @@ export default {
           return ''
         }
       }
-    },
-    clearZero () {
-      computeTagToZero().then(res => {
-        this.$Message.info('清零成功')
-      })
     },
     onClickAction (id) {
       this.isActionModalShow = true

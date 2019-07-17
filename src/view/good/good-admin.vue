@@ -102,7 +102,7 @@
                     <Col span="22"><p>{{currentSelectedRow.importTime==null?0:currentSelectedRow.importTime}}</p></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="2"><p >自定义字段1：</p></Col>
+                    <Col span="2"><p >铺货：</p></Col>
                     <Col span="10"><Input type="text" v-model="currentSelectedRow.rfu01" /></Col>
                     <Col span="2"><p style="position:relative;left:10px;">自定义字段2：</p></Col>
                     <Col span="10"><Input type="text" v-model="currentSelectedRow.rfu02" /></Col>
@@ -177,7 +177,7 @@
                     <Col span="10"><Input type="text" v-model="addGooddata.replenishNumber" /></Col>
                 </Row>
                 <Row type="flex" justify="center" align="middle" class="Row">
-                    <Col span="2"><p >自定义字段1：</p></Col>
+                    <Col span="2"><p >铺货：</p></Col>
                     <Col span="10"><Input type="text" v-model="addGooddata.rfu01" /></Col>
                     <Col span="2"><p style="position:relative;left:10px;">自定义字段2：</p></Col>
                     <Col span="10"><Input type="text" v-model="addGooddata.rfu02" /></Col>
@@ -632,7 +632,7 @@ export default {
             if (params.row.goodId !== 0 && params.row.goodId !== null) {
               console.log('in')
               $.ajax({
-                url: getUrl() + '/goods/' + params.row.goodId,
+                url: this.getUrl() + '/goods/' + params.row.goodId,
                 async: false,
                 headers: {
                   ESLS: store.getters.token
@@ -1237,7 +1237,7 @@ export default {
           isReplenish = true
         }
         if (isReplenish) {
-          return 'no-replenish-class'
+          return 'replenish-class'
         } else {
           return ''
         }

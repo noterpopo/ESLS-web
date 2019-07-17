@@ -214,7 +214,7 @@ export default {
         itemPrice: '999.99',
         itemOnSalePrice: '999.99',
         labelStyle: '5',
-        rfu01: '自定义字段1',
+        rfu01: '铺货',
         rfu02: '自定义字段2',
         rfus01: '自定义字段3',
         rfus02: '自定义字段4'
@@ -399,7 +399,7 @@ export default {
         },
         {
           id: 11,
-          name: '自定义字段1',
+          name: '铺货',
           x: 0,
           y: 0,
           width: 8,
@@ -632,7 +632,7 @@ export default {
         custom: '自定义文本',
         provider: '供应商',
         line: '线段',
-        rfu01: '自定义字段1',
+        rfu01: '铺货',
         rfu02: '自定义字段2',
         rfus01: '自定义字段3',
         rfus02: '自定义字段4'

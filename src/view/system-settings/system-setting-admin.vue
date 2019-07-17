@@ -105,7 +105,7 @@ export default {
         promoteTimeGap: '促销间隔',
         promotionReason: '促销原因',
         isPromote: '是否促销',
-        rfu01: '自定义字段1',
+        rfu01: '铺货',
         rfu02: '自定义字段2',
         rfus01: '自定义字段3',
         rfus02: '自定义字段4',

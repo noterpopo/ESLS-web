@@ -93,7 +93,7 @@ export default {
         itemPrice: '10.19',
         itemOnSalePrice: '444.44',
         labelStyle: '1',
-        rfu01: '自定义字段1',
+        rfu01: '铺货',
         rfu02: '自定义字段2',
         rfus01: '自定义字段3',
         rfus02: '自定义字段4'
@@ -300,7 +300,8 @@ export default {
         }
         // TODO
         getStyle(sN, 0).then(r => {
-          if (r.data.data === null) {
+          console.log(r.data)
+          if (r.data.data === null || r.data.data === '') {
             for (let i = 0; i < styleDisp1.length; ++i) {
               delete styleDisp1[i].id
             }
