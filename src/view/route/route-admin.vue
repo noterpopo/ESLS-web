@@ -754,6 +754,7 @@ export default {
     },
     onTableClick (currentRow) {
       this.currentSelectRow = currentRow
+      this.currentTagPage = 1
       this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag, queryId: 'routerId', queryString: currentRow.id })
     },
     getRouteTableData ({ page, count, queryId, queryString }) {
