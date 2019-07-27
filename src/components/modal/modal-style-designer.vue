@@ -46,7 +46,7 @@
                         <div :style="{textAlign:'left',position: 'absolute',top:'0px',width:item.width+'px',height:item.backup+'px',background : '#000',overflow:'hidden',border:'0px'}" v-else-if="item.columnType === '线段'&&item.width>item.height"></div>
                         <img v-else-if="item.columnType === '二维码'" id="qrCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
                         <img v-else-if="item.columnType === '条形码'" id="barCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
-                        <img v-else-if="item.columnType === '图片'" id="img" :style="{ width:item.width+'px', height:item.height+'px'}"/>
+                        <img v-else-if="item.columnType === '图片'" id="timg" :src="item.imageUrl" :width="item.width"  :height="item.height"/>
                     </vue-draggable-resizable>
                     <div slot="content">
                       <div v-if="item.columnType === '二维码'||item.columnType === '条形码'||item.columnType === '图片'" class="float-edit-img">
@@ -217,7 +217,8 @@ export default {
         rfu01: '铺货',
         rfu02: '自定义字段2',
         rfus01: '自定义字段3',
-        rfus02: '自定义字段4'
+        rfus02: '自定义字段4',
+        imageUrl: 'http://www.w3school.com.cn/i/eg_mouse.jpg'
       },
       decFontSizePrice: 0,
       decFontSizePromotePrice: 0,
@@ -590,6 +591,28 @@ export default {
           imageUrl: '',
           backup: null
 
+        },
+        {
+          id: 11,
+          name: '图片',
+          x: 0,
+          y: 0,
+          width: 10,
+          height: 10,
+          sourceColumn: 'imageUrl',
+          columnType: '图片',
+          backgroundColor: '1',
+          text: '6921489003907',
+          startText: '',
+          endText: '',
+          fontType: '',
+          fontFamily: '',
+          fontColor: '0',
+          fontSize: 14,
+          status: 0,
+          imageUrl: 'http://www.w3school.com.cn/i/eg_mouse.jpg',
+          backup: null
+
         }
       ],
       indeterminate: true,
@@ -654,7 +677,8 @@ export default {
         'rfu01',
         'rfu02',
         'rfus01',
-        'rfus02'
+        'rfus02',
+        'imageUrl'
       ]
     }
   },

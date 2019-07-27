@@ -113,6 +113,22 @@
                     <Col span="2"><p style="position:relative;left:10px;">自定义字段4：</p></Col>
                     <Col span="10"><Input type="text" v-model="currentSelectedRow.rfus02" /></Col>
                 </Row>
+                <Row type="flex" justify="center" align="middle" class="Row">
+                    <Col span="2"><p >商品图片：</p></Col>
+                    <Col span="22">
+                      <div>
+                          <Upload
+                              ref="imgUpload"
+                              :on-success="onUploadImgSuccess"
+                              :before-upload="handleUpload"
+                              :headers="headers"
+                              :action="upLaodImgUrl('id',currentSelectedRow.id)">
+                              <Button icon="ios-cloud-upload-outline">选择商品图片</Button>
+                          </Upload>
+                          <div v-if="img !== null">选择图片: {{ img.name }} <Button type="text" @click="upload">{{'点击上传' }}</Button></div>
+                      </div>
+                    </Col>
+                </Row>
               </div>
             </Modal>
             <Modal :width="1040" v-model="addModal" title="添加商品" :loading="addOkLoading" @on-ok="asyncAddOK">
@@ -245,6 +261,7 @@ export default {
   },
   data () {
     return {
+      img: null,
       isOpenEBlance: -1,
       shoplist: [],
       headers: {
@@ -949,6 +966,20 @@ export default {
     }
   },
   methods: {
+    onUploadImgSuccess () {
+      this.$refs.imgUpload.clearFiles()
+    },
+    handleUpload (file) {
+      this.img = file
+      return false
+    },
+    upload () {
+      this.$refs.imgUpload.post(this.img)
+      this.img = null
+    },
+    upLaodImgUrl (query, queryString) {
+      return config.baseUrl.dev + '/good/photo?query=' + query + '&queryString=' + queryString
+    },
     getUrl () {
       return config.baseUrl.dev
     },
@@ -1140,6 +1171,7 @@ export default {
     asyncEditOK () {
       var that = this
       let t = this.currentSelectedRow.price.toString()
+      delete this.currentSelectedRow.imageUrl
       if (t.indexOf('.') === -1) {
         t = t + '.00'
       } else {

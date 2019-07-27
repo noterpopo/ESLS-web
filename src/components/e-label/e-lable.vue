@@ -14,7 +14,7 @@
                 <div v-else-if="item.columnType === '线段'"  :style="{height:item.backup+'px',background : '#000',margin:'0px auto',padding:'0px',overflow:'hidden',border:'0px'}"></div>
                 <img v-else-if="item.columnType === '二维码'" id="tqrCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
                 <img v-else-if="item.columnType === '条形码'" id="tbarCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
-                <img v-else-if="item.columnType === '图片'" id="timg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
+                <img v-else-if="item.columnType === '图片'" id="timg" :src="item.imageUrl" :width="item.width"  :height="item.height"/>
               </div>
             </div>
           </div>
@@ -102,7 +102,7 @@ export default {
         itemisOnSale: false,
         itemPrice: '999.99',
         itemOnSalePrice: '999.99',
-        labelStyle: '5'
+        imageUrl: ''
       }
     }
   },
@@ -186,7 +186,7 @@ export default {
           } else if (data[i].sourceColumn === 'stock') {
             data[i].text = item['itemStock']
           } else if (data[i].sourceColumn === 'imageUrl') {
-            data[i].text = item['itemImgUrl']
+            data[i].imageUrl = item['itemImgUrl']
           } else if (data[i].sourceColumn === 'provider') {
             data[i].text = item['itemProvider']
           } else if (data[i].sourceColumn === 'rfu01') {
