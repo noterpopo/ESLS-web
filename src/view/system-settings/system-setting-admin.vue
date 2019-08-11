@@ -12,7 +12,7 @@
                     </Select>
                     <Button style="margin-top:10px;" type="primary" @click="onSubmit">确定</Button>
                 </TabPane>
-                <TabPane label="短信验证设置">
+                <TabPane v-if="isMainShop" label="短信验证设置">
                     <p>是否开启短信验证:</p>
                     <i-switch style="margin-top:10px;" v-model="isSMS" @on-change="changeSMS"/>
                 </TabPane>
@@ -24,7 +24,7 @@
                     </Select>
                     <Button style="margin-top:10px;" type="primary" @click="changeEBlance">确定</Button>
                     <p style="margin-top:10px;">预警门限:</p>
-                    <Input v-model="repNum"></Input>
+                    <Input v-model="repNum" />
                     <Button style="margin-top:10px;" type="primary" @click="changeRepNum">修改门限</Button>
                     <Button style="margin-top:10px;margin-left:10px;" type="primary" @click="clearZero">盘点清零</Button>
                 </TabPane>
@@ -37,6 +37,17 @@
                       <Option :value="3" >{{"不通知"}}</Option>
                     </Select>
                     <Button style="margin-top:10px;" type="primary" @click="onWarWaySubmit">确定</Button>
+                </TabPane>
+                <TabPane v-if="isMainShop" label="短信参数设置">
+                    <p>短信AppId:</p>
+                    <Input v-model="smsAppId"/>
+                    <p>短信AppKey:</p>
+                    <Input v-model="smsAppKey"/>
+                    <p>短信通知模版Id:</p>
+                    <Input v-model="smsTemp1"/>
+                    <p>短信验证模版Id:</p>
+                    <Input v-model="smsTemp2"/>
+                    <Button style="margin-top:10px;" type="primary" @click="onChangeSMSArgs">确定</Button>
                 </TabPane>
             </Tabs>
         </Card>
@@ -62,6 +73,10 @@ export default {
       computeWay: 0,
       windowWidth: 0,
       repNum: 0,
+      smsAppId: '',
+      smsAppKey: '',
+      smsTemp1: '',
+      smsTemp2: '',
       currentFileArgs: [],
       fileArgs: [
         'name',
@@ -133,6 +148,10 @@ export default {
       this.computeWay = this.currentArgs[0].computeType
       this.repNum = this.currentArgs[0].replenishNumber
       this.currentwarWay = this.currentArgs[0].notifyType
+      this.smsAppKey = this.currentArgs[0].msgAppKey
+      this.smsAppId = this.currentArgs[0].msgAppId
+      this.smsTemp1 = this.currentArgs[0].notifyTemplateId
+      this.smsTemp2 = this.currentArgs[0].messageTemplateId
     })
     getAllShop({ page: 0, count: 100 }).then(res => {
       this.shopData = res.data.data
@@ -146,23 +165,38 @@ export default {
   computed: {
     hasProAccess: () => {
       return store.getters.access.indexOf(16) !== -1
+    },
+    isMainShop: () => {
+      return store.getters.shopId === 1
     }
   },
   methods: {
+    onChangeSMSArgs () {
+      setSystemArgs(7, this.smsAppId + ' ' + this.smsAppKey + ' ' + this.smsTemp1 + ' ' + this.smsTemp2, this.curShopId).then(res => {
+        this.$Message.info('修改成功')
+      })
+    },
     onWarWaySubmit () {
       setSystemArgs(16, this.currentwarWay, this.curShopId).then(res => {
         this.$Message.info('修改成功')
       })
     },
     changeShop (shopId) {
-      this.currentArgs.map((item) => {
-        if (item.shopid === shopId) {
-          this.currentFileArgs = item.goodDataFormat.split(' ')
-          this.isSMS = item.isMessageVerifyOpen === 1
-          this.computeWay = item.computeType
-          this.repNum = item.replenishNumber
-          this.currentwarWay = item.notifyType
-        }
+      getSystemArgs().then(res => {
+        this.currentArgs = res.data.data
+        this.currentArgs.map((item) => {
+          if (item.shopid === shopId) {
+            this.currentFileArgs = item.goodDataFormat.split(' ')
+            this.isSMS = item.isMessageVerifyOpen === 1
+            this.computeWay = item.computeType
+            this.repNum = item.replenishNumber
+            this.currentwarWay = item.notifyType
+            this.smsAppKey = item.msgAppKey
+            this.smsAppId = item.msgAppId
+            this.smsTemp1 = item.notifyTemplateId
+            this.smsTemp2 = item.messageTemplateId
+          }
+        })
       })
     },
     clearZero () {
