@@ -9,7 +9,7 @@
                 <span v-if="item.columnType === '字符串'" :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', verticalAlign:'top', fontSize :item.fontSize+'px', fontWeight:item.fontType, lineHeight:item.height+'px', fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.startText + item.text + item.endText}}</span>
                 <span v-else-if="item.columnType === '数字'" :style="{lineHeight:item.height+'px'}">
                   <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', fontSize :item.fontSize+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{item.text.split('.')[0] +'.'}}</span>
-                  <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', verticalAlign:'top',fontSize :(item.sourceColumn==='promotePrice'?decFontSizePromotePrice:decFontSizePrice)+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{ item.text.split('.')[1]}}</span>
+                  <span :class="item.backup.split('/')[0]==='1' ? 'line' : '' " :style="{ color:item.fontColor==='0'?'black':item.fontColor==='1'?'white':'red', verticalAlign:'top',fontSize :(item.sourceColumn==='curPrice'?decFontSizePromotePrice:decFontSizePrice)+'px', fontWeight:item.fontType,  fontFamily:item.fontFamily, fontStyle:item.fontType}">{{ item.text.split('.')[1]}}</span>
                 </span>
                 <div v-else-if="item.columnType === '线段'"  :style="{height:item.backup+'px',background : '#000',margin:'0px auto',padding:'0px',overflow:'hidden',border:'0px'}"></div>
                 <img v-else-if="item.columnType === '二维码'" id="tqrCodeImg" :style="{ width:item.width+'px', height:item.height+'px'}"/>
@@ -167,9 +167,9 @@ export default {
             data[i].text = item['itemBarCode']
           } else if (data[i].sourceColumn === 'qrCode') {
             data[i].text = item['itemQRCode']
-          } else if (data[i].sourceColumn === 'price') {
+          } else if (data[i].sourceColumn === 'oriPrice') {
             data[i].text = item['itemPrice']
-          } else if (data[i].sourceColumn === 'promotePrice') {
+          } else if (data[i].sourceColumn === 'curPrice') {
             data[i].text = item['itemOnSalePrice']
           } else if (data[i].sourceColumn === 'name') {
             data[i].text = item['itemName']
@@ -203,9 +203,9 @@ export default {
           this.item.itemBarCode = data[i].text
         } else if (data[i].sourceColumn === 'qrCode') {
           this.item.itemQRCode = data[i].text
-        } else if (data[i].sourceColumn === 'price') {
+        } else if (data[i].sourceColumn === 'oriPrice') {
           this.decFontSizePrice = parseInt(data[i].backup.split('/')[1])
-        } else if (data[i].sourceColumn === 'promotePrice') {
+        } else if (data[i].sourceColumn === 'curPrice') {
           this.decFontSizePromotePrice = parseInt(data[i].backup.split('/')[1])
         }
       }

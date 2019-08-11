@@ -110,11 +110,11 @@
                           <span :style="{fontSize:'16px', marginRight: '4px'}">字号:</span>
                           <InputNumber :min="0"  size="small" :style="{width:'76px',marginRight: '4px'}" v-model="item.fontSize"/>
                         </div>
-                        <div v-if="item.sourceColumn==='price'">
+                        <div v-if="item.sourceColumn==='oriPrice'">
                           <span :style="{fontSize:'16px', marginRight: '4px'}">小数字号:</span>
                           <InputNumber :min="0" size="small" :style="{width:'76px',marginRight: '4px'}" v-model="decFontSizePrice"/>
                         </div>
-                        <div v-if="item.sourceColumn==='promotePrice'">
+                        <div v-if="item.sourceColumn==='curPrice'">
                           <span :style="{fontSize:'16px', marginRight: '4px'}">小数字号:</span>
                           <InputNumber :min="0" size="small" :style="{width:'76px',marginRight: '4px'}" v-model="decFontSizePromotePrice"/>
                         </div>
@@ -276,7 +276,7 @@ export default {
           y: 0,
           width: 8,
           height: 8,
-          sourceColumn: 'price',
+          sourceColumn: 'oriPrice',
           columnType: '数字',
           backgroundColor: '1',
           text: '999.99',
@@ -297,7 +297,7 @@ export default {
           y: 0,
           width: 8,
           height: 8,
-          sourceColumn: 'promotePrice',
+          sourceColumn: 'curPrice',
           columnType: '数字',
           backgroundColor: '1',
           text: '111.23',
@@ -639,11 +639,11 @@ export default {
         backup: null
       },
       translate: {
-        promotePrice: '价格',
+        curPrice: '现价',
         name: '名称',
         qrCode: '二维码',
         0: '自定义文本',
-        price: '原价',
+        oriPrice: '原价',
         imageUrl: '图片',
         barCode: '条形码',
         unit: '单位',
@@ -663,8 +663,8 @@ export default {
       sortRule: [
         'name',
         'line',
-        'price',
-        'promotePrice',
+        'oriPrice',
+        'curPrice',
         'shelfNumber',
         'stock',
         'origin',
@@ -771,9 +771,9 @@ export default {
                 that.item.itemBarCode = data[i].text
               } else if (data[i].sourceColumn === 'qrCode') {
                 that.item.itemQRCode = data[i].text
-              } else if (data[i].sourceColumn === 'price') {
+              } else if (data[i].sourceColumn === 'oriPrice') {
                 this.decFontSizePrice = parseInt(data[i].backup.split('/')[1])
-              } else if (data[i].sourceColumn === 'promotePrice') {
+              } else if (data[i].sourceColumn === 'curPrice') {
                 this.decFontSizePromotePrice = parseInt(data[i].backup.split('/')[1])
               }
             }
@@ -819,11 +819,11 @@ export default {
         } else {
           this.$set(this.currentDispmsData[i], 'regionId', 0)
         }
-        if (this.currentDispmsData[i].sourceColumn === 'promotePrice') {
+        if (this.currentDispmsData[i].sourceColumn === 'curPrice') {
           let backUp = this.currentDispmsData[i].backup.split('/')
           backUp[1] = this.decFontSizePromotePrice
           this.currentDispmsData[i].backup = backUp[0] + '/' + backUp[1] + '/' + backUp[2]
-        } else if (this.currentDispmsData[i].sourceColumn === 'price') {
+        } else if (this.currentDispmsData[i].sourceColumn === 'oriPrice') {
           let backUp = this.currentDispmsData[i].backup.split('/')
           backUp[1] = this.decFontSizePrice
           this.currentDispmsData[i].backup = backUp[0] + '/' + backUp[1] + '/' + backUp[2]

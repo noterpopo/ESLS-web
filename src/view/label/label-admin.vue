@@ -366,9 +366,9 @@ export default {
           for (var i = 0; i < len; ++i) {
             if (dispData[i].sourceColumn === 'name') {
               that.item.itemName = dispData[i].text
-            } else if (dispData[i].sourceColumn === 'price') {
+            } else if (dispData[i].sourceColumn === 'oriPrice') {
               that.item.itemPrice = dispData[i].text
-            } else if (dispData[i].sourceColumn === 'promotePrice') {
+            } else if (dispData[i].sourceColumn === 'curPrice') {
               that.item.itemOnSalePrice = dispData[i].text
             } else if (dispData[i].sourceColumn === 'spec') {
               that.item.itemNorm = dispData[i].text
