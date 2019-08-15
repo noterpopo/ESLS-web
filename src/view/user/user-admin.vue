@@ -453,39 +453,6 @@ export default {
             }),
             h('Select', {
               props: {
-                value: this.addRoleType,
-                transfer: true
-              },
-              attrs: {
-                style: 'margin-top:10px'
-              },
-              on: {
-                'on-change': function (val) {
-                  that.addRoleType = val
-                }
-              }
-            }, [
-              h('Option', {
-                props: {
-                  value: '最高权限',
-                  label: '最高权限'
-                }
-              }),
-              h('Option', {
-                props: {
-                  value: '中级权限',
-                  label: '中级权限'
-                }
-              }),
-              h('Option', {
-                props: {
-                  value: '低级权限',
-                  label: '低级权限'
-                }
-              })
-            ]),
-            h('Select', {
-              props: {
                 value: this.addShopId,
                 transfer: true
               },
@@ -508,7 +475,7 @@ export default {
           ])
         },
         onOk: () => {
-          addRole(this.addRoleName, this.addRoleType, this.addShopId).then(res => {
+          addRole(this.addRoleName, '中级权限', this.addShopId).then(res => {
             this.$Message.info('添加角色成功')
             this.getRoleList()
           })
