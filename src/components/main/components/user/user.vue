@@ -4,7 +4,7 @@
       <span style="vertical-align:middle;display:inline-block;">{{userName}}</span>
       <Icon :size="18" type="md-arrow-dropdown"></Icon>
       <DropdownMenu slot="list">
-        <DropdownItem v-if="hasChangePswAccess" name="changePsw">修改密码</DropdownItem>
+        <DropdownItem name="changePsw">修改密码</DropdownItem>
         <DropdownItem name="logout">退出登录</DropdownItem>
       </DropdownMenu>
     </Dropdown>
