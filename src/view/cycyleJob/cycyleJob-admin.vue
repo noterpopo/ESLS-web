@@ -118,6 +118,39 @@ export default {
           }
         },
         {
+          title: '状态',
+          key: 'status',
+          render: (h, params) => {
+            const row = params.row
+            const isUsable = row.status === 1
+            return h('i-switch', {
+              props: {
+                value: isUsable,
+                size: 'large',
+                disabled: !this.hasCycleJobAccess
+              },
+              on: {
+                'on-change': (val) => {
+                  if (val) {
+                    params.row.state = 1
+                  } else {
+                    params.row.state = 0
+                  }
+                  updateCycleJob(params.row).then(res => {
+                  })
+                }
+              }
+            }, [
+              h('span', {
+                slot: 'open'
+              }, '启用'),
+              h('span', {
+                slot: 'close'
+              }, '禁用')
+            ])
+          }
+        },
+        {
           title: '操作',
           key: 'action',
           align: 'center',

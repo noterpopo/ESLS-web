@@ -60,7 +60,9 @@ export default {
     },
     getVercode () {
       let data = { phoneNumber: this.phone, smsType: 'AUTH' }
-      getVerCode(data)
+      getVerCode(data).then(res => {
+        this.$Message.info('获取验证码成功')
+      })
     },
     toPswLogin () {
       this.$emit('toPswLogin')

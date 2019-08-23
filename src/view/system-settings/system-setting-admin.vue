@@ -39,15 +39,24 @@
                     <Button style="margin-top:10px;" type="primary" @click="onWarWaySubmit">确定</Button>
                 </TabPane>
                 <TabPane v-if="isMainShop" label="短信参数设置">
-                    <p>短信AppId:</p>
+                    <p>短信AccessKey:</p>
                     <Input v-model="smsAppId"/>
-                    <p>短信AppKey:</p>
+                    <p>短信AccessSecret:</p>
                     <Input v-model="smsAppKey"/>
+                    <p>短信签名:</p>
+                    <Input v-model="messageSign"/>
                     <p>短信通知模版Id:</p>
                     <Input v-model="smsTemp1"/>
                     <p>短信验证模版Id:</p>
                     <Input v-model="smsTemp2"/>
                     <Button style="margin-top:10px;" type="primary" @click="onChangeSMSArgs">确定</Button>
+                </TabPane>
+                <TabPane v-if="isMainShop" label="通知邮箱设置">
+                    <p>邮箱账号:</p>
+                    <Input v-model="notifyMailAccount"/>
+                    <p>邮箱密码:</p>
+                    <Input v-model="notifyMailPassword"/>
+                    <Button style="margin-top:10px;" type="primary" @click="onChangeEmailArgs">确定</Button>
                 </TabPane>
             </Tabs>
         </Card>
@@ -77,6 +86,9 @@ export default {
       smsAppKey: '',
       smsTemp1: '',
       smsTemp2: '',
+      messageSign: '',
+      notifyMailAccount: '',
+      notifyMailPassword: '',
       currentFileArgs: [],
       fileArgs: [
         'name',
@@ -152,6 +164,9 @@ export default {
       this.smsAppId = this.currentArgs[0].msgAppId
       this.smsTemp1 = this.currentArgs[0].notifyTemplateId
       this.smsTemp2 = this.currentArgs[0].messageTemplateId
+      this.messageSign = this.currentArgs[0].messageSign
+      this.notifyMailAccount = this.currentArgs[0].notifyMailAccount
+      this.notifyMailPassword = this.currentArgs[0].notifyMailPassword
     })
     getAllShop({ page: 0, count: 100 }).then(res => {
       this.shopData = res.data.data
@@ -171,6 +186,11 @@ export default {
     }
   },
   methods: {
+    onChangeEmailArgs () {
+      setSystemArgs(17, this.notifyMailAccount + ' ' + this.notifyMailPassword, this.curShopId).then(res => {
+        this.$Message.info('修改成功')
+      })
+    },
     onChangeSMSArgs () {
       setSystemArgs(7, this.smsAppId + ' ' + this.smsAppKey + ' ' + this.smsTemp1 + ' ' + this.smsTemp2, this.curShopId).then(res => {
         this.$Message.info('修改成功')
@@ -195,6 +215,9 @@ export default {
             this.smsAppId = item.msgAppId
             this.smsTemp1 = item.notifyTemplateId
             this.smsTemp2 = item.messageTemplateId
+            this.messageSign = item.messageSign
+            this.notifyMailAccount = item.notifyMailAccount
+            this.notifyMailPassword = item.notifyMailPassword
           }
         })
       })
