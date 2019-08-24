@@ -6,3 +6,10 @@ export const getLicense = () => {
     method: 'get'
   })
 }
+
+export const getServerInfos = (osName) => {
+  return axios.request({
+    url: 'license/getServerInfos?osName=' + osName,
+    method: 'get'
+  })
+}

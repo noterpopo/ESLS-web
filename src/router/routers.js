@@ -28,6 +28,15 @@ export default [
     component: () => import('@/view/login/login.vue')
   },
   {
+    path: '/initlicense',
+    name: 'initlicense',
+    meta: {
+      title: '注册证书',
+      hideInMenu: true
+    },
+    component: () => import('@/view/license/initLicense.vue')
+  },
+  {
     path: '/',
     name: '_home',
     redirect: '/home',
