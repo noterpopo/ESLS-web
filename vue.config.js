@@ -19,6 +19,9 @@ const BASE_URL = process.env.NODE_ENV === 'production'
   : '/'
 
 module.exports = {
+  devServer: {
+    disableHostCheck: true
+  },
   // 原本在webpack.config.js中的配置写到下面
   configureWebpack: {
     devtool: 'source-map',
