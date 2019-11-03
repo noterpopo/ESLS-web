@@ -426,22 +426,6 @@ export default {
               h('DropdownItem', {
                 nativeOn: {
                   click: (name) => {
-                    this.$Message.info('发送电子秤置零命令')
-                    balance(1, data).then(res => this.tagReload())
-                  }
-                }
-              }, '电子秤置零'),
-              h('DropdownItem', {
-                nativeOn: {
-                  click: (name) => {
-                    this.$Message.info('发送电子秤去皮命令')
-                    balance(2, data).then(res => this.tagReload())
-                  }
-                }
-              }, '电子秤去皮'),
-              h('DropdownItem', {
-                nativeOn: {
-                  click: (name) => {
                     this.$Message.info('发送获取电子秤电量命令')
                     balance(3, data).then(res => this.tagReload())
                   }
