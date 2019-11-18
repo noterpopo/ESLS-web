@@ -122,7 +122,8 @@ export default {
           key: 'status',
           render: (h, params) => {
             const row = params.row
-            const isUsable = row.status === 1
+            const isUsable = row.state === 1
+            console.log(isUsable)
             return h('i-switch', {
               props: {
                 value: isUsable,
