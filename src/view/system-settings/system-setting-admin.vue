@@ -29,7 +29,7 @@
                     <Button style="margin-top:10px;margin-left:10px;" type="primary" @click="clearZero">盘点清零</Button>
                 </TabPane>
                 <TabPane label=" 改价通知方式">
-                    <p>改价方式:</p>
+                    <p>改价通知方式:</p>
                     <Select :transfer="true" v-model="currentwarWay">
                       <Option :value="0" >{{"邮箱"}}</Option>
                       <Option :value="1" >{{"短信"}}</Option>
@@ -57,6 +57,11 @@
                     <p>邮箱密码:</p>
                     <Input v-model="notifyMailPassword"/>
                     <Button style="margin-top:10px;" type="primary" @click="onChangeEmailArgs">确定</Button>
+                </TabPane>
+                <TabPane v-if="isMainShop" label="唤醒个数">
+                    <p>唤醒个数:</p>
+                    <Input v-model="tagsLengthCommand"/>
+                    <Button style="margin-top:10px;" type="primary" @click="onChangeETagsLength">确定</Button>
                 </TabPane>
             </Tabs>
         </Card>
@@ -89,6 +94,7 @@ export default {
       messageSign: '',
       notifyMailAccount: '',
       notifyMailPassword: '',
+      tagsLengthCommand: '',
       currentFileArgs: [],
       fileArgs: [
         'name',
@@ -166,6 +172,7 @@ export default {
       this.smsTemp2 = this.currentArgs[0].messageTemplateId
       this.messageSign = this.currentArgs[0].messageSign
       this.notifyMailAccount = this.currentArgs[0].notifyMailAccount
+      this.tagsLengthCommand = this.currentArgs[0].tagsLengthCommand
       this.notifyMailPassword = this.currentArgs[0].notifyMailPassword
     })
     getAllShop({ page: 0, count: 100 }).then(res => {
@@ -196,6 +203,11 @@ export default {
         this.$Message.info('修改成功')
       })
     },
+    onChangeETagsLength () {
+      setSystemArgs(8, this.tagsLengthCommand, this.curShopId).then(res => {
+        this.$Message.info('修改成功')
+      })
+    },
     onWarWaySubmit () {
       setSystemArgs(16, this.currentwarWay, this.curShopId).then(res => {
         this.$Message.info('修改成功')
@@ -217,6 +229,7 @@ export default {
             this.smsTemp2 = item.messageTemplateId
             this.messageSign = item.messageSign
             this.notifyMailAccount = item.notifyMailAccount
+            this.tagsLengthCommand = item.tagsLengthCommand
             this.notifyMailPassword = item.notifyMailPassword
           }
         })
