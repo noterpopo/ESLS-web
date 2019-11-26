@@ -2,7 +2,7 @@ export default {
   /**
    * @description 配置显示在浏览器标签的title
    */
-  title: 'iView-admin',
+  title: '益亿-ESLS管理系统',
   /**
    * @description token在Cookie中存储的天数，默认1天
    */
@@ -17,8 +17,8 @@ export default {
    * @description api请求基础路径
    */
   baseUrl: {
-    dev: 'http://39.108.106.167:8086', // 'http://172.26.225.158:8086', 'http://39.108.106.167:8086' 'https://www.easy-mock.com/mock/5c6a58f27a34d233546dea97/',
-    pro: 'http://39.108.106.167:8086'
+    dev: 'http://47.107.139.6:8086', // 'http://172.26.225.158:8086', 'http://39.108.106.167:8086' 'https://www.easy-mock.com/mock/5c6a58f27a34d233546dea97/',
+    pro: 'http://47.107.139.6:8086'
   },
   /**
    * @description 默认打开的首页的路由name值，默认为home

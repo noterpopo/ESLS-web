@@ -576,42 +576,7 @@ export default {
                     flushTag(data, 1)
                   }
                 }
-              }, '标签刷屏'),
-              h('DropdownItem', {
-                nativeOn: {
-                  click: (name) => {
-                    testInkScreen(data, 1, 1)
-                  }
-                }
-              }, '墨水屏测试1'),
-              h('DropdownItem', {
-                nativeOn: {
-                  click: (name) => {
-                    testInkScreen(data, 1, 2)
-                  }
-                }
-              }, '墨水屏测试2'),
-              h('DropdownItem', {
-                nativeOn: {
-                  click: (name) => {
-                    testInkScreen(data, 1, 3)
-                  }
-                }
-              }, '墨水屏测试3'),
-              h('DropdownItem', {
-                nativeOn: {
-                  click: (name) => {
-                    testInkScreen(data, 1, 4)
-                  }
-                }
-              }, '墨水屏测试4'),
-              h('DropdownItem', {
-                nativeOn: {
-                  click: (name) => {
-                    testInkScreen(data, 1, 5)
-                  }
-                }
-              }, '墨水屏测试5')
+              }, '标签刷屏')
             ]
             if (this.hasHighRouteAccess) {
               if (this.hasBaseRouteAccess) {
