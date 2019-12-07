@@ -106,6 +106,7 @@ export default {
         'category',
         'origin',
         'spec',
+        'shopNumber',
         'stock',
         'unit',
         'shelfNumber',
@@ -146,7 +147,8 @@ export default {
         weightSpec: '重量规格',
         replenishNumber: '预警数量',
         barCode: '商品条码',
-        computeNumber: '件数'
+        computeNumber: '件数',
+        shopNumber: '店铺编号'
       }
     }
   },
