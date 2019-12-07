@@ -430,15 +430,7 @@ export default {
                     balance(3, data).then(res => this.tagReload())
                   }
                 }
-              }, '获取电子秤电量'),
-              h('DropdownItem', {
-                nativeOn: {
-                  click: (name) => {
-                    this.$Message.info('发送清空计量数据命令')
-                    balance(4, data).then(res => this.tagReload())
-                  }
-                }
-              }, '清空计量数据')
+              }, '获取电子秤电量')
             ]
             if (this.hasBindTagAccess) {
               if (this.hasBaseTagAccess) {
