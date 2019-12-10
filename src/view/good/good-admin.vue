@@ -261,6 +261,7 @@ export default {
   },
   data () {
     return {
+      selectLock: false,
       img: null,
       isOpenEBlance: -1,
       shoplist: [],
@@ -362,7 +363,7 @@ export default {
                   }
                   updateGood(params.row).then(res => {
                     getBindedTags({ queryId: 'barCode', queryString: params.row.barCode }).then(res => {
-                      that.tagData = res.data.data
+                      that.tagData = res.data.data.slice(0, that.countPerPageTag)
                       that.canShowData = that.tagData.filter(function (item, index) {
                         if (item.styleId === 0) {
                           return false
@@ -962,7 +963,11 @@ export default {
       this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood, queryId: this.queryId, queryString: this.queryString })
     },
     currentTagPage () {
-      this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag })
+      if (this.selectLock) {
+        this.searchTagPage(this.currentTagPage - 1)
+      } else {
+        this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag })
+      }
     }
   },
   methods: {
@@ -1071,6 +1076,7 @@ export default {
       this.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood, queryId: this.queryId, queryString: this.queryString })
     },
     tagReload () {
+      this.selectLock = false
       this.getTagTableData({ page: this.currentTagPage - 1, count: this.countPerPageTag })
     },
     getTagTableData (page, count) {
@@ -1118,12 +1124,35 @@ export default {
       this.editModal = true
     },
     searchTag (currentRow) {
+      this.selectLock = true
+      this.currentTagPage = 1
       var that = this
       that.isTagTableLoading = true
       that.currentSelectedRow = currentRow
       getBindedTags({ queryId: 'barCode', queryString: currentRow.barCode }).then(res => {
-        that.tagDataNum = res.data.code
-        const data = res.data.data
+        that.tagDataNum = res.data.data.length
+        const data = res.data.data.slice(0, this.countPerPageTag)
+        that.tagData = data
+        that.canShowData = data.filter(function (item) {
+          return item.styleId !== 0 && item.styleId !== 1
+        })
+        that.isTagTableLoading = false
+        if (that.canShowData.length === 0) {
+          that.showId = 0
+          this.$refs.label_canvas.initData(null, 0, 0, this.item)
+        } else {
+          that.showId = that.canShowData[0].id
+
+          that.getLabelData(that.showId)
+        }
+      })
+    },
+    searchTagPage (page) {
+      var that = this
+      that.isTagTableLoading = true
+      getBindedTags({ queryId: 'barCode', queryString: that.currentSelectedRow.barCode }).then(res => {
+        that.tagDataNum = res.data.data.length
+        const data = res.data.data.slice(this.countPerPageTag * page, this.countPerPageTag * (page + 1))
         that.tagData = data
         that.canShowData = data.filter(function (item) {
           return item.styleId !== 0 && item.styleId !== 1
