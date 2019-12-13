@@ -47,7 +47,7 @@
 import { getAllRoute, changeRoute, scanRoute, scanAll, settingRoute, updateRouter } from '@/api/route'
 import super_table from '@/components/table/supertable.vue'
 import routerExpand from '@/components/table/router-expand.vue'
-import { flushTag, scanTag, lightTag, testInkScreen, searchTag } from '@/api/tag'
+import { flushTag, scanTag, lightTag, searchTag } from '@/api/tag'
 import store from '@/store'
 import { getAllShop } from '@/api/shop'
 import goodTagExpand from '@/components/table/good-tag-expand.vue'
@@ -160,7 +160,7 @@ export default {
           key: 'isWorking',
           render: (h, params) => {
             let row = params.row
-            let isWorking = row.execTime === '' && row.completeTime === ''
+            let isWorking = row.execTime === '' || row.completeTime === ''
             let color = !isWorking ? 'primary' : 'error'
             let text = !isWorking ? '正常' : '超时'
 
