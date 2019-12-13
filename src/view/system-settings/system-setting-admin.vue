@@ -106,6 +106,7 @@ export default {
         'category',
         'origin',
         'spec',
+        'shopNumber',
         'stock',
         'unit',
         'shopNumber',
