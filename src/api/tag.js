@@ -20,6 +20,13 @@ export const getTag = (id) => {
   })
 }
 
+export const getTagNum = () => {
+  return axios.request({
+    url: 'tags/index',
+    method: 'get'
+  })
+}
+
 export const computeTagToZero = (id) => {
   return axios.request({
     url: 'tag/computeZero',

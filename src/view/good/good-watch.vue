@@ -28,7 +28,7 @@
             <Row style="margin-top:10px" type="flex" justify="center" align="middle">
                 <Col span="8">
                   <span>已经变价/变价总数: </span>
-                  <span style="width:30px;display:inline-block">{{submitSuccessNum+'/'+submitNum}}</span>
+                  <span style="width:50px;display:inline-block">{{submitSuccessNum+'/'+submitNum}}</span>
                   <Button style="margin-left:10px" type="primary" size="small" @click="getTagTableData(pageNum, countPerPage,3)">查看</Button>
                 </Col>
                 <Col span="8">
@@ -61,7 +61,7 @@
     </div>
 </template>
 <script>
-import { getAllTag, getOvertimeTag, gjTag, gjTags, getAllOvertimeTag } from '@/api/tag'
+import { getAllTag, getOvertimeTag, gjTag, gjTags, getAllOvertimeTag, getTagNum } from '@/api/tag'
 import tagExpand from '@/components/table/tag-expand.vue'
 import store from '@/store'
 import config from '@/config'
@@ -309,20 +309,12 @@ export default {
   },
   created () {
     this.getTagTableData(this.pageNum, this.countPerPage, 3)
-    getAllTag({ page: 0, count: 1, queryId: '', queryString: '' }).then(res => {
-      this.allTagNum = res.data.code
-    })
-    getAllTag({ page: 0, count: 1, queryId: 'forbidState', queryString: '1' }).then(res => {
-      this.usableTagNum = res.data.code
-    })
-    getAllTag({ page: 0, count: 1, queryId: 'forbidState', queryString: '0' }).then(res => {
-      this.unusableTagNum = res.data.code
-    })
-    getAllTag({ page: 0, count: 1, queryId: 'waitUpdate', queryString: '0' }).then(res => {
-      this.submitNum = res.data.code
-    })
-    getOvertimeTag(0, 1).then(res => {
-      this.overTimeTagNum = res.data.code
+    getTagNum().then(res => {
+      this.allTagNum = res.data.data.allSize
+      this.usableTagNum = res.data.data.normalTagSize
+      this.unusableTagNum = res.data.data.forbidTagSize
+      this.overTimeTagNum = res.data.data.overTimeTagSize
+      this.submitNum = res.data.data.waitUpdateTagSize
     })
   },
   destroyed () {

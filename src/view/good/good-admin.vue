@@ -240,10 +240,10 @@
 // TODO: tag表格搜索
 import super_table from '@/components/table/supertable.vue'
 import { getAllGood, updateGood, deleteGood, getBindedTags, getGood, cronUpdate } from '@/api/good'
-import { getAllTag, getTag, lightTag, flushTag, removeTag, scanTag, statusTag } from '@/api/tag'
+import { getAllTag, lightTag, flushTag, removeTag, scanTag, statusTag } from '@/api/tag'
 import { getAllShop } from '@/api/shop'
 import e_label from '@/components/e-label/e-lable.vue'
-import { getStyleDisp, getStyleInfo, getStyle } from '@/api/style'
+import { getStyleDisp, getStyle } from '@/api/style'
 import store from '@/store'
 import { VueContext } from 'vue-context'
 import goodTagExpand from '@/components/table/good-tag-expand.vue'
@@ -361,42 +361,29 @@ export default {
                   } else {
                     params.row.isPromote = 0
                   }
+                  that.currentSelectedRow = params.row
                   updateGood(params.row).then(res => {
                     getBindedTags({ queryId: 'barCode', queryString: params.row.barCode }).then(res => {
                       that.tagData = res.data.data.slice(0, that.countPerPageTag)
+                      if (that.tagDataNum.length === 0) {
+                        return
+                      }
                       that.canShowData = that.tagData.filter(function (item, index) {
                         if (item.styleId === 0) {
                           return false
                         }
-                        if (params.row.isPromote === 0) {
-                          getStyleInfo(item.styleId).then(res => {
-                            getStyle(res.data.data[0].styleNumber, 0).then(r => {
-                              item.styleId = r.data.data.id
-                              if (that.canShowData.length === 0) {
-                                that.showId = 0
-                                this.$refs.label_canvas.initData(null, 0, 0, this.item)
-                              } else {
-                                that.showId = that.canShowData[0].id
-                                that.getLabelData(that.showId)
-                              }
-                            })
-                          })
-                        } else {
-                          getStyleInfo(item.styleId).then(res => {
-                            getStyle(res.data.data[0].styleNumber, 1).then(r => {
-                              item.styleId = r.data.data.id
-                              if (that.canShowData.length === 0) {
-                                that.showId = 0
-                                this.$refs.label_canvas.initData(null, 0, 0, this.item)
-                              } else {
-                                that.showId = that.canShowData[0].id
-                                that.getLabelData(that.showId)
-                              }
-                            })
-                          })
-                        }
+
+                        getStyle(item.style.styleNumber, params.row.isPromote).then(r => {
+                          item.styleId = r.data.data.id
+                        })
                         return true
                       })
+
+                      if (that.canShowData.length === 0) {
+                        this.$refs.label_canvas.initData(null, 0, 0, null)
+                      } else {
+                        that.getLabelData(that.canShowData[0])
+                      }
                     })
                   })
                 }
@@ -646,22 +633,7 @@ export default {
           width: '70',
           align: 'center',
           render: (h, params) => {
-            let isCalOpen = false
-            if (params.row.goodId !== 0 && params.row.goodId !== null) {
-              console.log('in')
-              $.ajax({
-                url: this.getUrl() + '/goods/' + params.row.goodId,
-                async: false,
-                headers: {
-                  ESLS: store.getters.token
-                },
-                type: 'get',
-                success: (res) => {
-                  isCalOpen = res.data[0].isComputeOpen === 1
-                  console.log(isCalOpen)
-                }
-              })
-            }
+            let isCalOpen = params.row.goodIsComputeOpen
             let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
             let data = {}
             let tparams = {}
@@ -1138,12 +1110,9 @@ export default {
         })
         that.isTagTableLoading = false
         if (that.canShowData.length === 0) {
-          that.showId = 0
-          this.$refs.label_canvas.initData(null, 0, 0, this.item)
+          this.$refs.label_canvas.initData(null, 0, 0, null)
         } else {
-          that.showId = that.canShowData[0].id
-
-          that.getLabelData(that.showId)
+          that.getLabelData(that.canShowData[0])
         }
       })
     },
@@ -1159,12 +1128,9 @@ export default {
         })
         that.isTagTableLoading = false
         if (that.canShowData.length === 0) {
-          that.showId = 0
-          this.$refs.label_canvas.initData(null, 0, 0, this.item)
+          this.$refs.label_canvas.initData(null, 0, 0, null)
         } else {
-          that.showId = that.canShowData[0].id
-
-          that.getLabelData(that.showId)
+          that.getLabelData(that.canShowData[0])
         }
       })
     },
@@ -1218,7 +1184,7 @@ export default {
         }
       }
       this.currentSelectedRow.promotePrice = tp
-      this.getLabelData(this.showId)
+      this.getLabelData(this.canShowData[0])
       updateGood(that.currentSelectedRow).then(res => { that.editModal = false; that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood, queryId: this.queryId, queryString: this.queryString }) })
     },
     addGood () {
@@ -1246,7 +1212,7 @@ export default {
       this.addGooddata.promotePrice = tp
       updateGood(that.addGooddata).then(res => { that.addModal = false; that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood }) })
     },
-    getLabelData (tid) {
+    getLabelData (tag) {
       var that = this
       let goodInfo = that.goodData.filter(function (item) { return item.barCode === that.currentSelectedRow.barCode })
       if (goodInfo.length === 0) {
@@ -1270,20 +1236,18 @@ export default {
       that.item.rfus01 = goodInfo[0].rfus01
       that.item.rfus02 = goodInfo[0].rfus02
 
-      if (tid === 0) {
+      if (tag === null) {
         return
       }
-      getTag(tid).then(res => {
-        let tempTag = res.data.data
-        getStyleDisp(tempTag[0].styleId).then(res => {
-          const dispData = res.data.data
-          that.$refs.label_canvas.initData(dispData, tempTag[0].resolutionWidth, tempTag[0].resolutionHeight, that.item)
-        })
+      getStyleDisp(tag.styleId).then(res => {
+        const dispData = res.data.data
+        that.$refs.label_canvas.initData(dispData, tag.resolutionWidth, tag.resolutionHeight, that.item)
       })
     },
     onShowIdChange () {
       if (this.showId) {
-        this.getLabelData(this.showId)
+        let tag = this.canShowData.find(item => item.id === this.showId)
+        this.getLabelData(tag)
       }
     },
     onRightClick () {

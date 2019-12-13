@@ -109,6 +109,7 @@ export default {
         'shopNumber',
         'stock',
         'unit',
+        'shopNumber',
         'shelfNumber',
         'promoteTimeGap',
         'promotionReason',
