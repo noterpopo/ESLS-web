@@ -58,7 +58,7 @@
                     <Input v-model="notifyMailPassword"/>
                     <Button style="margin-top:10px;" type="primary" @click="onChangeEmailArgs">确定</Button>
                 </TabPane>
-                <TabPane v-if="isMainShop" label="唤醒个数">
+                <TabPane v-if="isMainShop && curShopId==1" label="唤醒个数">
                     <p>唤醒个数:</p>
                     <Input v-model="tagsLengthCommand"/>
                     <Button style="margin-top:10px;" type="primary" @click="onChangeETagsLength">确定</Button>

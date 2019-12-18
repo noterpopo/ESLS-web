@@ -61,31 +61,10 @@
     </div>
 </template>
 <script>
-import { getAllTag, getOvertimeTag, gjTag, gjTags, getAllOvertimeTag, getTagNum } from '@/api/tag'
+import { getAllTag, getOvertimeTag, gjTag, gjTags, getTagNum } from '@/api/tag'
 import tagExpand from '@/components/table/tag-expand.vue'
 import store from '@/store'
 import config from '@/config'
-const { Parser } = require('json2csv')
-const fields = ['id',
-  'power',
-  'tagRssi',
-  'apRssi',
-  'state',
-  'hardwareVersion',
-  'softwareVersion',
-  'forbidState',
-  'waitUpdate',
-  'execTime',
-  'completeTime',
-  'barCode',
-  'tagAddress',
-  'screenType',
-  'resolutionWidth',
-  'resolutionHeight',
-  'isWorking',
-  'goodId',
-  'styleId',
-  'routerId']
 export default {
   components: {
     tagExpand
@@ -330,22 +309,22 @@ export default {
   },
   methods: {
     exportCsv () {
-      const json2csvParser = new Parser({ fields })
-      getAllOvertimeTag().then(res => {
-        let csv = json2csvParser.parse(res.data.data)
-        let date = new Date()
-        let timestamp = date.toLocaleString()
-        let fileName = timestamp + '.csv'
-        console.log(csv)
-        var alink = document.createElement('a')
-        alink.id = 'linkDwnldLink'
-        alink.href = this.getDownloadUrl(csv)
-        document.body.appendChild(alink)
-        var linkDom = document.getElementById('linkDwnldLink')
-        linkDom.setAttribute('download', fileName)
-        linkDom.click()
-        document.body.removeChild(linkDom)
-      })
+      let xhr = new XMLHttpRequest()
+      xhr.open('POST', config.baseUrl.dev + '/tags/exportOvertime')
+      xhr.onload = function (a, b) {
+        let blob = this.response
+        let reader = new FileReader()
+        reader.readAsDataURL(blob)
+        reader.onload = function (e) {
+          let a = document.createElement('a')
+          a.download = 'overTime.csv'
+          a.href = e.target.result
+          a.click()
+        }
+      }
+      xhr.responseType = 'blob'
+      xhr.setRequestHeader('ESLS', store.getters.token)
+      xhr.send()
     },
     getDownloadUrl (csv) {
       var _utf = '\uFEFF' // 为了使Excel以utf-8的编码模式，同时也是解决中文乱码的问题
