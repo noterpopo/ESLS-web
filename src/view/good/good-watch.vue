@@ -11,29 +11,29 @@
             <Row type="flex" justify="center" align="middle">
                 <Col span="8">
                   <span>所有价签: </span>
-                  <span style="width:30px;display:inline-block">{{currentTimeTagData.length}}</span>
+                  <span style="width:30px;display:inline-block">{{allTagNum}}</span>
                   <Button style="margin-left:10px" type="primary" size="small" @click="getTagTableData(pageNum, countPerPage,0)">查看</Button>
                 </Col>
                 <Col span="8">
                   <span>启用价签: </span>
-                  <span style="width:30px;display:inline-block">{{currentTimeTagData.filter((item)=>{return item.forbidState===1}).length}}</span>
+                  <span style="width:30px;display:inline-block">{{usableTagNum}}</span>
                   <Button style="margin-left:10px" type="primary" size="small" @click="getTagTableData(pageNum, countPerPage,1)">查看</Button>
                 </Col>
                 <Col span="8">
                   <span>禁用价签: </span>
-                  <span style="width:30px;display:inline-block">{{currentTimeTagData.filter((item)=>{return item.forbidState===0}).length}}</span>
+                  <span style="width:30px;display:inline-block">{{unusableTagNum}}</span>
                   <Button style="margin-left:10px" type="primary" size="small" @click="getTagTableData(pageNum, countPerPage,2)">查看</Button>
                 </Col>
             </Row>
             <Row style="margin-top:10px" type="flex" justify="center" align="middle">
                 <Col span="8">
                   <span>已经变价/变价总数: </span>
-                  <span style="width:30px;display:inline-block">{{hasChangeNum+'/'+submitNum}}</span>
+                  <span style="width:50px;display:inline-block">{{submitSuccessNum+'/'+submitNum}}</span>
                   <Button style="margin-left:10px" type="primary" size="small" @click="getTagTableData(pageNum, countPerPage,3)">查看</Button>
                 </Col>
                 <Col span="8">
                   <span>变价超时: </span>
-                  <span style="width:30px;display:inline-block">{{overTimeTags.length}}</span>
+                  <span style="width:30px;display:inline-block">{{overTimeTagNum}}</span>
                   <Button style="margin-left:10px" type="primary" size="small" @click="getTagTableData(pageNum, countPerPage,4)">查看</Button>
                 </Col>
                 <Col span="8">
@@ -51,20 +51,19 @@
                 <Col span="2"><Button v-if="hasGjAccess" type="primary" @click="submitUpdate">一键改价</Button></Col>
             </Row>
           </div>
-          <Table border :loading='isTableLoading' :columns="tableColumns" :data="tagDataPage">
+          <Table v-if="rendertable" border :loading='isTableLoading' :columns="tableColumns" :data="tagData">
           </Table>
           <div style="float: right;margin:6px;">
-              <Page :total="tagData.length" :page-size="countPerPage" :current="pageNum+1" @on-change="changePage"></Page>
+              <Page :total="tableAllNum" :page-size="countPerPage" :current="pageNum+1" @on-change="changePage"></Page>
           </div>
 
         </Card>
     </div>
 </template>
 <script>
-import { getAllTag, getOvertimeTag, gjTag, gjTags } from '@/api/tag'
+import { getAllTag, getOvertimeTag, gjTag, gjTags, getTagNum } from '@/api/tag'
 import tagExpand from '@/components/table/tag-expand.vue'
 import store from '@/store'
-import { setInterval, clearInterval } from 'timers'
 import config from '@/config'
 export default {
   components: {
@@ -72,14 +71,12 @@ export default {
   },
   data () {
     return {
+      rendertable: true,
       windowWidth: 0,
       intervalid: null,
       successRate: 0,
       isTableLoading: false,
       tagData: [],
-      tagDataPage: [],
-      currentTimeTagData: [],
-      hasChangeNum: 0,
       tableColumns: [
         {
           type: 'expand',
@@ -207,7 +204,7 @@ export default {
           width: '140',
           render: (h, params) => {
             let row = params.row
-            let isWorking = row.execTime === '' && row.completeTime === ''
+            let isWorking = row.execTime === '' || row.completeTime === ''
             let color = !isWorking ? 'primary' : 'error'
             let text = !isWorking ? '正常' : '超时'
             return h('Tag', {
@@ -255,7 +252,7 @@ export default {
               on: {
                 'click': (event) => {
                   event.stopPropagation()
-                  let temp = this.currentTimeTagData.find(function (item) { return item.barCode === params.row.barCode })
+                  let temp = this.tagData.find(function (item) { return item.barCode === params.row.barCode })
                   this.submitTag(temp)
                 }
               }
@@ -263,15 +260,21 @@ export default {
           }
         }
       ],
-      overTimeTags: [],
       updateSum: 1,
       currentUpdate: 0,
+      allTagNum: 0,
+      usableTagNum: 0,
+      unusableTagNum: 0,
+      submitSuccessNum: 0,
+      overTimeTagNum: 0,
       submitNum: 0,
       updateStatus: 'active',
       selectid: [],
       pageNum: 0,
-      countPerPage: 10
-
+      countPerPage: 10,
+      mode: 0,
+      tableAllNum: 0,
+      websocket: null
     }
   },
   mounted () {
@@ -284,22 +287,19 @@ export default {
     }
   },
   created () {
-    getOvertimeTag().then(r => {
-      if (r.data.data === '不存在变价超时的标签信息') {
-        this.tagData = []
-        this.overTimeTags = []
-        this.changePage(1)
-        return
-      }
-      this.overTimeTags = r.data.data
-      this.changePage(1)
-    })
     this.getTagTableData(this.pageNum, this.countPerPage, 3)
+    getTagNum().then(res => {
+      this.allTagNum = res.data.data.allSize
+      this.usableTagNum = res.data.data.normalTagSize
+      this.unusableTagNum = res.data.data.forbidTagSize
+      this.overTimeTagNum = res.data.data.overTimeTagSize
+      this.submitNum = res.data.data.waitUpdateTagSize
+    })
   },
   destroyed () {
-    if (this.intervalid !== null) {
-      clearInterval(this.intervalid)
-      this.intervalid = null
+    if (this.websocket != null) {
+      this.websocket.close()
+      this.websocket = null
     }
   },
   computed: {
@@ -336,48 +336,36 @@ export default {
       }
     },
     getTagTableData (page, count, mode) {
+      this.mode = mode
       var that = this
       that.isTableLoading = true
-      getAllTag({}).then(res => {
-        const data = res.data.data
-        that.currentTimeTagData = data
-        if (mode === 0) {
-          this.tagData = this.currentTimeTagData
-          this.changePage(1)
-        } else if (mode === 1) {
-          this.tagData = this.currentTimeTagData.filter((item) => {
-            return item.forbidState === 1
-          })
-          this.changePage(1)
-        } else if (mode === 2) {
-          this.tagData = this.currentTimeTagData.filter((item) => {
-            return item.forbidState === 0
-          })
-          this.changePage(1)
-        } else if (mode === 3) {
-          this.tagData = this.currentTimeTagData.filter((item) => {
-            return item.waitUpdate === 0
-          })
-          this.hasChangeNum = 0
-          this.submitNum = this.tagData.length
-          this.changePage(1)
-        } else if (mode === 4) {
-          getOvertimeTag().then(r => {
-            if (r.data.data === '不存在变价超时的标签信息') {
-              this.tagData = []
-              this.overTimeTags = []
-              this.changePage(1)
-              return
-            }
-            this.tagData = r.data.data
-            this.overTimeTags = r.data.data
-            this.changePage(1)
-          }).catch(e => {
-            this.tagData = []
-            this.overTimeTags = []
-            this.changePage(1)
-          })
-        }
+      let params = { page: page, count: count, queryId: '', queryString: '' }
+      if (mode === 0) {
+      } else if (mode === 1) {
+        params.queryId = 'forbidState'
+        params.queryString = '1'
+      } else if (mode === 2) {
+        params.queryId = 'forbidState'
+        params.queryString = '0'
+      } else if (mode === 3) {
+        params.queryId = 'waitUpdate'
+        params.queryString = '0'
+      } else if (mode === 4) {
+        getOvertimeTag(page, count).then(r => {
+          this.tableAllNum = r.data.code
+          this.tagData = r.data.data
+          that.isTableLoading = false
+        }).catch(e => {
+          this.tagData = []
+          that.isTableLoading = false
+        })
+      }
+      if (mode === 4) {
+        return
+      }
+      getAllTag(params).then(res => {
+        this.tableAllNum = res.data.code
+        this.tagData = res.data.data
         that.isTableLoading = false
       })
     },
@@ -390,87 +378,88 @@ export default {
       items.push(tparams)
       this.$set(data, 'items', items)
       gjTag(data).then(res => {
-        this.getTagTableData(this.pageNum, this.countPerPage, 3)
+        if (res.data.data.error === false) {
+          this.submitNum--
+        } else {
+          this.$Modal.error({
+            title: '错误',
+            content: '变价错误'
+          })
+        }
+        this.getTagTableData(0, this.countPerPage, 3)
       })
     },
     submitUpdate () {
       // TODO 批量改价
-      let temp = this.currentTimeTagData.filter((item) => {
-        return item.waitUpdate === 0
+      getAllTag({ page: 0, count: 1, queryId: 'waitUpdate', queryString: '0' }).then(res => {
+        this.submitNum = res.data.code
       })
-      this.submitNum = temp.length
-
-      let flag = true
-      gjTags().then(() => {
-        getOvertimeTag().then(r => {
-          this.overTimeTags = r.data.data
-        })
-        this.$Modal.info({
-          title: '消息',
-          content: '变价完成'
-        })
-        getOvertimeTag().then(r => {
-          if (r.data.data === '不存在变价超时的标签信息') {
-            this.overTimeTags = []
-            return
-          }
-          this.overTimeTags = r.data.data
-        })
-        flag = false
-        getAllTag({}).then(res => {
-          this.currentTimeTagData = res.data.data
-          this.tagData = this.currentTimeTagData.filter((item) => {
-            for (let i = 0; i < temp.length; ++i) {
-              if (temp[i].id === item.id) {
-                return true
-              }
-            }
-            return false
+      this.initWebSocket()
+      gjTags().then((res) => {
+        if (res.data.data.error === false) {
+          this.$Modal.info({
+            title: '消息',
+            content: '变价完成'
           })
-          this.changePage(1)
-        })
-        let currentTemp = this.tagData.filter((item) => {
-          return item.waitUpdate === 0
-        })
-        let cNum = currentTemp.length
-        this.hasChangeNum = this.submitNum - cNum
-        this.successRate = (this.hasChangeNum / this.submitNum * 100).toFixed(2)
+        } else {
+          this.$Modal.error({
+            title: '错误',
+            content: '变价错误'
+          })
+        }
+        if (this.websocket != null) {
+          this.websocket.close()
+          this.websocket = null
+        }
       }).catch(() => {
-        if (this.intervalid !== null) {
-          clearInterval(this.intervalid)
-          this.intervalid = null
-        }
       })
-      this.intervalid = setInterval(() => {
-        getAllTag({}).then(res => {
-          this.currentTimeTagData = res.data.data
-          this.tagData = this.currentTimeTagData.filter((item) => {
-            for (let i = 0; i < temp.length; ++i) {
-              if (temp[i].id === item.id) {
-                return true
-              }
-            }
-            return false
-          })
-          this.changePage(1)
-        })
-        let currentTemp = this.tagData.filter((item) => {
-          return item.waitUpdate === 0
-        })
-        let cNum = currentTemp.length
-        this.hasChangeNum = this.submitNum - cNum
-        this.successRate = (this.hasChangeNum / this.submitNum * 100).toFixed(2)
-        if (!flag) {
-          if (this.intervalid !== null) {
-            clearInterval(this.intervalid)
-            this.intervalid = null
-          }
-        }
-      }, 2000)
     },
     changePage (page) {
       this.pageNum = page - 1
-      this.tagDataPage = this.tagData.slice(this.pageNum * this.countPerPage, (this.pageNum + 1) * this.countPerPage)
+      this.getTagTableData(this.pageNum, this.countPerPage, this.mode)
+    },
+    closeWebSocket () {
+      console.log('websocket关闭')
+      this.websocket = null
+    },
+    webSocketOnOpen () {
+      console.log('WebSocket连接成功')
+    },
+    errorWebSocket (e) {
+      console.log('WebSocket连接发生错误')
+    },
+    onWebSocketMessage (msg) {
+      console.log('WebSocket收到消息' + msg.data)
+      let pat = /[\d]+/g
+      console.log(msg.data.match(pat))
+      let tagId = msg.data.match(pat)[0]
+      this.overTimeTagNum = msg.data.match(pat)[1]
+      console.log(msg.data.match(pat)[1])
+      if (msg.data.indexOf('成功') !== -1) {
+        this.submitSuccessNum++
+        this.successRate = (this.submitSuccessNum / this.submitNum * 100).toFixed(2)
+        this.tagData.forEach(item => {
+          if (item.barCode === tagId) {
+            console.log('灰' + tagId)
+            item.waitUpdate = 1
+            this.rendertable = false
+            this.$nextTick(() => {
+              this.rendertable = true
+            })
+          }
+        })
+      }
+    },
+    initWebSocket () {
+      let ws = config.baseUrl.pro.replace('http://', 'ws://') + '/websocket?token=' + store.getters.token
+      console.log(ws)
+      if (this.websocket === null) {
+        this.websocket = new WebSocket(ws)
+        this.websocket.onopen = this.webSocketOnOpen
+        this.websocket.onerror = this.errorWebSocket
+        this.websocket.onmessage = this.onWebSocketMessage
+        this.websocket.onclose = this.closeWebSocket
+      }
     }
   }
 

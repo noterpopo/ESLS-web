@@ -3,7 +3,7 @@ import config from '@/config'
 
 console.log(window.location.host)
 function getBaseUrl () {
-  config.baseUrl.dev = window.location.host.split(':')[0] + ':8086'
+  config.baseUrl.dev = 'http://' + window.location.host.split(':')[0] + ':8086'
   config.baseUrl.pro = 'http://' + window.location.host.split(':')[0] + ':8086'
 }
 getBaseUrl()

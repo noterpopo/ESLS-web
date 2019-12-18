@@ -264,7 +264,7 @@ export default {
           width: '100',
           render: (h, params) => {
             let row = params.row
-            let isWorking = row.execTime === '' && row.completeTime === ''
+            let isWorking = row.execTime === '' || row.completeTime === ''
             let color = !isWorking ? 'primary' : 'error'
             let text = !isWorking ? '正常' : '超时'
             return h('Tag', {
@@ -434,11 +434,19 @@ export default {
               h('DropdownItem', {
                 nativeOn: {
                   click: (name) => {
-                    this.$Message.info('发送清空计量数据命令')
-                    balance(4, data).then(res => this.tagReload())
+                    this.$Message.info('发送电子秤置零命令')
+                    balance(1, data).then(res => this.tagReload())
                   }
                 }
-              }, '清空计量数据')
+              }, '电子秤置零'),
+              h('DropdownItem', {
+                nativeOn: {
+                  click: (name) => {
+                    this.$Message.info('发送电子秤去皮命令')
+                    balance(2, data).then(res => this.tagReload())
+                  }
+                }
+              }, '电子秤去皮')
             ]
             if (this.hasBindTagAccess) {
               if (this.hasBaseTagAccess) {

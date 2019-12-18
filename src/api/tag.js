@@ -1,6 +1,6 @@
 import axios from '@/libs/api.request'
 
-export const getAllTag = ({ page = 0, count = 9999, queryId, queryString }) => {
+export const getAllTag = ({ page = 0, count = 0, queryId = '', queryString = '' }) => {
   return axios.request({
     url: 'tags/',
     method: 'get',
@@ -16,6 +16,13 @@ export const getAllTag = ({ page = 0, count = 9999, queryId, queryString }) => {
 export const getTag = (id) => {
   return axios.request({
     url: 'tag/' + id,
+    method: 'get'
+  })
+}
+
+export const getTagNum = () => {
+  return axios.request({
+    url: 'tags/index',
     method: 'get'
   })
 }
@@ -208,7 +215,18 @@ export const gjTags = () => {
   })
 }
 
-export const getOvertimeTag = () => {
+export const getOvertimeTag = (page, count) => {
+  return axios.request({
+    url: 'tags/overtimePage',
+    method: 'get',
+    params: {
+      page: page,
+      count: count
+    }
+  })
+}
+
+export const getAllOvertimeTag = () => {
   return axios.request({
     url: 'tags/overtime',
     method: 'get'
