@@ -77,6 +77,7 @@ export default {
   },
   data () {
     return {
+      addNewStyle: false,
       windowWidth: 0,
       currentSelected: {},
       item: {
@@ -281,61 +282,86 @@ export default {
         let styleData = str.split('this is magic')
         let styleDisp1 = JSON.parse(styleData[0])
         let styleDisp2 = JSON.parse(styleData[1])
-        let sN = styleData[2]
-        let index = 1
-        for (let i = 0; i < styleDisp1.length; ++i) {
-          if (styleDisp1[i].status === 1) {
-            that.$set(styleDisp1[i], 'regionId', index++)
-          } else {
-            that.$set(styleDisp1[i], 'regionId', 0)
-          }
-        }
-        index = 1
-        for (let i = 0; i < styleDisp2.length; ++i) {
-          if (styleDisp2[i].status === 1) {
-            that.$set(styleDisp2[i], 'regionId', index++)
-          } else {
-            that.$set(styleDisp2[i], 'regionId', 0)
-          }
-        }
-        // TODO
-        getStyle(sN, 0).then(r => {
-          console.log(r.data)
-          if (r.data.data === null || r.data.data === '') {
+        that.$Modal.confirm({
+          title: '是否新建样式',
+          render: (h, params) => {
+            return h('span', [
+              h('p', {
+                attrs: {
+                  style: 'margin-top:10px'
+                }
+              }, '新建样式:'),
+              h('i-switch', {
+                props: {
+                  value: this.addNewStyle
+                },
+                on: {
+                  'on-change': (value) => {
+                    that.addNewStyle = value
+                  }
+                }
+              })
+            ])
+          },
+          onOk: () => {
+            let sN = styleData[2]
+            let index = 1
             for (let i = 0; i < styleDisp1.length; ++i) {
-              delete styleDisp1[i].id
+              if (styleDisp1[i].status === 1) {
+                that.$set(styleDisp1[i], 'regionId', index++)
+              } else {
+                that.$set(styleDisp1[i], 'regionId', 0)
+              }
             }
+            index = 1
             for (let i = 0; i < styleDisp2.length; ++i) {
-              delete styleDisp2[i].id
+              if (styleDisp2[i].status === 1) {
+                that.$set(styleDisp2[i], 'regionId', index++)
+              } else {
+                that.$set(styleDisp2[i], 'regionId', 0)
+              }
             }
-            console.log(styleDisp1)
-            console.log(styleDisp2)
-            console.log(sN)
-            newStyle(styledes).then(res => {
-              let newId = res.data.data[0].id
-              let newPromoteId = res.data.data[1].id
-              updateStyle(newId, styleDisp1, 0, 0).then(res => {
-                updateStyle(newPromoteId, styleDisp2, 0, 0).then(r => {
-                  that.$emit('reloadTable')
-                  that.$Message.info('新建样式成功')
+            // TODO
+            getStyle(sN, 0).then(r => {
+              console.log(r.data)
+              console.log(that.addNewStyle)
+              if (that.addNewStyle || (r.data.data === null || r.data.data === '')) {
+                for (let i = 0; i < styleDisp1.length; ++i) {
+                  delete styleDisp1[i].id
+                }
+                for (let i = 0; i < styleDisp2.length; ++i) {
+                  delete styleDisp2[i].id
+                }
+                console.log(styleDisp1)
+                console.log(styleDisp2)
+                console.log(sN)
+                newStyle(styledes).then(res => {
+                  let newId = res.data.data[0].id
+                  let newPromoteId = res.data.data[1].id
+                  updateStyle(newId, styleDisp1, 0, 0).then(res => {
+                    updateStyle(newPromoteId, styleDisp2, 0, 0).then(r => {
+                      that.$emit('reloadTable')
+                      that.$Message.info('新建样式成功')
+                    })
+                  })
                 })
-              })
-            })
-          } else {
-            console.log(styleDisp1)
-            console.log(styleDisp2)
-            console.log(sN)
-            updateStyle(r.data.data.id, styleDisp1, 1, 0).then(res => {
-              getStyle(sN, 1).then(r2 => {
-                updateStyle(r2.data.data.id, styleDisp2, 1, 0).then(r => {
-                  that.$emit('reloadTable')
-                  that.$Message.info('更新样式成功')
+              } else {
+                console.log(styleDisp1)
+                console.log(styleDisp2)
+                console.log(sN)
+                updateStyle(r.data.data.id, styleDisp1, 1, 0).then(res => {
+                  getStyle(sN, 1).then(r2 => {
+                    updateStyle(r2.data.data.id, styleDisp2, 1, 0).then(r => {
+                      that.$emit('reloadTable')
+                      that.$Message.info('更新样式成功')
+                    })
+                  })
                 })
-              })
+              }
+            }).catch(d => {
+
             })
           }
-        }).catch(d => {
-
         })
       })
       reader.readAsText(data)
