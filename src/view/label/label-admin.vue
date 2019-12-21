@@ -77,6 +77,7 @@ export default {
   },
   data () {
     return {
+      replaceNum: '',
       addNewStyle: false,
       windowWidth: 0,
       currentSelected: {},
@@ -300,11 +301,25 @@ export default {
                     that.addNewStyle = value
                   }
                 }
+              }),
+              h('Input', {
+                props: {
+                  placeholder: '替换编号',
+                  value: this.replaceNum
+                },
+                style: {
+                  display: (that.addNewStyle) ? 'none' : 'inline-block'
+                },
+                on: {
+                  'on-change': (event) => {
+                    that.replaceNum = event.target.value
+                  }
+                }
               })
             ])
           },
           onOk: () => {
-            let sN = styleData[2]
+            let sN = that.replaceNum
             let index = 1
             for (let i = 0; i < styleDisp1.length; ++i) {
               if (styleDisp1[i].status === 1) {
@@ -349,9 +364,9 @@ export default {
                 console.log(styleDisp1)
                 console.log(styleDisp2)
                 console.log(sN)
-                updateStyle(r.data.data.id, styleDisp1, 1, 0).then(res => {
+                updateStyle(r.data.data.id, styleDisp1, 2, 0).then(res => {
                   getStyle(sN, 1).then(r2 => {
-                    updateStyle(r2.data.data.id, styleDisp2, 1, 0).then(r => {
+                    updateStyle(r2.data.data.id, styleDisp2, 2, 0).then(r => {
                       that.$emit('reloadTable')
                       that.$Message.info('更新样式成功')
                     })
