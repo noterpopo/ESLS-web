@@ -320,6 +320,10 @@ export default {
           },
           onOk: () => {
             let sN = that.replaceNum
+            if (!sN.startsWith(styleData[2].substring(0, 2))) {
+              that.$Message.error('编号输入错误')
+              return
+            }
             let index = 1
             for (let i = 0; i < styleDisp1.length; ++i) {
               if (styleDisp1[i].status === 1) {
@@ -340,7 +344,7 @@ export default {
             getStyle(sN, 0).then(r => {
               console.log(r.data)
               console.log(that.addNewStyle)
-              if (that.addNewStyle || (r.data.data === null || r.data.data === '')) {
+              if (that.addNewStyle) {
                 for (let i = 0; i < styleDisp1.length; ++i) {
                   delete styleDisp1[i].id
                 }
@@ -364,6 +368,10 @@ export default {
                 console.log(styleDisp1)
                 console.log(styleDisp2)
                 console.log(sN)
+                if (r.data.data === null || r.data.data === '') {
+                  that.$Message.error('替换编号不存在')
+                  return
+                }
                 updateStyle(r.data.data.id, styleDisp1, 2, 0).then(res => {
                   getStyle(sN, 1).then(r2 => {
                     updateStyle(r2.data.data.id, styleDisp2, 2, 0).then(r => {
