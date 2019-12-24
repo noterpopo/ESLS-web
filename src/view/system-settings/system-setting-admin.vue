@@ -99,8 +99,8 @@ export default {
       fileArgs: [
         'name',
         'qrCode',
-        'price',
-        'promotePrice',
+        'oriPrice',
+        'curPrice',
         'provider',
         'operator',
         'category',
@@ -127,8 +127,8 @@ export default {
       translate: {
         name: '商品名称',
         qrCode: '二维码',
-        price: '原价',
-        promotePrice: '价格',
+        oriPrice: '原价',
+        curPrice: '价格',
         provider: '供应商',
         operator: '操作员',
         category: '类别',

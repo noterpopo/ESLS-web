@@ -320,7 +320,7 @@ export default {
           },
           onOk: () => {
             let sN = that.replaceNum
-            if (!sN.startsWith(styleData[2].substring(0, 2))) {
+            if (!that.addNewStyle && !sN.startsWith(styleData[2].substring(0, 2))) {
               that.$Message.error('编号输入错误')
               return
             }
@@ -344,13 +344,13 @@ export default {
             getStyle(sN, 0).then(r => {
               console.log(r.data)
               console.log(that.addNewStyle)
+              for (let i = 0; i < styleDisp1.length; ++i) {
+                delete styleDisp1[i].id
+              }
+              for (let i = 0; i < styleDisp2.length; ++i) {
+                delete styleDisp2[i].id
+              }
               if (that.addNewStyle) {
-                for (let i = 0; i < styleDisp1.length; ++i) {
-                  delete styleDisp1[i].id
-                }
-                for (let i = 0; i < styleDisp2.length; ++i) {
-                  delete styleDisp2[i].id
-                }
                 console.log(styleDisp1)
                 console.log(styleDisp2)
                 console.log(sN)
