@@ -1184,7 +1184,9 @@ export default {
         }
       }
       this.currentSelectedRow.promotePrice = tp
-      this.getLabelData(this.canShowData[0])
+      if (this.canShowData.length !== 0) {
+        this.getLabelData(this.canShowData[0])
+      }
       updateGood(that.currentSelectedRow).then(res => { that.editModal = false; that.getGoodTableData({ page: this.currentPage - 1, count: this.countPerPageGood, queryId: this.queryId, queryString: this.queryString }) })
     },
     addGood () {

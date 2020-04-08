@@ -140,7 +140,9 @@ export default {
               },
               on: {
                 'on-change': (val) => {
-                  this.onUpdateRole(params.row, val)
+                  if (val !== null) {
+                    this.onUpdateRole(params.row, val)
+                  }
                 }
               }
             }, this.roleData.map((item) => {
